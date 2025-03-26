@@ -13,7 +13,7 @@ spring:
       hibernate:
         ddl-auto: update  # Options: create, create-drop, update, validate, none
         format_sql: true
-        default_schema: farm
+        default_schema: school
     database:
     database-platform: org.hibernate.dialect.MySQL8Dialect
   mail:

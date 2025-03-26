@@ -48,4 +48,10 @@ public class ProductService {
     public List<Product> getProductsByProductName(String name) {
         return productRepository.findByProductNameContainingIgnoreCase(name);
     }
+
+    //GET PROCUCTS BASED ON LOCATION
+
+    public  List<Product> getProductsByLocation(String location){
+        return productRepository.findByFarm_LocationContainingIgnoreCase(location);
+    }
 }

@@ -103,5 +103,12 @@ public class ProductController {
     }
 
 
+    //Get Product Based on Location
+    @GetMapping("/search/by-location")
+    public ResponseEntity<List<Product>> getProductsByLocation(@RequestParam String location) {
+        List<Product> products = productService.getProductsByLocation(location);
+        return ResponseEntity.ok(products);
+    }
+
 
 }

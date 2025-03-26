@@ -1,6 +1,5 @@
 package com.alibou.book.user;
 
-import com.alibou.book.book.Book;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.role.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -52,8 +51,6 @@ public class User implements UserDetails, Principal {
     private boolean enabled;
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
-    @OneToMany(mappedBy = "owner")
-    private List<Book> books;
 //    @OneToMany(mappedBy = "user")
 //    private List<BookTransactionHistory> histories;
 
