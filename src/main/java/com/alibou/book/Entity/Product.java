@@ -20,6 +20,8 @@ public class Product {
     private String description;
     private Double price;
     private Integer quantity;
+    private String imageUrl; // URL pointing to the product image
+
 
     private String category; // e.g., Poultry, Meat, Dairy
 

@@ -1,15 +1,11 @@
 package com.alibou.book.Controllers;
 
-import com.alibou.book.Entity.Farm;
+import com.alibou.book.DTO.ProductRequestDTO;
 import com.alibou.book.Entity.Product;
-import com.alibou.book.Repositories.FarmRepository;
-import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.Services.ProductService;
-import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -23,35 +19,29 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
-    private final ProductRepository productRepository;
-    private final UserDetailsService userDetailsService;
-    private final FarmRepository farmRepository;
+
 
 
     // ✅ Add Product
-    @PostMapping("/add")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product, Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.badRequest().body(product);
+//    @PostMapping("/add")
+//    public ResponseEntity<Product> addProduct(@RequestBody Product product, Principal principal) {
+////       List<Product> products = (List<Product>) productService.addProduct(product,principal);
+//        return ResponseEntity.ok(productService.addProduct(product,principal));
+//    }
+
+    @PostMapping(value="/add", consumes = "multipart/form-data")
+    public ResponseEntity<?> createProduct(
+            @ModelAttribute ProductRequestDTO productRequest,
+            Principal principal) {
+        try {
+            Product createdProduct = productService.addProduct(productRequest, principal);
+            return ResponseEntity.ok(createdProduct);
+        } catch (Exception e) {
+            e.printStackTrace(); // Show real error
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
-        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
-        // Ensure farmId is provided in the request body
-        if (product.getFarm() == null || product.getFarm().getFarm_id() == null) {
-            return ResponseEntity.badRequest().body(product);
-        }
-        // Fetch the farm entity from the database
-        Optional<Farm> farmOptional = farmRepository.findById(product.getFarm().getFarm_id());
-        if (farmOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(product);
-        }
-        Farm farm = farmOptional.get();
-        // Set the fetched farm and user
-        product.setFarm(farm);
-        product.setFarmer(user);
-        // Save the product
-        productRepository.save(product);
-        return ResponseEntity.ok(product);
     }
+
 
 
 
