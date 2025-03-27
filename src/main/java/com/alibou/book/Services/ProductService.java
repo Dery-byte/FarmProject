@@ -7,12 +7,18 @@ import com.alibou.book.Repositories.FarmRepository;
 import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -49,10 +55,47 @@ public class ProductService {
 //    }
 
 
+//    public Product addProduct(ProductRequestDTO productRequest, Principal principal) throws IOException {
+//        if (principal == null) {
+//            throw new IllegalArgumentException("User must be authenticated to add a product.");
+//        }
+//        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+//        Long farmId = productRequest.getFarmId();
+//        if (farmId == null) {
+//            throw new IllegalArgumentException("Farm ID must be provided.");
+//        }
+//        Farm farm = farmRepository.findById(farmId)
+//                .orElseThrow(() -> new IllegalArgumentException("Farm not found with ID: " + farmId));
+//        // 🖼️ Handle image upload (you can change path/storage as needed)
+//        String uploadDir = new File("src/main/resources/static/uploads/").getAbsolutePath();
+//        String fileName = UUID.randomUUID() + "_" + productRequest.getImage().getOriginalFilename();
+//        File destination = new File(uploadDir, fileName);
+//// Make sure the directory exists
+//        destination.getParentFile().mkdirs();
+//        productRequest.getImage().transferTo(destination);
+//        // Construct the Product object
+//        Product product = new Product();
+//        product.setProductName(productRequest.getProductName());
+//        product.setDescription(productRequest.getDescription());
+//        product.setPrice(productRequest.getPrice());
+//        product.setQuantity(productRequest.getQuantity());
+//        product.setCategory(productRequest.getCategory());
+//        product.setFarm(farm);
+//        product.setFarmer(user);
+//        product.setImageUrl("/uploads/" + fileName); // 👈 This will be accessible in browser
+//        return productRepository.save(product);
+//    }
+
+    @Value("${application.file.upload-dir}")
+    private String uploadDir;
+
     public Product addProduct(ProductRequestDTO productRequest, Principal principal) throws IOException {
+        // Authentication check
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to add a product.");
         }
+
+        // Load user and validate farm
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Long farmId = productRequest.getFarmId();
         if (farmId == null) {
@@ -60,14 +103,39 @@ public class ProductService {
         }
         Farm farm = farmRepository.findById(farmId)
                 .orElseThrow(() -> new IllegalArgumentException("Farm not found with ID: " + farmId));
-        // 🖼️ Handle image upload (you can change path/storage as needed)
-        String uploadDir = new File("src/main/resources/static/uploads/").getAbsolutePath();
-        String fileName = UUID.randomUUID() + "_" + productRequest.getImage().getOriginalFilename();
-        File destination = new File(uploadDir, fileName);
-// Make sure the directory exists
-        destination.getParentFile().mkdirs();
-        productRequest.getImage().transferTo(destination);
-        // Construct the Product object
+
+        // Validate and process image
+        MultipartFile imageFile = productRequest.getImage();
+        if (imageFile == null || imageFile.isEmpty()) {
+            throw new IllegalArgumentException("Product image is required.");
+        }
+
+        // Create upload directory if it doesn't exist
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        try {
+            Files.createDirectories(uploadPath);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not create the upload directory.", e);
+        }
+
+        // Generate unique filename
+        String originalFilename = imageFile.getOriginalFilename();
+        String fileExtension = originalFilename != null
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : "";
+//        String fileName = UUID.randomUUID() + "_" + System.currentTimeMillis() + fileExtension;
+                String fileName = UUID.randomUUID() + "_" + productRequest.getImage().getOriginalFilename();
+
+
+        // Save file with error handling
+        Path targetLocation = uploadPath.resolve(fileName);
+        try {
+            Files.copy(imageFile.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+        }
+
+        // Create and save product
         Product product = new Product();
         product.setProductName(productRequest.getProductName());
         product.setDescription(productRequest.getDescription());
@@ -76,10 +144,10 @@ public class ProductService {
         product.setCategory(productRequest.getCategory());
         product.setFarm(farm);
         product.setFarmer(user);
-        product.setImageUrl("/uploads/" + fileName); // 👈 This will be accessible in browser
+        product.setImageUrl("/uploads/" + fileName);
+
         return productRepository.save(product);
     }
-
 
     // 🔹 Delete Product by ID
     public void deleteProduct(Long id) {

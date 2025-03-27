@@ -20,8 +20,6 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
 
-
-
     // ✅ Add Product
 //    @PostMapping("/add")
 //    public ResponseEntity<Product> addProduct(@RequestBody Product product, Principal principal) {

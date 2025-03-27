@@ -50,6 +50,7 @@ application:
   file:
     uploads:
       photos-output-path: ./uploads
+    upload-dir: ./uploads
 server:
   port: 8088
 springdoc:
