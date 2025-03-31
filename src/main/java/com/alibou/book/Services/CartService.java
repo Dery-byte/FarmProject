@@ -1,6 +1,7 @@
 package com.alibou.book.Services;
 
 
+import com.alibou.book.DTO.UpdateCartItemRequest;
 import com.alibou.book.Entity.Cart;
 import com.alibou.book.Entity.CartItem;
 import com.alibou.book.Entity.CartStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -73,7 +75,6 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-
     public Cart getUserCart(Principal principal) {
 //        String email = principal.getName();
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
@@ -120,6 +121,32 @@ public boolean removeFromCart(Long productId, Principal principal) {
         return cart.getItems().stream()
                 .mapToDouble(CartItem::getSubtotal)
                 .sum();
+    }
+
+
+    // UPDATE CART
+    @Transactional
+    public Cart updateCartItems(List<UpdateCartItemRequest> updates, Principal principal) {
+        Cart cart = getUserCart(principal);
+        List<CartItem> cartItems = cart.getItems();
+        for (UpdateCartItemRequest update : updates) {
+            Long productId = update.getProductId();
+            int quantity = update.getQuantity();
+
+            Optional<CartItem> itemOpt = cartItems.stream()
+                    .filter(item -> item.getProduct().getId().equals(productId))
+                    .findFirst();
+            if (itemOpt.isPresent()) {
+                CartItem item = itemOpt.get();
+                if (quantity <= 0) {
+                    cartItems.remove(item); // Remove item if quantity is 0 or less
+                } else {
+                    item.setQuantity(quantity);
+                    item.setSubtotal(quantity * item.getPrice());
+                }
+            }
+        }
+        return cartRepository.save(cart); // Persist updated cart
     }
 
 

@@ -1,6 +1,7 @@
 package com.alibou.book.Controllers;
 
 import com.alibou.book.DTO.AddToCartRequest;
+import com.alibou.book.DTO.BulkUpdateCartRequest;
 import com.alibou.book.Entity.Cart;
 import com.alibou.book.Services.CartService;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +48,14 @@ public class CartController {
         }
     }
 
+
+    //UPDATE THE CART
+    @PutMapping("/update")
+    public ResponseEntity<Cart> bulkUpdateCart(
+            @RequestBody BulkUpdateCartRequest request,
+            Principal principal) {
+        Cart updatedCart = cartService.updateCartItems(request.getItems(), principal);
+        return ResponseEntity.ok(updatedCart);
+    }
 
 }
