@@ -42,12 +42,6 @@ public class ProductController {
 
 
 
-
-
-
-
-
-
     // ✅ Delete Product by ID
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {

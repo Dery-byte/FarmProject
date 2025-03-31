@@ -1,6 +1,8 @@
 package com.alibou.book.Entity;
 
 public enum PaymentMethod {
-    ONE_TIME, PAY_ON_DELIVERY
-
+    MOBILE_MONEY,
+    BANK_TRANSFER,
+    CREDIT_CARD,
+    CASH_ON_DELIVERY
 }

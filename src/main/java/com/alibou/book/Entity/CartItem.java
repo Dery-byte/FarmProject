@@ -5,21 +5,21 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "order_details")
+@Table(name = "cart_items")
 @Data
-public class OrderDetails {
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer quantity;
-    private double price; // Price at the time of the order
-
+    private int quantity;
+    private double price;    // Price at time of adding
+    private double subtotal; // quantity * price
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "cart_id")
     @JsonIgnore
-    private Order order;
+    private Cart cart;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

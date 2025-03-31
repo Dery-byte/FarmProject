@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.List;
+
 @Entity
 @Table(name = "products")
 @Data
@@ -34,4 +37,8 @@ public class Product {
     @ManyToOne(fetch = FetchType.EAGER) // Load user only when needed
     @JoinColumn(name = "farmer_id") // Foreign key in Farm table pointing to User table
     private User farmer; // The seller/owner of the farm
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
+    private List<CartItem> cartItems;
 }
