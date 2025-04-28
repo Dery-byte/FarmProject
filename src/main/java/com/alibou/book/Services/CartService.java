@@ -149,5 +149,9 @@ public boolean removeFromCart(Long productId, Principal principal) {
         return cartRepository.save(cart); // Persist updated cart
     }
 
+    public int getCartItemCount(Principal principal) {
+        Cart cart = getUserCart(principal);
+        return cart.getItems().size();
+    }
 
 }

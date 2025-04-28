@@ -23,9 +23,10 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/place-order")
-    public ResponseEntity<Order> placeOrder(@RequestBody PlaceOrderRequest request, Principal principal) {
-        Order order = orderService.placeOrder(request, principal);
-        return new ResponseEntity<>(order, HttpStatus.CREATED);
+    @PostMapping("/checkout")
+    public ResponseEntity<Order> checkout(Principal principal) {
+        Order order = orderService.placeOrder(principal);
+        return ResponseEntity.ok(order);
     }
+
 }

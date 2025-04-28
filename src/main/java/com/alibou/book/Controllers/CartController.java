@@ -58,4 +58,10 @@ public class CartController {
         return ResponseEntity.ok(updatedCart);
     }
 
+//    Count cart Item
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCartItemCount(Principal principal) {
+        int count = cartService.getCartItemCount(principal);
+        return ResponseEntity.ok(count);
+    }
 }
