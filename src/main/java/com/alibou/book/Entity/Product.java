@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,16 @@ public class Product {
     private String description;
     private Double price;
     private Integer quantity;
-    private String imageUrl; // URL pointing to the product image
+//    private String imageUrl; // URL pointing to the product image
+//@CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+//@Column(name = "image_url")
+//private List<String> imageUrls; // ✅ Now stores multiple images
+
+
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
+    private List<String> imageUrls = new ArrayList<>();  // I
 
 
     private String category; // e.g., Poultry, Meat, Dairy

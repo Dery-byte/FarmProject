@@ -1,8 +1,9 @@
 package com.alibou.book.DTO;
 
-
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List; // ⬅️ Add this import
 
 @Data
 public class ProductRequestDTO {
@@ -12,5 +13,5 @@ public class ProductRequestDTO {
     private Integer quantity;
     private String category;
     private Long farmId;
-    private MultipartFile image; // 👈 Image file
+    private List<MultipartFile> images; // ⬅️ NOW multiple images
 }

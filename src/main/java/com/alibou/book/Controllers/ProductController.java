@@ -35,10 +35,11 @@ public class ProductController {
             Product createdProduct = productService.addProduct(productRequest, principal);
             return ResponseEntity.ok(createdProduct);
         } catch (Exception e) {
-            e.printStackTrace(); // Show real error
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
+
 
 
 
