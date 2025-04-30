@@ -6,12 +6,10 @@ import com.alibou.book.Services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 
 @RestController
@@ -22,11 +20,16 @@ public class OrderController {
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
-
-    @PostMapping("/checkout")
+    @PostMapping("/placeOrder")
     public ResponseEntity<Order> checkout(Principal principal) {
         Order order = orderService.placeOrder(principal);
         return ResponseEntity.ok(order);
+    }
+
+
+    @GetMapping("/allOrders")
+    public List<Order> getOrdersByUser(Principal principal) {
+        return orderService.getOrdersByUserId(principal);
     }
 
 }

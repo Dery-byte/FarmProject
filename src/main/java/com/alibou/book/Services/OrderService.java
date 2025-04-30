@@ -54,8 +54,6 @@ public Order placeOrder(Principal principal) {
         detail.setQuantity(item.getQuantity());
         detail.setPrice(item.getPrice());
         orderDetailsList.add(detail);
-
-
         // Update product quantity
         Product product = item.getProduct();
         product.setQuantity(product.getQuantity() - item.getQuantity());
@@ -64,12 +62,26 @@ public Order placeOrder(Principal principal) {
 
     order.setOrderDetails(orderDetailsList);
     orderRepository.save(order);
-
     // Clear the cart
     cart.getItems().clear();
     cartRepository.save(cart);
 
     return order;
 }
+
+
+
+    public List<Order> getOrdersByUserId(Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+        }
+        String username = principal.getName();
+        User user = (User) userDetailsService.loadUserByUsername(username);
+        return orderRepository.findByCustomer(user);
+    }
+
+
+
+
 
 }
