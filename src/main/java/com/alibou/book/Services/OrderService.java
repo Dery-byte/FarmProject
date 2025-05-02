@@ -82,6 +82,12 @@ public Order placeOrder(Principal principal) {
 
 
 
+    public List<Order> getAllOrders(){
+    return orderRepository.findAll();
+    }
+
+
+
 
 
 }

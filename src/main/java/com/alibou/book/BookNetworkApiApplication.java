@@ -2,6 +2,7 @@ package com.alibou.book;
 
 import com.alibou.book.role.Role;
 import com.alibou.book.role.RoleRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,5 +26,11 @@ public class BookNetworkApiApplication {
 				roleRepository.save(Role.builder().name("USER").build());
 			}
 		};
+	}
+
+
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 }

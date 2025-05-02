@@ -27,9 +27,24 @@ public class OrderController {
     }
 
 
-    @GetMapping("/allOrders")
+
+
+    @GetMapping("/allOrdersByUser")
     public List<Order> getOrdersByUser(Principal principal) {
         return orderService.getOrdersByUserId(principal);
     }
+
+
+
+
+
+
+    @GetMapping("/allOrders")
+    public List<Order> allOrders() {
+        return orderService.getAllOrders();
+    }
+
+
+
 
 }

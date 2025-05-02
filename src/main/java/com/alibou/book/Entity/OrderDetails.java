@@ -15,7 +15,8 @@ public class OrderDetails {
     private Integer quantity;
     private double price; // Price at the time of the order
 
-
+    @Enumerated(EnumType.STRING)
+    private OrderDetailStatus status = OrderDetailStatus.ACTIVE;
     @ManyToOne
     @JoinColumn(name = "order_id")
     @JsonIgnore
