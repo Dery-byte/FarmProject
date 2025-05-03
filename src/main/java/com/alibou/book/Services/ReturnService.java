@@ -4,6 +4,7 @@ import com.alibou.book.DTO.ReturnItemDTO;
 import com.alibou.book.DTO.ReturnRequestDTO;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.*;
+import com.alibou.book.exception.ResourceNotFoundException;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -76,6 +77,12 @@ public class ReturnService {
 
         return returnRequestRepository.save(returnRequest);
     }
+
+
+
+
+
+
 
     public void approveReturnItem(Long returnRequestId, Long itemId) {
         ReturnItem returnItem = (ReturnItem) returnItemRepository.findByIdAndReturnRequestId(itemId, returnRequestId)
@@ -191,5 +198,84 @@ public class ReturnService {
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
         return returnRequestRepository.findByIdAndUserId(id, Long.valueOf(user.getId()))
                 .orElseThrow(() -> new RuntimeException("Return request not found"));
+    }
+
+
+
+    public List<ReturnRequest> getAllReturnRequest(){
+        return returnRequestRepository.findAll();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ReturnRequest updateReturnStatus(Long returnId, Long itemId, String newStatus, String adminUsername) {
+        ReturnRequest returnRequest = returnRequestRepository.findById(returnId)
+                .orElseThrow(() -> new ResourceNotFoundException("Return not found"));
+
+        ReturnItem item = returnRequest.getItems().stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
+
+        // Create new history entry
+        StatusHistory history = new StatusHistory();
+        history.setStatus(newStatus);
+        history.setChangedAt(LocalDateTime.now());
+        history.setChangedBy(adminUsername);
+
+        // Update current status and history
+        item.setCurrentStatus(newStatus);
+item.setStatus(ReturnItemStatus.valueOf(newStatus));
+        item.getStatusHistory().add(history);
+
+        return returnRequestRepository.save(returnRequest);
+    }
+
+
+
+
+
+
+
+
+    public List<ReturnRequest> getReturnsByStatus(String status) {
+        return returnRequestRepository.findByItemsCurrentStatus(status);
+    }
+
+
+
+
+
+
+
+
+
+
+    public List<ReturnRequest> getAllReturns() {
+        return returnRequestRepository.findAll();
+    }
+
+    public List<ReturnItem> getAllReturnItem() {
+        return returnItemRepository.findAll();
+    }
+
+
+    public List<ReturnRequest> getAllReturn() {
+        return returnRequestRepository.findAll();
     }
 }

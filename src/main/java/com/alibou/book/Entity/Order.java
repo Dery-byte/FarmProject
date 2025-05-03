@@ -38,8 +38,10 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User customer;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-
     private List<OrderDetails> orderDetails;
+
+
+
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 

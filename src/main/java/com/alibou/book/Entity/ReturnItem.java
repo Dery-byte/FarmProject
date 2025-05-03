@@ -1,5 +1,6 @@
 package com.alibou.book.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -21,6 +24,7 @@ public class ReturnItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "return_request_id", nullable = false)
+    @JsonIgnore
     private ReturnRequest returnRequest;
 
     @Column(name = "product_id", nullable = false)
@@ -41,6 +45,12 @@ public class ReturnItem {
 
     @Enumerated(EnumType.STRING)
     private ReturnItemStatus status = ReturnItemStatus.PENDING;
+    private String currentStatus;
 
-    // Constructors, getters, setters...
+
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("changedAt ASC")
+    private List<StatusHistory> statusHistory = new ArrayList<>();
+
 }

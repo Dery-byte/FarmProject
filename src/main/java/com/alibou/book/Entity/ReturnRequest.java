@@ -1,6 +1,7 @@
 package com.alibou.book.Entity;
 
 import com.alibou.book.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +30,15 @@ public class ReturnRequest {
     private String reason;
 
     @OneToMany(mappedBy = "returnRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+
     private List<ReturnItem> items = new ArrayList<>();
+
+
+
+
+
+
+
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
