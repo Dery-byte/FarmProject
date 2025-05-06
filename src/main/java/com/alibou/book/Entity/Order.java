@@ -19,12 +19,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime orderDate;
-
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
-
     private Double amount;
-
     private boolean isPaid;
 
 //    @Enumerated(EnumType.STRING)
@@ -37,11 +34,11 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User customer;
+
+
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetails> orderDetails;
-
-
-
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 

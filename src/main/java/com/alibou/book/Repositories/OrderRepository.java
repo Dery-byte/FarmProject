@@ -3,6 +3,7 @@ package com.alibou.book.Repositories;
 import com.alibou.book.Entity.Order;
 import com.alibou.book.Entity.OrderDetailStatus;
 import com.alibou.book.Entity.OrderDetails;
+import com.alibou.book.Entity.ReturnRequest;
 import com.alibou.book.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,4 +30,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                          @Param("productId") Long productId,
                                          @Param("status") OrderDetailStatus status);
     }
+
+    List<Order>findByCustomer_Id(Long userId);
+
 }

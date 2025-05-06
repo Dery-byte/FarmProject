@@ -1,11 +1,8 @@
 package com.alibou.book.Services;
-import com.alibou.book.DTO.OrderItemRequest;
-import com.alibou.book.DTO.PlaceOrderRequest;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.CartRepository;
 import com.alibou.book.Repositories.OrderRepository;
 import com.alibou.book.Repositories.ProductRepository;
-import com.alibou.book.security.UserDetailsServiceImpl;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -75,11 +72,10 @@ public Order placeOrder(Principal principal) {
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to fetch orders.");
         }
-        String username = principal.getName();
-        User user = (User) userDetailsService.loadUserByUsername(username);
-        return orderRepository.findByCustomer(user);
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+//        return orderRepository.findByUserId(Long.valueOf(user.getId()));
+        return orderRepository.findByCustomer_Id(Long.valueOf(user.getId()));
     }
-
 
 
     public List<Order> getAllOrders(){

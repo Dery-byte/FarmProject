@@ -47,7 +47,6 @@ public class ReturnController {
         List<ReturnResponse> responses = returnRequests.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(responses);
     }
 
@@ -70,6 +69,12 @@ public class ReturnController {
     }
 
 
+
+    @GetMapping("/requestUser")
+    public ResponseEntity<ReturnResponse> getReturnRequest(Principal principal) {
+        ReturnRequest returnRequest = (ReturnRequest) returnService.getUserReturnRequests(principal);
+        return ResponseEntity.ok(toResponse(returnRequest));
+    }
 
 
 

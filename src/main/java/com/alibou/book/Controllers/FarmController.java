@@ -35,7 +35,7 @@ public class FarmController {
     }
 
     // ✅ Get all farms
-    @GetMapping
+    @GetMapping("/allFarm")
     public ResponseEntity<List<Farm>> getAllFarms() {
         List<Farm> farms = farmService.getAllFarms();
         return ResponseEntity.ok(farms);
