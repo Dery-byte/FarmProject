@@ -1,13 +1,12 @@
 package com.alibou.book.Controllers;
 
-import com.alibou.book.DTO.OrderStatusUpdate;
-import com.alibou.book.DTO.ReturnItemResponse;
-import com.alibou.book.DTO.ReturnResponse;
+import com.alibou.book.DTO.*;
 import com.alibou.book.Entity.Order;
 import com.alibou.book.Entity.OrdersStatus;
 import com.alibou.book.Entity.ReturnRequest;
 import com.alibou.book.Services.OrderService;
 import com.alibou.book.user.User;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +32,12 @@ public class OrderController {
         this.orderService = orderService;
         this.userDetailsService = userDetailsService;
     }
+
+
+
     @PostMapping("/placeOrder")
-    public ResponseEntity<Order> checkout(Principal principal) {
-        Order order = orderService.placeOrder(principal);
+    public ResponseEntity<Order> checkout(Principal principal,@Valid @RequestBody PlaceOrderRequest request ) {
+        Order order = orderService.placeOrder(principal,request);
         return ResponseEntity.ok(order);
     }
 

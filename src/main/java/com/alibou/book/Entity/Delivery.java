@@ -1,23 +1,56 @@
 package com.alibou.book.Entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "deliveries")
-@Data
+@Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+//@Entity
+//@Table(name = "deliveries")
+//@Data
 public class Delivery {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false, length = 100)
+    private String recipientName;
 
-    private String deliveryStatus; // "PENDING", "IN TRANSIT", "DELIVERED"
-    private String deliveryAddress;
-    private LocalDateTime deliveryDate;
+    @Column(nullable = false, length = 20)
+    private String phoneNumber;
 
-    @OneToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @Column(nullable = false, length = 200)
+    private String digitalAddress;
+
+    @Column(length = 200)
+    private String street;
+
+    @Column(nullable = false, length = 100)
+    private String area;
+
+    @Column(nullable = false, length = 200)
+    private String district;
+
+    @Column(nullable = false, length = 50)
+    private String region;
+
+
+
+
+    @Column(nullable = false, length = 100)
+    private String notes;
+
+    @Column(nullable = false, length = 20)
+    private String landmark;
+
+//    @Column(nullable = false, length = 50)
+//    private String region;
+
+    // Business logic validation
+    public void validate() {
+        if (recipientName == null || recipientName.isBlank()) {
+            throw new IllegalArgumentException("Recipient name is required");
+        }
+        // Add other validations as needed
+    }
 }

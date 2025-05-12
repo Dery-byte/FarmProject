@@ -1,10 +1,13 @@
 package com.alibou.book.Services;
+import com.alibou.book.DTO.DeliveryInfoRequest;
+import com.alibou.book.DTO.PlaceOrderRequest;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.CartRepository;
 import com.alibou.book.Repositories.OrderRepository;
 import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.context.DelegatingApplicationListener;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,46 +29,109 @@ public class OrderService {
     private final UserDetailsService userDetailsService;
     private final CartService cartService;
     private final CartRepository cartRepository;
+    private final DelegatingApplicationListener delegatingApplicationListener;
 //    private final UserRepository userRepository;
-@Transactional
-public Order placeOrder(Principal principal) {
-    Cart cart = cartService.getUserCart(principal);
+//@Transactional
+//public Order placeOrder(Principal principal) {
+//    Cart cart = cartService.getUserCart(principal);
+//
+//    if (cart.getItems().isEmpty()) {
+//        throw new RuntimeException("Cart is empty");
+//    }
+//
+//    Order order = new Order();
+//    order.setOrderDate(LocalDateTime.now());
+//    order.setCustomer(cart.getUser());
+//    order.setAmount(cartService.getCartTotal(cart));
+//    order.setOrdersStatus(OrdersStatus.PENDING);
+//    order.setStatus(PENDING);
+//    order.setPaid(false); // until payment is made
+//
+//    List<OrderDetails> orderDetailsList = new ArrayList<>();
+//
+//    for (CartItem item : cart.getItems()) {
+//        OrderDetails detail = new OrderDetails();
+//        detail.setOrder(order);
+//        detail.setProduct(item.getProduct());
+//        detail.setQuantity(item.getQuantity());
+//        detail.setPrice(item.getPrice());
+//        orderDetailsList.add(detail);
+//        // Update product quantity
+//        Product product = item.getProduct();
+//        product.setQuantity(product.getQuantity() - item.getQuantity());
+//        productRepository.save(product);
+//    }
+//
+//    order.setOrderDetails(orderDetailsList);
+//    orderRepository.save(order);
+//    // Clear the cart
+//    cart.getItems().clear();
+//    cartRepository.save(cart);
+//
+//    return order;
+//}
 
-    if (cart.getItems().isEmpty()) {
-        throw new RuntimeException("Cart is empty");
+
+    @Transactional
+    public Order placeOrder(Principal principal, PlaceOrderRequest request) {
+        // 1. Get user cart
+        Cart cart = cartService.getUserCart(principal);
+        if (cart.getItems().isEmpty()) {
+            throw new IllegalStateException("Cannot place order: Cart is empty");
+        }
+
+        // 2. Validate and create delivery info
+        Delivery deliveryInfo = new Delivery(
+                request.getDelivery().getRecipientName(),
+                request.getDelivery().getPhoneNumber(),
+                request.getDelivery().getDigitalAddress(),
+                request.getDelivery().getArea(),
+                request.getDelivery().getDistrict(),
+                request.getDelivery().getNotes(),
+                request.getDelivery().getLandmark(),
+                request.getDelivery().getStreet(),
+                request.getDelivery().getRegion()
+        );
+        deliveryInfo.validate(); // Throws IllegalArgumentException if invalid
+
+        // 3. Create order with delivery info
+        Order order = new Order();
+        order.setOrderDate(LocalDateTime.now());
+        order.setCustomer(cart.getUser());
+        order.setAmount(cartService.getCartTotal(cart));
+        order.setOrdersStatus(OrdersStatus.PENDING);
+        order.setStatus(OrderStatus.PENDING);
+        order.setPaid(false);
+        order.setDeliveryInfo(deliveryInfo); // Embedded delivery details
+
+        // 4. Convert cart items to order details
+        List<OrderDetails> orderDetailsList = cart.getItems().stream()
+                .map(item -> {
+                    OrderDetails detail = new OrderDetails();
+                    detail.setOrder(order);
+                    detail.setProduct(item.getProduct());
+                    detail.setQuantity(item.getQuantity());
+                    detail.setPrice(item.getPrice());
+
+                    // Update product stock
+                    Product product = item.getProduct();
+                    product.setQuantity(product.getQuantity() - item.getQuantity());
+                    productRepository.save(product);
+
+                    return detail;
+                })
+                .toList();
+
+        order.setOrderDetails(orderDetailsList);
+
+        // 5. Save and clear cart
+        Order savedOrder = orderRepository.save(order);
+        cart.getItems().clear();
+        return savedOrder;
     }
 
-    Order order = new Order();
-    order.setOrderDate(LocalDateTime.now());
-    order.setCustomer(cart.getUser());
-    order.setAmount(cartService.getCartTotal(cart));
-    order.setOrdersStatus(OrdersStatus.PENDING);
-    order.setStatus(PENDING);
-    order.setPaid(false); // until payment is made
 
-    List<OrderDetails> orderDetailsList = new ArrayList<>();
 
-    for (CartItem item : cart.getItems()) {
-        OrderDetails detail = new OrderDetails();
-        detail.setOrder(order);
-        detail.setProduct(item.getProduct());
-        detail.setQuantity(item.getQuantity());
-        detail.setPrice(item.getPrice());
-        orderDetailsList.add(detail);
-        // Update product quantity
-        Product product = item.getProduct();
-        product.setQuantity(product.getQuantity() - item.getQuantity());
-        productRepository.save(product);
-    }
-
-    order.setOrderDetails(orderDetailsList);
-    orderRepository.save(order);
-    // Clear the cart
-    cart.getItems().clear();
-    cartRepository.save(cart);
-
-    return order;
-}
 
 
 

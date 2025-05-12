@@ -44,7 +44,8 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User customer;
 
-
+    @Embedded
+    private Delivery deliveryInfo;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetails> orderDetails;
@@ -56,9 +57,5 @@ public class Order {
     @JsonManagedReference
     private List<OrderStatusHistory> orderStatusHistoryList= new ArrayList<>();
 }
-
-
-
-
 
 
