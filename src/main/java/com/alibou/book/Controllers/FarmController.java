@@ -35,7 +35,7 @@ public class FarmController {
     }
 
     // ✅ Get all farms
-    @GetMapping("/allFarm")
+    @GetMapping
     public ResponseEntity<List<Farm>> getAllFarms() {
         List<Farm> farms = farmService.getAllFarms();
         return ResponseEntity.ok(farms);
@@ -87,7 +87,7 @@ public class FarmController {
 //    }
 
     // ✅ Delete a farm
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteFarmBy/{id}")
     public ResponseEntity<String> deleteFarm(@PathVariable Long id) {
         if (farmService.getFarmById(id).isPresent()) {
             farmService.deleteFarm(id);

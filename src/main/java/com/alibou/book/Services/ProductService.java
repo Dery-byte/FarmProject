@@ -2,8 +2,10 @@ package com.alibou.book.Services;
 
 import com.alibou.book.DTO.ProductRequestDTO;
 import com.alibou.book.Entity.Farm;
+import com.alibou.book.Entity.OrderDetails;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.FarmRepository;
+import com.alibou.book.Repositories.OrderDetailsRepository;
 import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserDetailsService userDetailsService;
     private final FarmRepository farmRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
 
     @Value("${application.file.upload-dir}")
     private String uploadDir;
@@ -156,6 +159,16 @@ public class ProductService {
         product.setPrice(productRequest.getPrice());
         product.setQuantity(productRequest.getQuantity());
         product.setCategory(productRequest.getCategory());
+
+
+        product.setWeight(productRequest.getWeight());
+        product.setBreed(productRequest.getBreed());
+        product.setHealthStatus(productRequest.getHealthStatus());
+        product.setCondition(productRequest.getCondition());
+        product.setGender(productRequest.getGender());
+        product.setAge(productRequest.getAge());
+
+
         product.setFarm(farm);
         product.setFarmer(user);
         product.setImageUrls(imageUrls); // 👈 SET the List of image URLs
@@ -166,8 +179,17 @@ public class ProductService {
 
     // 🔹 Delete Product by ID
     public void deleteProduct(Long id) {
+        List<OrderDetails> orderDetails = orderDetailsRepository.findByProductId(id);
+        orderDetails.forEach(od -> {
+            od.setProduct(null); // This requires setProduct() method in OrderDetails
+            orderDetailsRepository.save(od); // Save the change
+        });
+
         productRepository.deleteById(id);
     }
+
+
+
     // 🔹 Update Product by ID
     public Product updateProduct(Long id, Product newProduct) {
         return productRepository.findById(id).map(product -> {

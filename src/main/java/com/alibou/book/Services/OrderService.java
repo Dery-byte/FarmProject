@@ -39,6 +39,7 @@ public Order placeOrder(Principal principal) {
     order.setOrderDate(LocalDateTime.now());
     order.setCustomer(cart.getUser());
     order.setAmount(cartService.getCartTotal(cart));
+    order.setOrdersStatus(OrdersStatus.PENDING);
     order.setStatus(PENDING);
     order.setPaid(false); // until payment is made
 
@@ -84,6 +85,59 @@ public Order placeOrder(Principal principal) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//TRYING THE ORDERS PROGRESS UPDATE
+
+
+    public Order updateOrderStatus(Long orderId, OrdersStatus newStatus, String adminUsername) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        OrdersStatus currentStatus = order.getOrdersStatus();
+
+        if (!isValidTransition(currentStatus, newStatus)) {
+            throw new IllegalArgumentException("Invalid status transition from " + currentStatus + " to " + newStatus);
+        }
+        // Create status history entry
+        OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
+        orderStatusHistory.setStatus(String.valueOf(newStatus));
+        orderStatusHistory.setChangedAt(LocalDateTime.now());
+        orderStatusHistory.setChangedBy(adminUsername);
+        orderStatusHistory.setOrder(order); // assuming a relationship exists
+        // Update order
+        order.setOrdersStatus(newStatus);
+//        order.setStatus(OrdersStatus.valueOf(newStatus.name()));
+        order.getOrderStatusHistoryList().add(orderStatusHistory);
+        return orderRepository.save(order);
+    }
+
+    private boolean isValidTransition(OrdersStatus current, OrdersStatus next) {
+        if (current == null) {
+            return next == OrdersStatus.PENDING; // Only allow starting from PENDING
+        }
+        return switch (current) {
+            case PENDING -> next == OrdersStatus.PROCESSED;
+            case PROCESSED -> next == OrdersStatus.SHIPPED;
+            case SHIPPED -> next == OrdersStatus.DELIVERED;
+            default -> false;
+        };
+    }
 
 
 }

@@ -24,6 +24,17 @@ public class Product {
     private String description;
     private Double price;
     private Integer quantity;
+
+
+    private Double weight;
+    private String breed;
+    private String healthStatus;
+
+    @Column(name = "`condition`") // Backticks escape the keyword
+    private String condition;
+    private GenderStatus gender;
+    private String age;  // IN months
+
 //    private String imageUrl; // URL pointing to the product image
 //@CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
 //@Column(name = "image_url")
@@ -48,7 +59,7 @@ public class Product {
     @JoinColumn(name = "farmer_id") // Foreign key in Farm table pointing to User table
     private User farmer; // The seller/owner of the farm
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<CartItem> cartItems;
 }

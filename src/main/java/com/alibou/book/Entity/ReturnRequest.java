@@ -29,7 +29,6 @@ public class ReturnRequest {
     private String reason;
 
     @OneToMany(mappedBy = "returnRequest", cascade = CascadeType.ALL, orphanRemoval = true)
-
     private List<ReturnItem> items = new ArrayList<>();
 
 

@@ -22,12 +22,6 @@ public class Farm {
     private User farmer; // The seller/owner of the farm
 
 
-
-
-
-
-
-
     @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL) // Fix: mappedBy should reference the field in Product
     @JsonIgnore
     private List<Product> productList;

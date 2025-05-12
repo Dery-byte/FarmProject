@@ -1,12 +1,15 @@
 package com.alibou.book.Entity;
 
 import com.alibou.book.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,6 +34,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+
+    @Enumerated(EnumType.STRING)
+    private OrdersStatus ordersStatus;
+
+
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User customer;
@@ -42,4 +51,14 @@ public class Order {
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("changedAt ASC")
+    @JsonManagedReference
+    private List<OrderStatusHistory> orderStatusHistoryList= new ArrayList<>();
 }
+
+
+
+
+
+
