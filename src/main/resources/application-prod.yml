@@ -62,3 +62,9 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+mnotify:
+  v2:
+    url: https://api.mnotify.com/api/sms/quick
+    key: oWmpfPGz22BObP6ng9Zjb0Xe4
+    sender-id: OPTUMSERV
+#

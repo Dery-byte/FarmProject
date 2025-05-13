@@ -43,7 +43,16 @@ public class User implements UserDetails, Principal {
     private Integer id;
     private String firstname;
     private String lastname;
+
+    private String phoneNummber;
+
+//    private String recipient;
+
+
     private LocalDate dateOfBirth;
+
+
+
     @Column(unique = true)
     private String username;
     private String password;
@@ -51,6 +60,8 @@ public class User implements UserDetails, Principal {
     private boolean enabled;
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
+
+
 //    @OneToMany(mappedBy = "user")
 //    private List<BookTransactionHistory> histories;
 

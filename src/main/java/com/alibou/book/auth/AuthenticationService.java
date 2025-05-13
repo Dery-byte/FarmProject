@@ -2,6 +2,7 @@ package com.alibou.book.auth;
 
 import com.alibou.book.email.EmailService;
 import com.alibou.book.email.EmailTemplateName;
+import com.alibou.book.email.MNotifyV2SmsService;
 import com.alibou.book.role.RoleRepository;
 import com.alibou.book.security.JwtService;
 import com.alibou.book.user.Token;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +35,8 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
+
+    private final MNotifyV2SmsService mNotifyV2SmsService;
 
 
 
@@ -48,6 +52,7 @@ public class AuthenticationService {
                 .lastname(request.getLastname())
                 .username(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .phoneNummber(request.getRecipient().get(0))
                 .accountLocked(false)
                 .enabled(false)
                 .roles(List.of(userRole))
@@ -108,10 +113,55 @@ public class AuthenticationService {
         return generatedToken;
     }
 
+
+//    private void sendSMS(User user){
+//        var newToken = generateAndSaveActivationToken(user);
+//        System.out.println(STR."This is the recipient \{user.getPhoneNummber()}");
+//        String message=newToken;
+//        mNotifyV2SmsService.sendSms(Collections.singletonList(user.getPhoneNummber()),message);
+//
+//    }
+
+
+
+
     private void sendValidationEmail(User user) throws MessagingException {
         var newToken = generateAndSaveActivationToken(user);
         String finalActivationUrl = activationUrl + "?token=" + newToken;
         System.out.println("Final Activation Link: " + finalActivationUrl); // ✅ Debugging
+
+
+
+        // ✅ SEND SMS if user has a phone number
+//        if (user.getRecipient() != null && !user.getRecipient().isBlank()) {
+//            String smsMessage = "Hello " + user.getFullName() +
+//                    ", your activation code is: " + newToken +
+//                    ". It expires in 15 minutes.";
+//
+//            try {
+//                System.out.println("📱 Attempting to send SMS to: " + user.getRecipient());
+//
+//                mNotifyV2SmsService.sendSms(
+//                        List.of(user.getRecipient()),
+//                        smsMessage
+//                );
+//
+//                System.out.println("✅ SMS send attempt finished.");
+//
+//            } catch (Exception e) {
+//                System.err.println("❌ Failed to send SMS: " + e.getMessage());
+//            }
+//
+//            System.out.println(user.getRecipient());
+//        }
+
+
+
+//        mNotifyV2SmsService.sendSms(user.getPhoneNummber(),message);
+
+//        mNotifyV2SmsService.sendSms(Collections.singletonList(user.getPhoneNummber()),message);
+
+
 
 
         emailService.sendEmail(
@@ -122,6 +172,13 @@ public class AuthenticationService {
                 newToken,
                 "Account activation"
                 );
+
+
+
+        System.out.println(STR."This is the recipient \{user.getPhoneNummber()}");
+        String message = "Hello " + user.getFirstname() + ", your OTP is: " + newToken;
+        mNotifyV2SmsService.sendSms(Collections.singletonList(user.getPhoneNummber()),message);
+
     }
 
     private String generateActivationCode(int length) {

@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -26,4 +28,10 @@ public class RegistrationRequest {
     @NotNull(message = "Password is mandatory")
     @Size(min = 8, message = "Password should be 8 characters long minimum")
     private String password;
+
+
+    @NotNull(message = "Phone number is mandatory")
+//    @Size(min = 10, message = "Phone number should be 10")
+    private List<String> recipient;
+
 }

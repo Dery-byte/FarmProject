@@ -1,6 +1,5 @@
 spring:
   datasource:
-#    url: jdbc:postgresql://localhost:5432/template1
     url: jdbc:mysql://localhost:3306/farm
     username: root
     password: EMMARESCUE
@@ -36,13 +35,12 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: "https://localhost:8080/realms/postgres"
+
 application:
   mailing:
     frontend:
       activation-url: http://localhost:4200/activate-account
       jwk-set-uri: http://localhost:8080/realms/postgres/protocol/openid-connect/certs
-
-  #      activation-url:  http://localhost:8088/api/v1/auth/activate-account
   security:
     jwt:
       secret-key: 19k2m8GRJSBNzJee6zzNWa43JGkoMS9WsB+vfog3OXQ=
@@ -51,10 +49,19 @@ application:
     uploads:
       photos-output-path: ./uploads
     upload-dir: ./uploads
+
 server:
   port: 8088
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+mnotify:
+  v2:
+    url: https://api.mnotify.com/api/sms/quick
+    key: oWmpfPGz22BObP6ng9Zjb0Xe4
+    sender-id: OPTUMSERV
+#  OTC
