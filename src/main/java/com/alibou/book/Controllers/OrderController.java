@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,11 +49,6 @@ public class OrderController {
     }
 
 
-    @GetMapping("/allOrders")
-    public List<Order> allOrders() {
-        return orderService.getAllOrders();
-    }
-
 
 
     @PatchMapping("/{orderId}/status")
@@ -77,6 +73,21 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/allOrders")
+    public List<Order> allOrders() {
+        return orderService.getAllOrders();
+    }
+
+    @GetMapping("/count")
+    public long getOrderCount() {
+        return orderService.getTotalOrderCount();
+    }
+
+
+    @GetMapping("/total-sales")
+    public BigDecimal getTotalOrdersAmount() {
+        return orderService.getTotalOrdersAmount();
+    }
 
 
 }

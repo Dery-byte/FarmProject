@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -149,8 +150,14 @@ public class OrderService {
     return orderRepository.findAll();
     }
 
+    public long getTotalOrderCount() {
+        return orderRepository.count();
+    }
 
 
+    public BigDecimal getTotalOrdersAmount() {
+        return orderRepository.getTotalAmountSafe();
+    }
 
 
 

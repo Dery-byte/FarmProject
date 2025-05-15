@@ -1,8 +1,10 @@
 package com.alibou.book.auth;
 
+import com.alibou.book.DTO.UserResponseDTO;
 import com.alibou.book.email.EmailService;
 import com.alibou.book.email.EmailTemplateName;
 import com.alibou.book.email.MNotifyV2SmsService;
+import com.alibou.book.role.Role;
 import com.alibou.book.role.RoleRepository;
 import com.alibou.book.security.JwtService;
 import com.alibou.book.user.Token;
@@ -11,6 +13,7 @@ import com.alibou.book.user.User;
 import com.alibou.book.user.UserRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Page;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,11 +22,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -176,8 +181,12 @@ public class AuthenticationService {
 
 
         System.out.println(STR."This is the recipient \{user.getPhoneNummber()}");
-        String message = "Hello " + user.getFirstname() + ", your OTP is: " + newToken;
-        mNotifyV2SmsService.sendSms(Collections.singletonList(user.getPhoneNummber()),message);
+//        String message = "Hello " + user.getFirstname() + ", your OTP is: " + newToken;
+
+        String smsMessage = "Hello " + user.getFullName() +
+                    ", your activation code is: " + newToken +
+                    ". It expires in 15 minutes.";
+        mNotifyV2SmsService.sendSms(Collections.singletonList(user.getPhoneNummber()),smsMessage);
 
     }
 
@@ -192,5 +201,61 @@ public class AuthenticationService {
             codeBuilder.append(characters.charAt(randomIndex));
         }
         return codeBuilder.toString();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Basic version
+    public List<User> getAllNonAdminUsers() {
+        return userRepository.findAllNonAdminUsers();
+    }
+
+//    // Enhanced version with pagination
+//    public Page<User> getAllNonAdminUsers(Pageable pageable) {
+//        return userRepository.findAllNonAdminUsers(pageable);
+//    }
+
+    // DTO projection version
+    public List<UserResponseDTO> getAllNonAdminUserDTOs() {
+        return userRepository.findAllNonAdminUsers().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private UserResponseDTO convertToDTO(User user) {
+        return new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getRoles().stream()
+                        .map(Role::getName)
+                        .collect(Collectors.toSet())
+        );
+    }
+
+
+
+
+    public long countNonAdminUsers() {
+        return userRepository.countNonAdminUsers();
+        // or: return userRepository.countByRoles_NameNot("ROLE_ADMIN");
     }
 }
