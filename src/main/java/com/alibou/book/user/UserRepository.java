@@ -23,7 +23,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN u.roles r " +
             "WHERE r.name != 'ADMIN' OR r.name IS NULL")
     List<User> findAllNonAdminUsers();
-
     // Alternative if you need to exclude users with ANY admin role
     @Query("SELECT u FROM User u WHERE NOT EXISTS " +
             "(SELECT 1 FROM u.roles r WHERE r.name = 'ADMIN')")
@@ -50,13 +49,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // Get latest users with pagination
     Page<User> findAllByOrderByCreatedDateDesc(Pageable pageable);
-
     // Get latest non-admin users
     @Query("SELECT u FROM User u WHERE NOT EXISTS " +
             "(SELECT 1 FROM u.roles r WHERE r.name = 'ADMIN') " +
             "ORDER BY u.createdDate DESC")
     Page<User> findLatestNonAdminUsers(Pageable pageable);
-
     // Get users signed up after a specific date
     List<User> findByCreatedDateAfter(LocalDateTime date);
 

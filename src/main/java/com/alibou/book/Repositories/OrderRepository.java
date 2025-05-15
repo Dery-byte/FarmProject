@@ -12,8 +12,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
 
 
 @Repository
@@ -47,6 +51,65 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // For cases where some orders might have null amounts
     @Query("SELECT COALESCE(SUM(o.amount), 0) FROM Order o")
     BigDecimal getTotalAmountSafe();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Daily totals
+    @Query("SELECT DATE(o.orderDate) AS date, SUM(o.amount) AS totalAmount " +
+            "FROM Order o " +
+            "WHERE o.orderDate BETWEEN :start AND :end " +
+            "AND o.isPaid = false " +
+            "GROUP BY DATE(o.orderDate) " +
+            "ORDER BY DATE(o.orderDate)")
+    List<Map<String, Object>> getDailyTotalsInMonth(@Param("start") LocalDateTime start,
+                                                    @Param("end") LocalDateTime end);
+
+    // Weekly totals
+    @Query("SELECT FUNCTION('WEEK', o.orderDate) AS week, SUM(o.amount) AS totalAmount " +
+            "FROM Order o " +
+            "WHERE o.orderDate BETWEEN :start AND :end " +
+            "AND o.isPaid = false " +
+            "GROUP BY FUNCTION('WEEK', o.orderDate) " +
+            "ORDER BY FUNCTION('WEEK', o.orderDate)")
+    List<WeeklyRevenueSummary> getWeeklyTotalsInMonth(@Param("start") LocalDateTime start,
+                                                      @Param("end") LocalDateTime end);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

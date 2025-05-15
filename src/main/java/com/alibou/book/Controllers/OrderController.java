@@ -2,12 +2,10 @@ package com.alibou.book.Controllers;
 
 import com.alibou.book.DTO.*;
 import com.alibou.book.Entity.Order;
-import com.alibou.book.Entity.OrdersStatus;
-import com.alibou.book.Entity.ReturnRequest;
+import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
 import com.alibou.book.Services.OrderService;
 import com.alibou.book.user.User;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 
 @RestController
@@ -88,6 +86,46 @@ public class OrderController {
     public BigDecimal getTotalOrdersAmount() {
         return orderService.getTotalOrdersAmount();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @GetMapping("/revenueDaily")
+    public ResponseEntity<List<Map<String, Object>>> getDailyTotals(
+            @RequestParam int year,
+            @RequestParam int month) {
+        List<Map<String, Object>> result = orderService.getDailyTotals(year, month);
+        return ResponseEntity.ok(result);
+    }
+
+    // Weekly revenue API
+    @GetMapping("/revenueWeekly")
+    public ResponseEntity<List<WeeklyRevenueSummary>> getWeeklyTotals(
+            @RequestParam int year,
+            @RequestParam int month) {
+        List<WeeklyRevenueSummary> result = orderService.getWeeklyTotals(year, month);
+        return ResponseEntity.ok(result);
+    }
+
+
+
+
 
 
 }

@@ -1,10 +1,11 @@
 package com.alibou.book.Services;
-import com.alibou.book.DTO.DeliveryInfoRequest;
 import com.alibou.book.DTO.PlaceOrderRequest;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.CartRepository;
 import com.alibou.book.Repositories.OrderRepository;
+import com.alibou.book.Repositories.PaymentRepository;
 import com.alibou.book.Repositories.ProductRepository;
+import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.context.DelegatingApplicationListener;
@@ -14,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.List;
-
-import static com.alibou.book.Entity.OrderStatus.PENDING;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class OrderService {
     private final CartService cartService;
     private final CartRepository cartRepository;
     private final DelegatingApplicationListener delegatingApplicationListener;
+    private final PaymentRepository paymentRepository;
 //    private final UserRepository userRepository;
 //@Transactional
 //public Order placeOrder(Principal principal) {
@@ -95,6 +97,11 @@ public class OrderService {
         );
         deliveryInfo.validate(); // Throws IllegalArgumentException if invalid
 
+
+        // Create Payment during Order Processing
+
+
+
         // 3. Create order with delivery info
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
@@ -104,6 +111,16 @@ public class OrderService {
         order.setStatus(OrderStatus.PENDING);
         order.setPaid(false);
         order.setDeliveryInfo(deliveryInfo); // Embedded delivery details
+
+
+        Payment payment = new Payment();
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setAmount(cartService.getCartTotal(cart));
+        payment.setPaymentMethod(PaymentMethod.MOBILE_MONEY);
+        payment.setStatus(PaymentStatus.PENDING);
+        payment.setTransactionId("999987363536839");
+        payment.setOrder(order);
+        paymentRepository.save(payment);
 
         // 4. Convert cart items to order details
         List<OrderDetails> orderDetailsList = cart.getItems().stream()
@@ -210,6 +227,46 @@ public class OrderService {
             case SHIPPED -> next == OrdersStatus.DELIVERED;
             default -> false;
         };
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public List<Map<String, Object>> getDailyTotals(int year, int month) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        return orderRepository.getDailyTotalsInMonth(
+                startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX));
+    }
+
+    public List<WeeklyRevenueSummary> getWeeklyTotals(int year, int month) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        return orderRepository.getWeeklyTotalsInMonth(
+                startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX));
     }
 
 
