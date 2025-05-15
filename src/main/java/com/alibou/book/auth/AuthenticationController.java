@@ -1,19 +1,22 @@
 package com.alibou.book.auth;
 
 import com.alibou.book.DTO.UserResponseDTO;
+import com.alibou.book.DTO.UserSummaryDTO;
+import com.alibou.book.user.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("auth")
@@ -73,6 +76,51 @@ public class AuthenticationController {
         stats.put("nonAdminCount", service.countNonAdminUsers());
         stats.put("timestamp", Instant.now());
         return stats;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Get latest X users
+    @GetMapping("/latest")
+    public ResponseEntity<Page<User>> getLatestUsers(
+            @RequestParam(defaultValue = "10") int count) {
+        return ResponseEntity.ok(service.getLatestUsers(count));
+    }
+
+    // Get latest X non-admin users
+    @GetMapping("/latest/non-admins")
+    public ResponseEntity<Page<User>> getLatestNonAdminUsers(
+            @RequestParam(defaultValue = "10") int count) {
+        return ResponseEntity.ok(service.getLatestNonAdminUsers(count));
+    }
+
+    // Get users signed up in last X days
+    @GetMapping("/recent")
+    public ResponseEntity<List<User>> getRecentUsers(
+            @RequestParam(defaultValue = "7") int days) {
+        LocalDateTime cutoff = LocalDateTime.now().minusDays(days);
+        return ResponseEntity.ok(service.getUsersSignedUpAfter(cutoff));
+    }
+
+
+
+
+    @GetMapping("/latestUsersSummary")
+    public ResponseEntity<Page<UserSummaryDTO>> getLatestUsersSummary(
+            @RequestParam(defaultValue = "6") int count) {
+        return ResponseEntity.ok(service.getLatestUsersSummary(count));
     }
 
 }

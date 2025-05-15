@@ -1,6 +1,7 @@
 package com.alibou.book.auth;
 
 import com.alibou.book.DTO.UserResponseDTO;
+import com.alibou.book.DTO.UserSummaryDTO;
 import com.alibou.book.email.EmailService;
 import com.alibou.book.email.EmailTemplateName;
 import com.alibou.book.email.MNotifyV2SmsService;
@@ -13,8 +14,10 @@ import com.alibou.book.user.User;
 import com.alibou.book.user.UserRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -257,5 +259,42 @@ public class AuthenticationService {
     public long countNonAdminUsers() {
         return userRepository.countNonAdminUsers();
         // or: return userRepository.countByRoles_NameNot("ROLE_ADMIN");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public Page<User> getLatestUsers(int count) {
+        return userRepository.findAllByOrderByCreatedDateDesc(
+                (org.springframework.data.domain.Pageable) PageRequest.of(0, count)
+        );
+    }
+
+    public Page<User> getLatestNonAdminUsers(int count) {
+        return userRepository.findLatestNonAdminUsers(
+                (Pageable) PageRequest.of(0, count)
+        );
+    }
+
+    public List<User> getUsersSignedUpAfter(LocalDateTime date) {
+        return userRepository.findByCreatedDateAfter(date);
+    }
+
+
+
+    public Page<UserSummaryDTO> getLatestUsersSummary(int count) {
+        return userRepository.findAllByOrderByCreatedDateDesc(
+                        PageRequest.of(0, count))
+                .map(UserSummaryDTO::fromUser);
     }
 }

@@ -1,0 +1,19 @@
+package com.alibou.book.DTO;
+
+import com.alibou.book.user.User;
+
+import java.time.LocalDateTime;
+
+public record UserSummaryDTO(
+        Integer id,
+        String fullName,
+        LocalDateTime signupDate
+) {
+    public static UserSummaryDTO fromUser(User user) {
+        return new UserSummaryDTO(
+                user.getId(),
+                user.getFullName(),
+                user.getCreatedDate()
+        );
+    }
+}
