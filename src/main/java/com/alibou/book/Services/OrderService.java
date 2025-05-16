@@ -1,4 +1,6 @@
 package com.alibou.book.Services;
+import com.alibou.book.DTO.MonthlyOrderSummary;
+import com.alibou.book.DTO.MonthlyRevenueSummary;
 import com.alibou.book.DTO.PlaceOrderRequest;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.CartRepository;
@@ -18,6 +20,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -268,6 +271,43 @@ public class OrderService {
         return orderRepository.getWeeklyTotalsInMonth(
                 startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX));
     }
+
+
+
+
+    public List<MonthlyRevenueSummary> getMonthlyRevenue(int year) {
+        List<Object[]> results = orderRepository.getMonthlyRevenue(year);
+        List<MonthlyRevenueSummary> summary = new ArrayList<>();
+
+        for (Object[] row : results) {
+            int month = (int) row[0];
+            double total = (double) row[1];
+            summary.add(new MonthlyRevenueSummary(month, total));
+        }
+        return summary;
+    }
+
+
+
+
+
+    public List<MonthlyOrderSummary> getMonthlyOrders(int year) {
+        return orderRepository.findMonthlyOrders(year);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

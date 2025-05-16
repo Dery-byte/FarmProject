@@ -1,9 +1,6 @@
 package com.alibou.book.Controllers;
 
-import com.alibou.book.DTO.ReturnItemResponse;
-import com.alibou.book.DTO.ReturnRequestDTO;
-import com.alibou.book.DTO.ReturnResponse;
-import com.alibou.book.DTO.StatusUpdateRequest;
+import com.alibou.book.DTO.*;
 import com.alibou.book.Entity.ReturnItem;
 import com.alibou.book.Entity.ReturnRequest;
 import com.alibou.book.Services.ReturnService;
@@ -140,6 +137,15 @@ public class ReturnController {
     @GetMapping("getAllReturnReuests")
     public List<ReturnRequest> getAllReturn() {
         return returnService.getAllReturn();
+    }
+
+
+
+
+    @GetMapping("/monthlyReturns")
+    public ResponseEntity<List<MonthlyReturnSummary>> getMonthlyReturns(@RequestParam int year) {
+        List<MonthlyReturnSummary> data = returnService.getMonthlyReturns(year);
+        return ResponseEntity.ok(data);
     }
 
 

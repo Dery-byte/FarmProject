@@ -1,5 +1,6 @@
 package com.alibou.book.Services;
 
+import com.alibou.book.DTO.MonthlyReturnSummary;
 import com.alibou.book.DTO.ReturnItemDTO;
 import com.alibou.book.DTO.ReturnRequestDTO;
 import com.alibou.book.Entity.*;
@@ -278,4 +279,18 @@ item.setStatus(ReturnItemStatus.valueOf(newStatus));
     public List<ReturnRequest> getAllReturn() {
         return returnRequestRepository.findAll();
     }
+
+
+
+
+
+
+
+
+
+
+    public List<MonthlyReturnSummary> getMonthlyReturns(int year) {
+        return returnRequestRepository.getMonthlyReturns(year);
+    }
+
 }

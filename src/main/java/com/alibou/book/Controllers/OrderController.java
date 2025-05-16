@@ -128,4 +128,24 @@ public class OrderController {
 
 
 
+
+
+    @GetMapping("/revenueMonthly")
+    public ResponseEntity<List<MonthlyRevenueSummary>> getMonthlyRevenue(@RequestParam int year) {
+        List<MonthlyRevenueSummary> data = orderService.getMonthlyRevenue(year);
+        return ResponseEntity.ok(data);
+    }
+
+
+
+
+    @GetMapping("/ordersMonthly")
+    public ResponseEntity<List<MonthlyOrderSummary>> getMonthlyOrders(@RequestParam int year) {
+        List<MonthlyOrderSummary> data = orderService.getMonthlyOrders(year);
+        return ResponseEntity.ok(data);
+    }
+
+
+
+
 }

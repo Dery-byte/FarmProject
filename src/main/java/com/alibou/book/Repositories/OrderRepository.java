@@ -1,5 +1,6 @@
 package com.alibou.book.Repositories;
 
+import com.alibou.book.DTO.MonthlyOrderSummary;
 import com.alibou.book.Entity.Order;
 import com.alibou.book.Entity.OrderDetailStatus;
 import com.alibou.book.Entity.OrderDetails;
@@ -94,6 +95,27 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "ORDER BY FUNCTION('WEEK', o.orderDate)")
     List<WeeklyRevenueSummary> getWeeklyTotalsInMonth(@Param("start") LocalDateTime start,
                                                       @Param("end") LocalDateTime end);
+
+
+
+    @Query("SELECT FUNCTION('MONTH', o.orderDate) AS month, SUM(o.amount) AS totalAmount " +
+            "FROM Order o " +
+            "WHERE FUNCTION('YEAR', o.orderDate) = :year AND o.isPaid = false " +
+            "GROUP BY FUNCTION('MONTH', o.orderDate) " +
+            "ORDER BY month")
+    List<Object[]> getMonthlyRevenue(@Param("year") int year);
+
+
+
+
+
+
+    @Query("SELECT new com.alibou.book.DTO.MonthlyOrderSummary(FUNCTION('MONTH', o.orderDate), COUNT(o)) " +
+            "FROM Order o " +
+            "WHERE FUNCTION('YEAR', o.orderDate) = :year " +
+            "GROUP BY FUNCTION('MONTH', o.orderDate) " +
+            "ORDER BY FUNCTION('MONTH', o.orderDate)")
+    List<MonthlyOrderSummary> findMonthlyOrders(@Param("year") int year);
 
 
 

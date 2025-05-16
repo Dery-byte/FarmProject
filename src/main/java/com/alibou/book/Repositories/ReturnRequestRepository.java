@@ -1,5 +1,6 @@
 package com.alibou.book.Repositories;
 
+import com.alibou.book.DTO.MonthlyReturnSummary;
 import com.alibou.book.Entity.ReturnRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,21 @@ public interface ReturnRequestRepository extends JpaRepository<ReturnRequest, Lo
 
     @Query("SELECT r FROM ReturnRequest r JOIN r.items i WHERE i.productId = :productId")
     List<ReturnRequest> findByProductId(@Param("productId") String productId);
+
+
+
+
+
+
+
+
+
+
+    @Query("SELECT new com.alibou.book.DTO.MonthlyReturnSummary(FUNCTION('MONTH', r.RequestDate), COUNT(r)) " +
+            "FROM ReturnRequest r " +
+            "WHERE FUNCTION('YEAR', r.RequestDate) = :year " +
+            "GROUP BY FUNCTION('MONTH', r.RequestDate) " +
+            "ORDER BY FUNCTION('MONTH', r.RequestDate)")
+    List<MonthlyReturnSummary> getMonthlyReturns(@Param("year") int year);
+
 }
