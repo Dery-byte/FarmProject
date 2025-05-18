@@ -1,12 +1,15 @@
 package com.alibou.book.Services;
 
+import com.alibou.book.DTO.PriceRangeInfo;
 import com.alibou.book.DTO.ProductRequestDTO;
+import com.alibou.book.DTO.ProductResponsepPriceRange;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.OrderDetails;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.FarmRepository;
 import com.alibou.book.Repositories.OrderDetailsRepository;
 import com.alibou.book.Repositories.ProductRepository;
+import com.alibou.book.config.PriceRangeConfig;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +37,13 @@ public class ProductService {
     private final UserDetailsService userDetailsService;
     private final FarmRepository farmRepository;
     private final OrderDetailsRepository orderDetailsRepository;
+private final PriceRangeConfig priceRangeConfig;
+
+
+
+
+
+
 
     @Value("${application.file.upload-dir}")
     private String uploadDir;
@@ -256,6 +266,131 @@ public class ProductService {
                 .filter(product -> product.getQuantity() > 0) // assuming Product has a quantity field
                 .toList();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    PRICING SERVICE
+
+    public PriceRangeInfo getDynamicPriceRanges() {
+        Double minPrice = productRepository.findMinPrice();
+        Double maxPrice = productRepository.findMaxPrice();
+
+        List<PriceRangeInfo.PriceRange> ranges = new ArrayList<>();
+
+        // Add "All" option
+        ranges.add(createRange(null, null, "All"));
+
+        if (minPrice != null && maxPrice != null) {
+            double step = priceRangeConfig.getStepSize();
+            double current = 0.0;
+            double maxBeforePlus = priceRangeConfig.getMaxBeforePlus();
+
+            // Generate ranges up to maxBeforePlus
+            while (current < maxBeforePlus) {
+                double rangeEnd = current + step;
+                String label = String.format("GH₵%.2f - GH₵%.2f", current, rangeEnd);
+                ranges.add(createRange(current, rangeEnd, label));
+                current = rangeEnd;
+            }
+
+            // Add the "+" range
+            ranges.add(createRange(current, null, String.format("GH₵%.2f+", current)));
+        }
+
+        return new PriceRangeInfo(minPrice, maxPrice, ranges);
+    }
+
+    public ResponseEntity<List<Product>>  getProductsByPriceRange(Double minPrice, Double maxPrice) {
+        List<Product> products;
+
+        // Case 1: No filters - return all products
+        if (minPrice == null && maxPrice == null) {
+            products = productRepository.findAllProducts();
+        }
+        // Case 2: Only minPrice specified - return products >= minPrice
+        else if (maxPrice == null) {
+            products = productRepository.findByPriceGreaterThanEqual(minPrice);
+        }
+        // Case 3: Only maxPrice specified - return products <= maxPrice
+        else if (minPrice == null) {
+            products = productRepository.findByPriceLessThanEqual(maxPrice);
+        }
+        // Case 4: Both min and max specified - return products between
+        else {
+            products = productRepository.findByPriceBetween(minPrice, maxPrice);
+        }
+        return ResponseEntity.ok(products);
+    }
+    private PriceRangeInfo.PriceRange createRange(Double min, Double max, String label) {
+        Long count;
+        if (min == null && max == null) {
+            count = productRepository.countAllProducts();
+        } else if (max == null) {
+            count = productRepository.countByPriceGreaterThanEqual(min);
+        } else {
+            count = productRepository.countByPriceBetween(min, max);
+        }
+        return new PriceRangeInfo.PriceRange(min, max, count, label);
+    }
+
+
 
 
 

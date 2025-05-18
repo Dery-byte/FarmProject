@@ -65,3 +65,8 @@ mnotify:
     key: oWmpfPGz22BObP6ng9Zjb0Xe4
     sender-id: OPTUMSERV
 #  OTC
+#Princing configuration
+price:
+  ranges:
+    step-size: 50.0
+    max-before-plus: 200.0

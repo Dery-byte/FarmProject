@@ -1,7 +1,10 @@
 package com.alibou.book.Controllers;
 
+import com.alibou.book.DTO.PriceRangeInfo;
 import com.alibou.book.DTO.ProductRequestDTO;
+import com.alibou.book.DTO.ProductResponsepPriceRange;
 import com.alibou.book.Entity.Product;
+import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.Services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final ProductRepository productRepository;
 
     // ✅ Add Product
 //    @PostMapping("/add")
@@ -118,5 +122,39 @@ public class ProductController {
         List<Product> products = productService.getAvailableProductsByFarmLocation(location);
         return ResponseEntity.ok(products);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    PRICING CONTROLLER
+@GetMapping("/price-ranges")
+public ResponseEntity<PriceRangeInfo> getPriceRanges() {
+    return ResponseEntity.ok(productService.getDynamicPriceRanges());
+}
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Product>> filterProducts(
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        ResponseEntity<List<Product>> products = productService.getProductsByPriceRange(minPrice,maxPrice);
+        return ResponseEntity.ok(products.getBody());
+
+
+
+
+    }
+
+
+
+
 
 }
