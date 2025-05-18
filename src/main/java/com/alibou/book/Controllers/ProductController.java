@@ -101,4 +101,22 @@ public class ProductController {
 
 
 
+
+
+
+
+
+    @GetMapping("/location/{location}")
+    public ResponseEntity<List<Product>> getProductsByFarmLocation(@PathVariable String location) {
+        List<Product> products = productService.getProductsByFarmLocation(location);
+        return ResponseEntity.ok(products);
+    }
+
+    // Optional endpoint for available products only
+    @GetMapping("/location/{location}/available/products")
+    public ResponseEntity<List<Product>> getAvailableProductsByFarmLocation(@PathVariable String location) {
+        List<Product> products = productService.getAvailableProductsByFarmLocation(location);
+        return ResponseEntity.ok(products);
+    }
+
 }

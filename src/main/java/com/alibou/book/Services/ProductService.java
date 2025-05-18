@@ -228,4 +228,39 @@ public class ProductService {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public List<Product> getProductsByFarmLocation(String location) {
+        return productRepository.findByFarmLocation(location);
+    }
+
+    // Optional: Add validation or additional business logic here
+    public List<Product> getAvailableProductsByFarmLocation(String location) {
+        return productRepository.findByFarmLocation(location).stream()
+                .filter(product -> product.getQuantity() > 0) // assuming Product has a quantity field
+                .toList();
+    }
+
+
+
+
+
+
+
 }

@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -147,6 +148,21 @@ public class ReturnController {
         List<MonthlyReturnSummary> data = returnService.getMonthlyReturns(year);
         return ResponseEntity.ok(data);
     }
+
+
+
+
+//    @GetMapping("/monthlyReturns")
+//    public ResponseEntity<List<MonthlyReturnSummary>> getMonthlyReturns(
+//            @RequestParam(required = false) Integer year) {
+//
+//        if (year == null) {
+//            year = LocalDate.now().getYear();
+//        }
+//
+//        List<MonthlyReturnSummary> data = returnService.getMonthlyReturns(year);
+//        return ResponseEntity.ok(data);
+//    }
 
 
 

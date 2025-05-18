@@ -1,15 +1,14 @@
 package com.alibou.book.Controllers;
 
+import com.alibou.book.DTO.FarmResponse;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.FarmRepository;
 import com.alibou.book.Services.FarmService;
 import com.alibou.book.security.JwtService;
 import com.alibou.book.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -152,5 +151,34 @@ public class FarmController {
 //        Long quizId = report.getQuiz().getqId();
         // Validate if quizId is present
     }
+
+
+    // Get products by farm name
+    @GetMapping("/{farmName}/products")
+    public ResponseEntity<List<Product>> getProductsByFarmName(
+            @PathVariable String farmName
+    ) {
+        return ResponseEntity.ok(farmService.findProductsByFarmName(farmName));
+    }
+
+
+    // Get farms with their products by name
+    @GetMapping("/with-products")
+    public ResponseEntity<List<FarmResponse>> getFarmsWithProductsByName(
+            @RequestParam String farmName
+    ) {
+        return ResponseEntity.ok(farmService.findFarmsWithProductsByName(farmName));
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
 

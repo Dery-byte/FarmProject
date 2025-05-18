@@ -1,5 +1,6 @@
 package com.alibou.book.Services;
 
+import com.alibou.book.DTO.FarmResponse;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.FarmRepository;
@@ -121,6 +122,40 @@ public class FarmService {
     public List<Farm> getFarmsByUser(Long userId) {
         return farmRepository.findByFarmerId(userId);
     }
+
+
+
+
+
+    public List<FarmResponse> findFarmsWithProductsByName(String farmName) {
+        return farmRepository.findByFarmNameContainingIgnoreCase(farmName)
+                .stream()
+                .map(farm -> FarmResponse.builder()
+                        .id(farm.getFarm_id())
+                        .farmName(farm.getFarmName())
+                        .location(farm.getLocation())
+                        .products(farm.getProductList())
+                        .build())
+                .toList();
+    }
+
+
+
+    // Option 1: Get farms by name
+    public List<Farm> findFarmsByName(String farmName) {
+        return farmRepository.findByFarmNameContainingIgnoreCase(farmName);
+    }
+
+    // Option 2: Get products by farm name
+    public List<Product> findProductsByFarmName(String farmName) {
+        return farmRepository.findProductsByFarmName(farmName);
+    }
+
+
+
+
+
+
 
 
 }
