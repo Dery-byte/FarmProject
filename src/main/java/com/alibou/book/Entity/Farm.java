@@ -4,6 +4,8 @@ import com.alibou.book.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.lang.Long;
 import java.util.List;
 
 @Entity
