@@ -107,6 +107,12 @@ public class FarmService {
             // Copy other fields from updatedFarm to existingFarm
             existingFarm.setFarmName(updatedFarm.getFarmName());
             existingFarm.setLocation(updatedFarm.getLocation());
+            existingFarm.setFarmSize(updatedFarm.getFarmSize());
+            existingFarm.setFarmAddress(updatedFarm.getFarmAddress());
+            existingFarm.setContact(updatedFarm.getContact());
+            existingFarm.setFarmType(updatedFarm.getFarmType());
+            existingFarm.setYearEstablished(updatedFarm.getYearEstablished());
+            existingFarm.setNumberOfworkers(updatedFarm.getNumberOfworkers());
 //            existingFarm.setSize(updatedFarm.getSize());
             return farmRepository.save(existingFarm);
         }).orElseThrow(() -> new RuntimeException(STR."Farm not found with ID: \{id}"));

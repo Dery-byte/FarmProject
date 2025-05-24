@@ -145,6 +145,7 @@ public class FarmController {
         // Fetch the user using the principal (currently logged-in user)
         User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
         farm.setFarmer(user);
+        farm.setFarmOwner(user.getFullName());
         farmRepository.save(farm);
         return ResponseEntity.ok(farm);
         // Get the quiz ID from the report
