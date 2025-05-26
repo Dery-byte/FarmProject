@@ -6,6 +6,8 @@ import com.alibou.book.Entity.OrderDetailStatus;
 import com.alibou.book.Entity.OrderDetails;
 import com.alibou.book.Entity.ReturnRequest;
 import com.alibou.book.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -128,6 +130,23 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
 
+    //ORDERS BY FARMERS
+
+    // Correct method name based on your actual entity relationships
+    //@Query("SELECT DISTINCT o FROM Order o JOIN o.orderDetails od WHERE od.product.farmer.id = :farmerId")
+
+    @Query("SELECT DISTINCT o FROM Order o " +
+            "JOIN FETCH o.orderDetails od " +
+            "JOIN od.product p " +
+            "WHERE p.farmer.id = :farmerId")
+    List<Order> findByFarmerId(@Param("farmerId") Long farmerId);
+
+    // OR using derived query method (choose one approach)
+    List<Order> findByOrderDetailsProductFarmerId(Long farmerId);
+
+    // For pagination
+    @Query("SELECT DISTINCT o FROM Order o JOIN o.orderDetails od WHERE od.product.farmer.id = :farmerId")
+    Page<Order> findByFarmerId(@Param("farmerId") Long farmerId, Pageable pageable);
 
 
 

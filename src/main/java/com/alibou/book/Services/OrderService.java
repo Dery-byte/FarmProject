@@ -1,4 +1,6 @@
 package com.alibou.book.Services;
+import com.alibou.book.DTO.FarmersOrdersDTO.OrderDTO;
+import com.alibou.book.DTO.FarmersOrdersDTO.OrderItemDTO;
 import com.alibou.book.DTO.MonthlyOrderSummary;
 import com.alibou.book.DTO.MonthlyRevenueSummary;
 import com.alibou.book.DTO.PlaceOrderRequest;
@@ -8,8 +10,12 @@ import com.alibou.book.Repositories.OrderRepository;
 import com.alibou.book.Repositories.PaymentRepository;
 import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
+import com.alibou.book.exception.ResourceNotFoundException;
+import com.alibou.book.exception.UnauthorizedAccessException;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.context.DelegatingApplicationListener;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -23,6 +29,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -304,6 +311,89 @@ public class OrderService {
 
 
 
+
+
+
+
+
+
+
+    public List<Order> getOrdersByFarmer(Long farmerId) {
+        return orderRepository.findByFarmerId(farmerId);
+    }
+
+
+
+    public Page<Order> getOrdersByFarmer(Long farmerId, Pageable pageable) {
+        return orderRepository.findByFarmerId(farmerId, pageable);
+    }
+
+    public OrderDTO getOrderDetails(Long orderId, Long farmerId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        // Verify that at least one item in the order belongs to this farmer
+        boolean belongsToFarmer = order.getOrderDetails().stream()
+                .anyMatch(item -> item.getProduct().getFarmer().getId().equals(farmerId));
+
+        if (!belongsToFarmer) {
+            throw new UnauthorizedAccessException("You don't have permission to view this order");
+        }
+
+        return convertToDTO(order, farmerId);
+    }
+
+    public OrderDTO convertToDTO(Order order, Long farmerId) {
+        OrderDTO dto = new OrderDTO();
+        dto.setOrderId(order.getId());
+        dto.setOrderDate(order.getOrderDate());
+        dto.setCustomerName(order.getCustomer().getFullName());
+        //dto.setStatus(order.getStatus());
+        dto.setStatus(order.getOrdersStatus());
+        // dto.setTotalAmount(order.getTotalAmount());
+        dto.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
+
+
+
+        // Only include items that belong to this farmer
+        List<OrderItemDTO> items = order.getOrderDetails().stream()
+                .peek(item -> {
+                    System.out.println("Product: " + item.getProduct().getProductName());
+                    User farmer = item.getProduct().getFarmer();
+                    System.out.println("Product Farmer ID: " + (farmer != null ? farmer.getId() : "null"));
+                    System.out.println("Current Farmer ID: " + farmerId);
+                })
+                .filter(item -> {
+                    Long productFarmerId = Long.valueOf(item.getProduct().getFarmer().getId());
+                    System.out.println("Comparing farmer IDs: " + productFarmerId + " (" + productFarmerId.getClass().getName() + ") vs " + farmerId + " (" + farmerId.getClass().getName() + ")");
+                    boolean equals = productFarmerId.equals(farmerId);
+                    System.out.println("equals result: " + equals);
+                    return equals;
+                })
+                .map(this::convertItemToDTO)
+                .collect(Collectors.toList());
+
+        System.out.println(STR."Order ID: \{order.getId()} has \{items.size()} items.");
+
+        dto.setItems(items);
+        return dto;
+
+    }
+
+    public OrderItemDTO convertItemToDTO(OrderDetails item) {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setProductId(item.getProduct().getId());
+        dto.setProductName(item.getProduct().getProductName());
+        dto.setQuantity(item.getQuantity());
+        //  dto.setPriceAtPurchase(item.getPriceAtPurchase());
+        dto.setPriceAtPurchase(BigDecimal.valueOf(item.getPrice()));
+        // Convert double price to BigDecimal first
+        BigDecimal price = BigDecimal.valueOf(item.getPrice());
+        dto.setPriceAtPurchase(price);
+        BigDecimal total = price.multiply(BigDecimal.valueOf(item.getQuantity()));
+        dto.setTotal(total);
+        return dto;
+    }
 
 
 

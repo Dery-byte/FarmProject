@@ -1,11 +1,15 @@
 package com.alibou.book.Controllers;
 
 import com.alibou.book.DTO.*;
+import com.alibou.book.DTO.FarmersOrdersDTO.OrderDTO;
 import com.alibou.book.Entity.Order;
 import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
 import com.alibou.book.Services.OrderService;
 import com.alibou.book.user.User;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +19,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -147,5 +152,60 @@ public class OrderController {
 
 
 
+
+
+    //GET ORDERS BY FARMER
+
+    @GetMapping("/allOrdersByFarmer")
+    public ResponseEntity<List<OrderDTO>> getFarmerOrders(Principal principal) {
+        //User currentFarmer = authenticationService.getCurrentUser();
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to view return request.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        List<Order> orders = orderService.getOrdersByFarmer(Long.valueOf(user.getId()));
+
+        // Convert to DTOs
+        List<OrderDTO> dtos = orders.stream()
+                .map(order -> orderService.convertToDTO(order, Long.valueOf(user.getId())))
+                .collect(Collectors.toList());
+
+
+        return ResponseEntity.ok(dtos);
+    }
+
+
+
+
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<OrderDTO>> getFarmerOrdersPaginated(Principal principal,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        //User currentFarmer = authenticationService.getCurrentUser();
+
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to view return request.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        Page<Order> orders = orderService.getOrdersByFarmer(
+                Long.valueOf(user.getId()),
+                PageRequest.of(page, size, Sort.by("orderDate").descending()));
+
+        Page<OrderDTO> dtos = orders.map(order -> orderService.convertToDTO(order, Long.valueOf(user.getId())));
+        return ResponseEntity.ok(dtos);
+    }
+
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> getOrderDetails(Principal principal, @PathVariable Long orderId) {
+        //User currentFarmer = authenticationService.getCurrentUser();
+
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to view return request.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        OrderDTO orderDTO = orderService.getOrderDetails(orderId, Long.valueOf(user.getId()));
+        return ResponseEntity.ok(orderDTO);
+    }
 
 }

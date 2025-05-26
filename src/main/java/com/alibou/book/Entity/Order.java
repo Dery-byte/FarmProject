@@ -47,7 +47,7 @@ public class Order {
     @Embedded
     private Delivery deliveryInfo;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     private List<OrderDetails> orderDetails;
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonIgnore
