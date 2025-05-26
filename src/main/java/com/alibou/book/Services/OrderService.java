@@ -1,9 +1,7 @@
 package com.alibou.book.Services;
+import com.alibou.book.DTO.*;
 import com.alibou.book.DTO.FarmersOrdersDTO.OrderDTO;
 import com.alibou.book.DTO.FarmersOrdersDTO.OrderItemDTO;
-import com.alibou.book.DTO.MonthlyOrderSummary;
-import com.alibou.book.DTO.MonthlyRevenueSummary;
-import com.alibou.book.DTO.PlaceOrderRequest;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.CartRepository;
 import com.alibou.book.Repositories.OrderRepository;
@@ -328,7 +326,7 @@ public class OrderService {
         return orderRepository.findByFarmerId(farmerId, pageable);
     }
 
-    public OrderDTO getOrderDetails(Long orderId, Long farmerId) {
+    public OrderDto getOrderDetails(Long orderId, Long farmerId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
@@ -343,20 +341,42 @@ public class OrderService {
         return convertToDTO(order, farmerId);
     }
 
-    public OrderDTO convertToDTO(Order order, Long farmerId) {
-        OrderDTO dto = new OrderDTO();
-        dto.setOrderId(order.getId());
+    public OrderDto convertToDTO(Order order, Long farmerId) {
+        OrderDto dto = new OrderDto();
+        dto.setId(order.getId());
         dto.setOrderDate(order.getOrderDate());
         dto.setCustomerName(order.getCustomer().getFullName());
+        dto.setCustomerId(Long.valueOf(order.getCustomer().getId()));
+        dto.setCustomerEmail(order.getCustomer().getUsername());
+        //dto.setCustomerEmail(order.getDeliveryInfo().);
         //dto.setStatus(order.getStatus());
         dto.setStatus(order.getOrdersStatus());
         // dto.setTotalAmount(order.getTotalAmount());
         dto.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
 
+        DeliveryDetailsDTO deliveryDTO = new DeliveryDetailsDTO();
+        deliveryDTO.setDeliveryNote(order.getDeliveryInfo().getNotes());
+        deliveryDTO.setArea(order.getDeliveryInfo().getArea());
+        deliveryDTO.setRecipient(order.getDeliveryInfo().getRecipientName());
+        deliveryDTO.setPhone(order.getDeliveryInfo().getPhoneNumber());
+        deliveryDTO.setGpsAddress(order.getDeliveryInfo().getDigitalAddress());
+        deliveryDTO.setMajorLandmark(order.getDeliveryInfo().getLandmark());
+        deliveryDTO.setRegion(order.getDeliveryInfo().getRegion());
+        deliveryDTO.setStreet(order.getDeliveryInfo().getStreet());
+        deliveryDTO.setDistrict(order.getDeliveryInfo().getDistrict());
+        dto.setDeliveryDetails(deliveryDTO);
+
+        OrderSummaryDTO summary = new OrderSummaryDTO();
+        summary.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
+        //summary.setTotalAmount(order.getTotalAmount());
+        summary.setPaymentMethod(order.getPaymentMethod() != null ?
+                order.getPaymentMethod().toString() : "Not specified");
+        summary.setPaymentStatus(order.isPaid() ? "Paid" : "Unpaid");
+        dto.setSummary(summary);
 
 
         // Only include items that belong to this farmer
-        List<OrderItemDTO> items = order.getOrderDetails().stream()
+        List<OrderItemDto> items = order.getOrderDetails().stream()
                 .peek(item -> {
                     System.out.println("Product: " + item.getProduct().getProductName());
                     User farmer = item.getProduct().getFarmer();
@@ -380,16 +400,16 @@ public class OrderService {
 
     }
 
-    public OrderItemDTO convertItemToDTO(OrderDetails item) {
-        OrderItemDTO dto = new OrderItemDTO();
-        dto.setProductId(item.getProduct().getId());
+    public OrderItemDto convertItemToDTO(OrderDetails item) {
+        OrderItemDto dto = new OrderItemDto();
         dto.setProductName(item.getProduct().getProductName());
+        dto.setOrderedItemStatus(item.getOrderedItemStatus());
         dto.setQuantity(item.getQuantity());
-        //  dto.setPriceAtPurchase(item.getPriceAtPurchase());
-        dto.setPriceAtPurchase(BigDecimal.valueOf(item.getPrice()));
-        // Convert double price to BigDecimal first
+        dto.setId(item.getProduct().getId());
+
+        dto.setPrice(BigDecimal.valueOf(item.getPrice()));
         BigDecimal price = BigDecimal.valueOf(item.getPrice());
-        dto.setPriceAtPurchase(price);
+        dto.setPrice(BigDecimal.valueOf(item.getPrice()));
         BigDecimal total = price.multiply(BigDecimal.valueOf(item.getQuantity()));
         dto.setTotal(total);
         return dto;

@@ -1,26 +1,23 @@
 package com.alibou.book.Services;
 
+import com.alibou.book.DTO.FarmDTO;
 import com.alibou.book.DTO.FarmResponse;
+import com.alibou.book.DTO.FarmWithProductsDTO;
+import com.alibou.book.DTO.ProductDTO;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.FarmRepository;
 import com.alibou.book.security.JwtService;
 import com.alibou.book.user.User;
 import com.alibou.book.user.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,11 +26,14 @@ public class FarmService {
     private FarmRepository farmRepository;
     private UserRepository userRepository;
     private JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
-    public FarmService(FarmRepository farmRepository, UserRepository userRepository, JwtService jwtService) {
+
+    public FarmService(FarmRepository farmRepository, UserRepository userRepository, JwtService jwtService, UserDetailsService userDetailsService) {
         this.farmRepository = farmRepository;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     public List<Farm> getAllFarms() {
@@ -156,6 +156,107 @@ public class FarmService {
     public List<Product> findProductsByFarmName(String farmName) {
         return farmRepository.findProductsByFarmName(farmName);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public List<FarmDTO> getFarmsForCurrentFarmer(Long farmerId) {
+//        if (principal == null) {
+//            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+//        }
+//        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        //User currentFarmer = authenticationService.getCurrentUser();
+        List<Farm> farms = farmRepository.findByFarmerId(farmerId);
+        return farms.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Optional: Get farms with products
+    public List<FarmWithProductsDTO> getFarmsWithProductsForCurrentFarmer(Long farmerId) {
+//        if (principal == null) {
+//            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+//        }
+//        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        List<Farm> farms = farmRepository.findByFarmerIdWithProducts(farmerId);
+        return farms.stream()
+                .map(this::convertToDTOWithProducts)
+                .collect(Collectors.toList());
+    }
+
+    private FarmDTO convertToDTO(Farm farm) {
+        return FarmDTO.builder()
+                .id(farm.getFarm_id())
+                .name(farm.getFarmName())
+                .location(farm.getLocation())
+                .address(farm.getFarmAddress())
+                .type(farm.getFarmType())
+                .size(farm.getFarmSize())
+                .build();
+    }
+
+    private FarmWithProductsDTO convertToDTOWithProducts(Farm farm) {
+        List<ProductDTO> productDTOs = farm.getProductList().stream()
+                .map(p -> ProductDTO.builder()
+                        .id(p.getId())
+                        .name(p.getProductName())
+                        .quantity(p.getQuantity())
+                        .category(p.getCategory())
+                        .price(p.getPrice())
+                        .imageUrls(p.getImageUrls()) // Include image URLs
+                        .build())
+                .collect(Collectors.toList());
+
+        return FarmWithProductsDTO.builder()
+                .id(farm.getFarm_id())
+                .name(farm.getFarmName())
+                .products(productDTOs)
+                .build();
+    }
+
+
+
+
+
+
+
 
 
 

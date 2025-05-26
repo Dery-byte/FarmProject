@@ -24,6 +24,7 @@ public class OrderDetails {
 
     @Enumerated(EnumType.STRING)
     private OrderDetailStatus status = OrderDetailStatus.ACTIVE;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
     @JsonIgnore
@@ -32,6 +33,8 @@ public class OrderDetails {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+    @Enumerated(EnumType.STRING)
+    private OrderedItemStatus orderedItemStatus=OrderedItemStatus.PENDING;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("changedAt ASC")

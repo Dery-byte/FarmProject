@@ -157,7 +157,7 @@ public class OrderController {
     //GET ORDERS BY FARMER
 
     @GetMapping("/allOrdersByFarmer")
-    public ResponseEntity<List<OrderDTO>> getFarmerOrders(Principal principal) {
+    public ResponseEntity<List<OrderDto>> getFarmerOrders(Principal principal) {
         //User currentFarmer = authenticationService.getCurrentUser();
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to view return request.");
@@ -166,7 +166,7 @@ public class OrderController {
         List<Order> orders = orderService.getOrdersByFarmer(Long.valueOf(user.getId()));
 
         // Convert to DTOs
-        List<OrderDTO> dtos = orders.stream()
+        List<OrderDto> dtos = orders.stream()
                 .map(order -> orderService.convertToDTO(order, Long.valueOf(user.getId())))
                 .collect(Collectors.toList());
 
@@ -178,7 +178,7 @@ public class OrderController {
 
 
     @GetMapping("/paginated")
-    public ResponseEntity<Page<OrderDTO>> getFarmerOrdersPaginated(Principal principal,
+    public ResponseEntity<Page<OrderDto>> getFarmerOrdersPaginated(Principal principal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         //User currentFarmer = authenticationService.getCurrentUser();
@@ -191,21 +191,21 @@ public class OrderController {
                 Long.valueOf(user.getId()),
                 PageRequest.of(page, size, Sort.by("orderDate").descending()));
 
-        Page<OrderDTO> dtos = orders.map(order -> orderService.convertToDTO(order, Long.valueOf(user.getId())));
+        Page<OrderDto> dtos = orders.map(order -> orderService.convertToDTO(order, Long.valueOf(user.getId())));
         return ResponseEntity.ok(dtos);
     }
 
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDTO> getOrderDetails(Principal principal, @PathVariable Long orderId) {
+    public ResponseEntity<OrderDto> getOrderDetails(Principal principal, @PathVariable Long orderId) {
         //User currentFarmer = authenticationService.getCurrentUser();
 
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to view return request.");
         }
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
-        OrderDTO orderDTO = orderService.getOrderDetails(orderId, Long.valueOf(user.getId()));
-        return ResponseEntity.ok(orderDTO);
+        OrderDto orderDto = orderService.getOrderDetails(orderId, Long.valueOf(user.getId()));
+        return ResponseEntity.ok(orderDto);
     }
 
 }

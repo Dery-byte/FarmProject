@@ -2,6 +2,8 @@ package com.alibou.book.Repositories;
 
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,6 +31,29 @@ public interface FarmRepository extends JpaRepository<Farm, Long> {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Method to find farms by farmer ID
+    //List<Farm> findByFarmerId(Long farmerId);
+
+    // Optional: Paginated version
+    Page<Farm> findByFarmerId(Long farmerId, Pageable pageable);
+
+    // Optional: With eager loading of products
+    @Query("SELECT f FROM Farm f LEFT JOIN FETCH f.productList WHERE f.farmer.id = :farmerId")
+    List<Farm> findByFarmerIdWithProducts(@Param("farmerId") Long farmerId);
 
 
 

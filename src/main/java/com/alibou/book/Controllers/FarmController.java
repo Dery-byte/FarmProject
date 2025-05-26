@@ -1,6 +1,8 @@
 package com.alibou.book.Controllers;
 
+import com.alibou.book.DTO.FarmDTO;
 import com.alibou.book.DTO.FarmResponse;
+import com.alibou.book.DTO.FarmWithProductsDTO;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.FarmRepository;
@@ -178,6 +180,48 @@ public class FarmController {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //SPECIFIC FARM AND HIS/HER FARMS
+
+
+    @GetMapping("getAllFarmsByFarmer")
+    public ResponseEntity<List<FarmDTO>> getFarmerFarms( Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        List<FarmDTO> farms = farmService.getFarmsForCurrentFarmer(Long.valueOf(user.getId()));
+        return ResponseEntity.ok(farms);
+    }
+
+    // Optional endpoint for farms with products
+    @GetMapping("/getAllFarmsByFarmer/with-products")
+    public ResponseEntity<List<FarmWithProductsDTO>> getFarmerFarmsWithProducts(Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+
+        List<FarmWithProductsDTO> farms = farmService.getFarmsWithProductsForCurrentFarmer(Long.valueOf(user.getId()));
+        return ResponseEntity.ok(farms);
+    }
 
 
 

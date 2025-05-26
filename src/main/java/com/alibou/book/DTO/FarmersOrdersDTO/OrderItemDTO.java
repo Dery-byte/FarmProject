@@ -1,5 +1,6 @@
 package com.alibou.book.DTO.FarmersOrdersDTO;
 
+import com.alibou.book.Entity.OrdersStatus;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,4 +16,6 @@ public class OrderItemDTO {
     private Integer quantity;
     private BigDecimal priceAtPurchase;
     private BigDecimal total;
+    private OrdersStatus status;
+
 }
