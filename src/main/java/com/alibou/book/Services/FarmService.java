@@ -243,7 +243,6 @@ public class FarmService {
                         .imageUrls(p.getImageUrls()) // Include image URLs
                         .build())
                 .collect(Collectors.toList());
-
         return FarmWithProductsDTO.builder()
                 .id(farm.getFarm_id())
                 .name(farm.getFarmName())

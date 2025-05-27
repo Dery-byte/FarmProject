@@ -27,11 +27,17 @@ public class ReturnItem {
     @JsonIgnore
     private ReturnRequest returnRequest;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+//    @Column(name = "product_id", nullable = false)
+//    private Long productId;
 
     @Column(name = "product_name")
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;  // This is the crucial relationship
+
+
 
     @Column(name = "reason")
     private String reason;
@@ -40,6 +46,7 @@ public class ReturnItem {
     private String quantity;
 
     private String RejectionReason;
+//    private String image;
 
     private LocalDateTime ProcessedDate;
 

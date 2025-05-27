@@ -6,6 +6,9 @@ import com.alibou.book.Entity.ReturnRequest;
 import com.alibou.book.Services.ReturnService;
 import com.alibou.book.user.User;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -165,5 +168,89 @@ public class ReturnController {
 //    }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //GET RETUNRED ITEMS FOR A PARTICULAR FARMER
+
+
+
+    @GetMapping("/allRturnsByFarmer")
+    public ResponseEntity<List<ReturnRequestDTO>> getFarmerReturns(Principal principal) {
+
+                if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+
+        List<ReturnRequestDTO> returns = returnService.getReturnsForCurrentFarmer(Long.valueOf(user.getId()));
+        return ResponseEntity.ok(returns);
+    }
+
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<ReturnRequestDTO>> getFarmerReturnsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size, Principal principal) {
+
+        // Get current farmer ID
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+
+        // Get paginated results
+        Page<ReturnRequestDTO> returns = (Page<ReturnRequestDTO>) returnService.getReturnsForCurrentFarmer(Long.valueOf(user.getId()));
+
+        return ResponseEntity.ok(returns);
+    }
 
 }

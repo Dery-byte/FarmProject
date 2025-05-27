@@ -1,15 +1,16 @@
 package com.alibou.book.DTO;
 
 import com.alibou.book.Entity.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Builder
 @Data
 public class ReturnItemDTO {
     private Long id;
-    private Long productId;
+    //private Long productId;
     private String name;
     private String reason;
     private String quantity;
@@ -17,6 +18,8 @@ public class ReturnItemDTO {
     private LocalDateTime processedDate;
     private ReturnItemStatus status;
     private String currentStatus;
+
+    private String image;
     private List<StatusHistory> statusHistory;
 
     // Add order details you need from ReturnRequest
