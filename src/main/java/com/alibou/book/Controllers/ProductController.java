@@ -3,6 +3,7 @@ package com.alibou.book.Controllers;
 import com.alibou.book.DTO.PriceRangeInfo;
 import com.alibou.book.DTO.ProductRequestDTO;
 import com.alibou.book.DTO.ProductResponsepPriceRange;
+import com.alibou.book.DTO.ProductUpdateRequest;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.Services.ProductService;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.security.Principal;
@@ -56,9 +58,15 @@ public class ProductController {
 
     // ✅ Update Product by ID
     @PutMapping("/update/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        return ResponseEntity.ok(productService.updateProduct(id, product));
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Long id,
+            @RequestPart ProductUpdateRequest productUpdateRequest,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        Product updatedProduct = productService.updateProduct(id, productUpdateRequest, images);
+        return ResponseEntity.ok(updatedProduct);
     }
+
 
     // ✅ Get all products
     @GetMapping

@@ -3,6 +3,7 @@ package com.alibou.book.Services;
 import com.alibou.book.DTO.PriceRangeInfo;
 import com.alibou.book.DTO.ProductRequestDTO;
 import com.alibou.book.DTO.ProductResponsepPriceRange;
+import com.alibou.book.DTO.ProductUpdateRequest;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.OrderDetails;
 import com.alibou.book.Entity.Product;
@@ -10,6 +11,8 @@ import com.alibou.book.Repositories.FarmRepository;
 import com.alibou.book.Repositories.OrderDetailsRepository;
 import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.config.PriceRangeConfig;
+import com.alibou.book.file.FileStorageService;
+import com.alibou.book.file.FileStorageServices;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +41,7 @@ public class ProductService {
     private final FarmRepository farmRepository;
     private final OrderDetailsRepository orderDetailsRepository;
 private final PriceRangeConfig priceRangeConfig;
+private final FileStorageServices fileStorageServices;
 
 
 
@@ -201,18 +205,49 @@ private final PriceRangeConfig priceRangeConfig;
 
 
     // 🔹 Update Product by ID
-    public Product updateProduct(Long id, Product newProduct) {
+    public Product updateProduct(Long id, ProductUpdateRequest newProduct, List<MultipartFile> newImages) {
         return productRepository.findById(id).map(product -> {
+            // Update basic fields
             product.setProductName(newProduct.getProductName());
             product.setDescription(newProduct.getDescription());
             product.setPrice(newProduct.getPrice());
             product.setQuantity(newProduct.getQuantity());
             product.setCategory(newProduct.getCategory());
+            product.setAge(newProduct.getAge());
+            product.setWeight(newProduct.getWeight());
+            product.setBreed(newProduct.getBreed());
+            product.setHealthStatus(newProduct.getHealthStatus());
+            product.setCondition(newProduct.getCondition());
+
+            // Handle images
+            List<String> existingImageUrls = newProduct.getExistingImageUrls() != null ?
+                    newProduct.getExistingImageUrls() : new ArrayList<>();
+
+            List<String> newImageUrls = new ArrayList<>();
+
+            if (newImages != null) {
+                for (MultipartFile file : newImages) {
+                    if (!file.isEmpty()) {
+                        try {
+                            String imageUrl = fileStorageServices.storeFile(file);
+                            newImageUrls.add(imageUrl);
+                        } catch (IOException e) {
+                            throw new RuntimeException("Failed to store file", e);
+                        }
+                    }
+                }
+            }
+
+            // Combine existing and new image URLs
+            List<String> allImageUrls = new ArrayList<>();
+            allImageUrls.addAll(existingImageUrls);
+            allImageUrls.addAll(newImageUrls);
+
+            product.setImageUrls(allImageUrls);
+
             return productRepository.save(product);
         }).orElseThrow(() -> new RuntimeException("Product not found!"));
     }
-
-
     // ✅ Get all products
     public List<Product> getAllProducts() {
         return productRepository.findAll();
