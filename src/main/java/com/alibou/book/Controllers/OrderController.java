@@ -10,13 +10,16 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -234,6 +237,86 @@ public class OrderController {
     @GetMapping("/farmerTotalSales")
     public BigDecimal getFarmerTotalSales() {
         return orderService.getTotalSalesByCurrentFarmer();
+    }
+
+
+
+    // ✅ Monthly summary for authenticated farmer
+    @GetMapping("/monthly-summaryForFarmer")
+    public ResponseEntity<List<MonthlyOrderSummary>> getMonthlyOrderSummaryByAuthenticatedFarmer(
+            @RequestParam int year,
+            Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Get farmer's ID from the principal (assuming you can load it by username)
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        Long farmerId = Long.valueOf(user.getId());
+
+        List<MonthlyOrderSummary> summaries = orderService.getMonthlyOrdersForFarmer(year, farmerId);
+        return ResponseEntity.ok(summaries);
+    }
+
+
+
+
+
+
+
+    @GetMapping("/monthly-revenueFarmer")
+    public ResponseEntity<List<MonthlyRevenueSummary>> getMonthlyRevenueForFarmer(
+            @RequestParam int year,
+            Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Get farmer's ID from the principal (assuming you can load it by username)
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        Long farmerId = Long.valueOf(user.getId());
+
+        List<MonthlyRevenueSummary> summaries = orderService.getMonthlyRevenueForFarmer(year,farmerId);
+        return ResponseEntity.ok(summaries);
+    }
+
+
+
+
+
+
+
+    @GetMapping("/weekly-summaryByFarmer")
+    public ResponseEntity<List<WeeklyRevenueSummary>> getWeeklyRevenueForFarmer(
+            @RequestParam int year,
+            @RequestParam int month,
+            Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Get farmer's ID from the principal (assuming you can load it by username)
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        Long farmerId = Long.valueOf(user.getId());
+
+        List<WeeklyRevenueSummary> summary = orderService.getWeeklyTotalsForFarmer(year, month, farmerId);
+        return ResponseEntity.ok(summary);
+    }
+
+
+
+
+
+    // Endpoint: /api/analytics/daily-revenue?year=2024&month=5
+    @GetMapping("/daily-summaryByFarmer")
+    public List<Map<String, Object>> getDailyRevenue(
+            @RequestParam int year,
+            @RequestParam int month,
+            Principal principal) {
+        if (principal == null) {
+            return (List<Map<String, Object>>) ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Get farmer's ID from the principal (assuming you can load it by username)
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        Long farmerId = Long.valueOf(user.getId());
+        return orderService.getDailyRevenueForFarmer(year, month, farmerId);
     }
 
 }

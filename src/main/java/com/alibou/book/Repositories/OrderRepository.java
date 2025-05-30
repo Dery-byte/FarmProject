@@ -1,10 +1,10 @@
 package com.alibou.book.Repositories;
 
 import com.alibou.book.DTO.MonthlyOrderSummary;
+import com.alibou.book.DTO.MonthlyRevenueSummary;
 import com.alibou.book.Entity.Order;
 import com.alibou.book.Entity.OrderDetailStatus;
 import com.alibou.book.Entity.OrderDetails;
-import com.alibou.book.Entity.ReturnRequest;
 import com.alibou.book.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -175,5 +175,104 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Calculate total sales for a specific farmer
     @Query("SELECT COALESCE(SUM(od.price * od.quantity), 0) FROM Order o JOIN o.orderDetails od JOIN od.product p WHERE p.farmer.id = :farmerId AND o.isPaid = false")
     BigDecimal getTotalSalesByFarmerId(Long farmerId);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Query("""
+    SELECT new com.alibou.book.DTO.MonthlyOrderSummary(
+        FUNCTION('MONTH', o.orderDate), COUNT(DISTINCT o.id))
+    FROM Order o
+    JOIN o.orderDetails od
+    JOIN od.product p
+    WHERE FUNCTION('YEAR', o.orderDate) = :year
+      AND p.farmer.id = :farmerId
+    GROUP BY FUNCTION('MONTH', o.orderDate)
+    ORDER BY FUNCTION('MONTH', o.orderDate)
+""")
+    List<MonthlyOrderSummary> findMonthlyOrdersByFarmer(@Param("year") int year, @Param("farmerId") Long farmerId);
+
+
+
+
+
+
+    @Query("""
+    SELECT new com.alibou.book.DTO.MonthlyRevenueSummary(FUNCTION('MONTH', o.orderDate), SUM(o.amount))
+    FROM Order o
+    WHERE FUNCTION('YEAR', o.orderDate) = :year
+      AND o.isPaid = false
+      AND EXISTS (
+          SELECT 1 FROM OrderDetails od
+          WHERE od.order = o AND od.product.farmer.id = :farmerId
+      )
+    GROUP BY FUNCTION('MONTH', o.orderDate)
+    ORDER BY FUNCTION('MONTH', o.orderDate)
+    """)
+    List<MonthlyRevenueSummary> getMonthlyRevenueByFarmer(@Param("year") int year, @Param("farmerId") Long farmerId);
+
+
+
+
+
+
+
+
+    @Query("""
+    SELECT new com.alibou.book.DTO.WeeklyRevenueSummary(FUNCTION('WEEK', o.orderDate), SUM(o.amount))
+    FROM Order o
+    WHERE FUNCTION('YEAR', o.orderDate) = :year
+      AND FUNCTION('MONTH', o.orderDate) = :month
+      AND o.isPaid = false
+      AND EXISTS (
+          SELECT 1 FROM OrderDetails od
+          WHERE od.order = o AND od.product.farmer.id = :farmerId
+      )
+    GROUP BY FUNCTION('WEEK', o.orderDate)
+    ORDER BY FUNCTION('WEEK', o.orderDate)
+    """)
+    List<WeeklyRevenueSummary> getWeeklyTotalsInMonthByFarmer(
+            @Param("year") int year,
+            @Param("month") int month,
+            @Param("farmerId") Long farmerId);
+
+
+
+
+
+
+
+
+
+
+    // Daily totals
+    @Query("""
+    SELECT DATE(o.orderDate) AS date, SUM(o.amount) AS totalAmount
+    FROM Order o
+    WHERE FUNCTION('YEAR', o.orderDate) = :year
+      AND FUNCTION('MONTH', o.orderDate) = :month
+      AND o.isPaid = false
+      AND EXISTS (
+          SELECT 1 FROM OrderDetails od
+          WHERE od.order = o AND od.product.farmer.id = :farmerId
+      )
+    GROUP BY DATE(o.orderDate)
+    ORDER BY DATE(o.orderDate)
+    """)
+    List<Map<String, Object>> getDailyTotalsInMonthByFarmer(
+            @Param("year") int year,
+            @Param("month") int month,
+            @Param("farmerId") Long farmerId);
+
 
 }

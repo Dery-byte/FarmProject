@@ -458,5 +458,25 @@ public class OrderService {
     }
 
 
+    //Get monthly order summary for a specific farmer
+    public List<MonthlyOrderSummary> getMonthlyOrdersForFarmer(int year, Long farmerId) {
+        return orderRepository.findMonthlyOrdersByFarmer(year, farmerId);
+    }
+
+    public List<MonthlyRevenueSummary> getMonthlyRevenueForFarmer(int year, Long farmerId) {
+        return orderRepository.getMonthlyRevenueByFarmer(year, farmerId);
+    }
+
+
+    public List<WeeklyRevenueSummary> getWeeklyTotalsForFarmer(int year, int month, Long farmerId) {
+        return orderRepository.getWeeklyTotalsInMonthByFarmer(year, month, farmerId);
+    }
+
+
+
+    // Daily revenue for a specific farmer in a given month
+    public List<Map<String, Object>> getDailyRevenueForFarmer(int year, int month, Long farmerId) {
+        return orderRepository.getDailyTotalsInMonthByFarmer(year, month, farmerId);
+    }
 
 }
