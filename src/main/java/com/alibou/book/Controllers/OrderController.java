@@ -208,4 +208,32 @@ public class OrderController {
         return ResponseEntity.ok(orderDto);
     }
 
+
+
+
+
+
+
+
+
+    //ORDER COUNT BY FARMER
+
+
+
+
+    @GetMapping("/farmer/orders")
+    public List<Order> getFarmerOrders() {
+        return orderService.getOrdersByCurrentFarmer();
+    }
+
+    @GetMapping("/farmerOrderCount")
+    public long getFarmerOrderCount() {
+        return orderService.getOrderCountByCurrentFarmer();
+    }
+
+    @GetMapping("/farmerTotalSales")
+    public BigDecimal getFarmerTotalSales() {
+        return orderService.getTotalSalesByCurrentFarmer();
+    }
+
 }

@@ -1,10 +1,14 @@
 package com.alibou.book.DTO;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Data
+@Setter
+@Getter
 public class ProductUpdateRequest {
     private String productName;
     private String description;

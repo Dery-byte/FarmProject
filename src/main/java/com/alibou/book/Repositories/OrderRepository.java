@@ -153,4 +153,27 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+    //ORDER COUNT BY FARMER
+
+
+
+    // Count orders for a specific farmer
+    @Query("SELECT COUNT(DISTINCT o) FROM Order o JOIN o.orderDetails od JOIN od.product p WHERE p.farmer.id = :farmerId AND o.isPaid = false")
+    Long countByFarmerId(Long farmerId);
+
+    // Calculate total sales for a specific farmer
+    @Query("SELECT COALESCE(SUM(od.price * od.quantity), 0) FROM Order o JOIN o.orderDetails od JOIN od.product p WHERE p.farmer.id = :farmerId AND o.isPaid = false")
+    BigDecimal getTotalSalesByFarmerId(Long farmerId);
+
 }

@@ -248,6 +248,10 @@ private final FileStorageServices fileStorageServices;
             return productRepository.save(product);
         }).orElseThrow(() -> new RuntimeException("Product not found!"));
     }
+
+
+
+
     // ✅ Get all products
     public List<Product> getAllProducts() {
         return productRepository.findAll();

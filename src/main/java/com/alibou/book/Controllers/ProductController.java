@@ -9,6 +9,7 @@ import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.Services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,16 +58,15 @@ public class ProductController {
     }
 
     // ✅ Update Product by ID
-    @PutMapping("/update/{id}")
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Product> updateProduct(
             @PathVariable Long id,
-            @RequestPart ProductUpdateRequest productUpdateRequest,
+            @ModelAttribute ProductUpdateRequest productUpdateRequest,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
         Product updatedProduct = productService.updateProduct(id, productUpdateRequest, images);
         return ResponseEntity.ok(updatedProduct);
     }
-
 
     // ✅ Get all products
     @GetMapping

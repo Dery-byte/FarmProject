@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.context.DelegatingApplicationListener;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -417,6 +419,43 @@ public class OrderService {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // GET ORDERS BY FARMER
+
+
+    public List<Order> getOrdersByCurrentFarmer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        return orderRepository.findByFarmerId(Long.valueOf(currentUser.getId()));
+    }
+
+    public long getOrderCountByCurrentFarmer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        return orderRepository.countByFarmerId(Long.valueOf(currentUser.getId()));
+    }
+
+    public BigDecimal getTotalSalesByCurrentFarmer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        return orderRepository.getTotalSalesByFarmerId(Long.valueOf(currentUser.getId()));
+    }
 
 
 
