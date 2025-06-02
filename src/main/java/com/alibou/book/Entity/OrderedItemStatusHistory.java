@@ -1,8 +1,6 @@
 package com.alibou.book.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,13 +8,10 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 
-
-
 @Setter
 @Getter
 @Entity
-public class OrderStatusHistory {
-
+public class OrderedItemStatusHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,7 +21,5 @@ public class OrderStatusHistory {
     @ManyToOne
     @JoinColumn(name = "order_id")
     @JsonBackReference
-    private Order order;
-
-
+    private OrderDetails orderDetails;
 }

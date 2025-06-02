@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class OrderItemRequest {
+    private Long orderDetailsId;
     private Long productId;
     private int quantity;
 //    private List<ReturnItemResponse> returnItemResponses;

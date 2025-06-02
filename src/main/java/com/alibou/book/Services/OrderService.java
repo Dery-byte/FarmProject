@@ -1,12 +1,7 @@
 package com.alibou.book.Services;
 import com.alibou.book.DTO.*;
-import com.alibou.book.DTO.FarmersOrdersDTO.OrderDTO;
-import com.alibou.book.DTO.FarmersOrdersDTO.OrderItemDTO;
 import com.alibou.book.Entity.*;
-import com.alibou.book.Repositories.CartRepository;
-import com.alibou.book.Repositories.OrderRepository;
-import com.alibou.book.Repositories.PaymentRepository;
-import com.alibou.book.Repositories.ProductRepository;
+import com.alibou.book.Repositories.*;
 import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
 import com.alibou.book.exception.ResourceNotFoundException;
 import com.alibou.book.exception.UnauthorizedAccessException;
@@ -43,6 +38,7 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final DelegatingApplicationListener delegatingApplicationListener;
     private final PaymentRepository paymentRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
 //    private final UserRepository userRepository;
 //@Transactional
 //public Order placeOrder(Principal principal) {
@@ -205,6 +201,18 @@ public class OrderService {
 
 //TRYING THE ORDERS PROGRESS UPDATE
 
+    private boolean isValidTransition(OrdersStatus current, OrdersStatus next) {
+        if (current == null) {
+            return next == OrdersStatus.PENDING; // Only allow starting from PENDING
+        }
+        return switch (current) {
+            case PENDING -> next == OrdersStatus.PROCESSED;
+            case PROCESSED -> next == OrdersStatus.SHIPPED;
+            case SHIPPED -> next == OrdersStatus.DELIVERED;
+            default -> false;
+        };
+    }
+
 
     public Order updateOrderStatus(Long orderId, OrdersStatus newStatus, String adminUsername) {
         Order order = orderRepository.findById(orderId)
@@ -227,17 +235,17 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    private boolean isValidTransition(OrdersStatus current, OrdersStatus next) {
-        if (current == null) {
-            return next == OrdersStatus.PENDING; // Only allow starting from PENDING
-        }
-        return switch (current) {
-            case PENDING -> next == OrdersStatus.PROCESSED;
-            case PROCESSED -> next == OrdersStatus.SHIPPED;
-            case SHIPPED -> next == OrdersStatus.DELIVERED;
-            default -> false;
-        };
-    }
+//    private boolean isValidTransition(OrdersStatus current, OrdersStatus next) {
+//        if (current == null) {
+//            return next == OrdersStatus.PENDING; // Only allow starting from PENDING
+//        }
+//        return switch (current) {
+//            case PENDING -> next == OrdersStatus.PROCESSED;
+//            case PROCESSED -> next == OrdersStatus.SHIPPED;
+//            case SHIPPED -> next == OrdersStatus.DELIVERED;
+//            default -> false;
+//        };
+//    }
 
 
 
@@ -328,6 +336,42 @@ public class OrderService {
         return orderRepository.findByFarmerId(farmerId, pageable);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public OrderDto getOrderDetails(Long orderId, Long farmerId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
@@ -339,13 +383,11 @@ public class OrderService {
         if (!belongsToFarmer) {
             throw new UnauthorizedAccessException("You don't have permission to view this order");
         }
-
         return convertToDTO(order, farmerId);
     }
-
     public OrderDto convertToDTO(Order order, Long farmerId) {
         OrderDto dto = new OrderDto();
-        dto.setId(order.getId());
+        dto.setOrderId(order.getId());
         dto.setOrderDate(order.getOrderDate());
         dto.setCustomerName(order.getCustomer().getFullName());
         dto.setCustomerId(Long.valueOf(order.getCustomer().getId()));
@@ -394,28 +436,50 @@ public class OrderService {
                 })
                 .map(this::convertItemToDTO)
                 .collect(Collectors.toList());
-
         System.out.println(STR."Order ID: \{order.getId()} has \{items.size()} items.");
-
         dto.setItems(items);
         return dto;
 
     }
-
     public OrderItemDto convertItemToDTO(OrderDetails item) {
         OrderItemDto dto = new OrderItemDto();
+        dto.setOrderDetailsId(item.getId());
         dto.setProductName(item.getProduct().getProductName());
         dto.setOrderedItemStatus(item.getOrderedItemStatus());
         dto.setQuantity(item.getQuantity());
-        dto.setId(item.getProduct().getId());
-
+        dto.setProductId(item.getProduct().getId());
         dto.setPrice(BigDecimal.valueOf(item.getPrice()));
         BigDecimal price = BigDecimal.valueOf(item.getPrice());
         dto.setPrice(BigDecimal.valueOf(item.getPrice()));
         BigDecimal total = price.multiply(BigDecimal.valueOf(item.getQuantity()));
         dto.setTotal(total);
+        dto.setOrderedItemStatusHistoryList(item.getOrderedItemStatusHistoryList());
+
         return dto;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -445,16 +509,15 @@ public class OrderService {
         return orderRepository.findByFarmerId(Long.valueOf(currentUser.getId()));
     }
 
-    public long getOrderCountByCurrentFarmer() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) authentication.getPrincipal();
-        return orderRepository.countByFarmerId(Long.valueOf(currentUser.getId()));
+    public long getOrderCountByCurrentFarmer(Long farmerId) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User currentUser = (User) authentication.getPrincipal();
+        return orderRepository.countByFarmerId(farmerId);
     }
 
-    public BigDecimal getTotalSalesByCurrentFarmer() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) authentication.getPrincipal();
-        return orderRepository.getTotalSalesByFarmerId(Long.valueOf(currentUser.getId()));
+    public BigDecimal getTotalSalesByCurrentFarmer(Long farmerId) {
+
+        return orderRepository.getTotalSalesByFarmerId(farmerId);
     }
 
 
@@ -478,5 +541,73 @@ public class OrderService {
     public List<Map<String, Object>> getDailyRevenueForFarmer(int year, int month, Long farmerId) {
         return orderRepository.getDailyTotalsInMonthByFarmer(year, month, farmerId);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+// validation for the item
+private boolean isValidTransitionItemStatusOrdered(OrderedItemStatus current, OrderedItemStatus next) {
+    if (next == null) {
+        return false; // Never allow transition to null
+    }
+    if (current == null) {
+        return next == OrderedItemStatus.PENDING; // Only allow starting from PENDING
+    }
+    return switch (current) {
+        case PENDING -> next == OrderedItemStatus.PROCESSED;
+        case PROCESSED -> next == OrderedItemStatus.SHIPPED;
+        case SHIPPED -> next == OrderedItemStatus.DELIVERED;
+        default -> false;
+    };
+}
+
+
+
+
+    @Transactional
+    public OrderDetails updateOrderedItemStatus(Long ordererdItemId, OrderedItemStatus newStatus, String adminUsername) {
+        OrderDetails orderDetails = orderDetailsRepository.findById(ordererdItemId).
+                orElseThrow(()-> new  RuntimeException("Order Item Not found"));
+        //OrderedItemStatus currentOrderedItemStatus = orderDetails.getOrderedItemStatus();
+
+       System.out.println(orderDetails.getId());
+        System.out.println(orderDetails.getOrder().getId());
+
+        System.out.println(newStatus);
+        OrderedItemStatus currentOrderedItemStatus = orderDetails.getOrderedItemStatus();
+
+
+        if (!isValidTransitionItemStatusOrdered(currentOrderedItemStatus, newStatus)) {
+            throw new IllegalArgumentException("Invalid status transition from " + currentOrderedItemStatus + " to " + newStatus);
+        }
+        // Create status history entry
+OrderedItemStatusHistory orderedItemStatusHistory = new  OrderedItemStatusHistory();
+        orderedItemStatusHistory.setStatus(String.valueOf(newStatus));
+        orderedItemStatusHistory.setChangedAt(LocalDateTime.now());
+        orderedItemStatusHistory.setChangedBy(adminUsername);
+        orderedItemStatusHistory.setOrderDetails(orderDetails); // assuming a relationship exists
+        // Update order
+        //orderDetails.setStatus(newStatus);
+        orderDetails.setOrderedItemStatus(newStatus);
+//        orderDetails.setStatus(newStatus);
+        //order.setOrdersStatus(newStatus);
+//        order.setStatus(OrdersStatus.valueOf(newStatus.name()));
+        orderDetails.getOrderedItemStatusHistoryList().add(orderedItemStatusHistory);
+        //order.getOrderStatusHistoryList().add(orderStatusHistory);
+        return orderDetailsRepository.save(orderDetails);
+    }
+
+
+
+
 
 }

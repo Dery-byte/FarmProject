@@ -54,4 +54,23 @@ public interface ReturnRequestRepository extends JpaRepository<ReturnRequest, Lo
 
 
 
+
+
+    //MONTHLY RETURNS FOR FARMER
+
+    @Query("SELECT new com.alibou.book.DTO.MonthlyReturnSummary(" +
+            "FUNCTION('MONTH', r.RequestDate), COUNT(r)) " +
+            "FROM ReturnRequest r " +
+            "JOIN r.items ri " +  // Join to return items
+            "JOIN ri.product p " +  // Join to products
+            "JOIN p.farmer f " +   // Join to farmer
+            "WHERE FUNCTION('YEAR', r.RequestDate) = :year " +
+            "AND f.id = :farmerId " +  // Filter by farmer
+            "GROUP BY FUNCTION('MONTH', r.RequestDate) " +
+            "ORDER BY FUNCTION('MONTH', r.RequestDate)")
+    List<MonthlyReturnSummary> getMonthlyReturnsForFarmer(
+            @Param("year") int year,
+            @Param("farmerId") Long farmerId);
+
+
 }

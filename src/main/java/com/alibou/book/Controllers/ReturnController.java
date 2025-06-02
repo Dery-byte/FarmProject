@@ -169,6 +169,24 @@ public class ReturnController {
 
 
 
+    // RETURNS BY CONTROLLER
+
+    @GetMapping("/monthly-returnsForFarmer")
+    public ResponseEntity<List<MonthlyReturnSummary>> getMonthlyReturnSummary(
+            @RequestParam int year,
+            Principal principal
+           ) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Get farmer's ID from the principal (assuming you can load it by username)
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        Long farmerId = Long.valueOf(user.getId());
+        List<MonthlyReturnSummary> summary = returnService.getMonthlyReturnsForFarmer(year,farmerId );
+        return ResponseEntity.ok(summary);
+    }
+
+
 
 
 

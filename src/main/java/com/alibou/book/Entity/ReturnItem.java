@@ -1,5 +1,6 @@
 package com.alibou.book.Entity;
 
+import com.alibou.book.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,9 @@ public class ReturnItem {
     private Product product;  // This is the crucial relationship
 
 
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User customerName;  // This is the crucial relationship
 
     @Column(name = "reason")
     private String reason;

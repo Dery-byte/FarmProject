@@ -3,6 +3,7 @@ package com.alibou.book.Services;
 import com.alibou.book.DTO.MonthlyReturnSummary;
 import com.alibou.book.DTO.ReturnItemDTO;
 import com.alibou.book.DTO.ReturnRequestDTO;
+import com.alibou.book.DTO.StatusHistoryDTO;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.*;
 import com.alibou.book.exception.ResourceNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,56 +32,51 @@ public class ReturnService {
     private final PaymentRepository paymentRepository;
     private final ReturnItemRepository returnItemRepository;
 
+
+    @Transactional
     public ReturnRequest createReturnRequest(ReturnRequestDTO returnRequestDTO, Principal principal) {
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to create a return request.");
         }
-
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
-
         // Verify the order belongs to the user
         Order order = orderRepository.findByIdAndCustomer(returnRequestDTO.getOrderId(), user)
                 .orElseThrow(() -> new RuntimeException("Order not found or doesn't belong to user"));
-
         // Check if order is eligible for return
         if (order.getStatus() == OrderStatus.COMPLETED || order.getStatus() == OrderStatus.RETURNED) {
             throw new RuntimeException("Order is not eligible for return");
         }
-
         ReturnRequest returnRequest = new ReturnRequest();
         returnRequest.setUser(user);
         returnRequest.setOrderId(order.getId());
         returnRequest.setReason(returnRequestDTO.getReason());
         returnRequest.setRequestDate(LocalDateTime.now());
-
         for (ReturnItemDTO itemDTO : returnRequestDTO.getItems()) {
             // Verify each product is in the order
-            OrderDetails orderDetail = orderDetailsRepository.findByOrderIdAndProductId(order.getId(), itemDTO.getId())
+            OrderDetails orderDetail = orderDetailsRepository.findByOrderIdAndProductId(order.getId(), itemDTO.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found in order"));
-
             // Check if item is already returned
+            System.out.println("Order ID " + order.getId() + " Item Product ID " + itemDTO.getProductId());
             if (orderDetail.getStatus() == OrderDetailStatus.RETURN_REQUESTED) {
                 throw new RuntimeException("Product " + orderDetail.getProduct().getProductName() + " already returned");
             }
-
             // Create return item with RETURN_REQUESTED status
             ReturnItem item = new ReturnItem();
-            item.setId(orderDetail.getId());
+           //item.setId(orderDetail.getId());
+           // item.setProduct(orderDetail.getProduct());
             item.setProduct(orderDetail.getProduct());
-            item.setProduct(orderDetail.getProduct());
+
+           // item.setCustomerName(orderDetail.getOrder().getCustomer());
             item.setName(orderDetail.getProduct().getProductName());
             item.setQuantity(String.valueOf(orderDetail.getQuantity()));
             item.setReason(itemDTO.getReason());
             item.setStatus(ReturnItemStatus.RETURN_REQUESTED);
             item.setReturnRequest(returnRequest);
-
             returnRequest.getItems().add(item);
-
             // Mark order item as return requested
             orderDetail.setStatus(OrderDetailStatus.RETURN_REQUESTED);
             orderDetailsRepository.save(orderDetail);
         }
-
         return returnRequestRepository.save(returnRequest);
     }
 
@@ -229,13 +226,26 @@ public class ReturnService {
 
 
     public ReturnRequest updateReturnStatus(Long returnId, Long itemId, String newStatus, String adminUsername) {
+        System.out.printf("Update request - returnId: %d, itemId: %d, status: %s%n",
+                returnId, itemId, newStatus);
+
         ReturnRequest returnRequest = returnRequestRepository.findById(returnId)
                 .orElseThrow(() -> new ResourceNotFoundException("Return not found"));
+
+        // Detailed items log
+        System.out.println("All items in this return:");
+        returnRequest.getItems().forEach(i ->
+                System.out.printf("- Item %d: %s (status: %s)%n Reason : %s%n",
+                        i.getId(), i.getName(), i.getCurrentStatus(),i.getReason()));
 
         ReturnItem item = returnRequest.getItems().stream()
                 .filter(i -> i.getId().equals(itemId))
                 .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
+                .orElseThrow(() -> {
+                    System.out.printf("Item %d not found among %d items%n",
+                            itemId, returnRequest.getItems().size());
+                    return new ResourceNotFoundException("Item not found");
+                });
 
         // Create new history entry
         StatusHistory history = new StatusHistory();
@@ -312,15 +322,9 @@ item.setStatus(ReturnItemStatus.valueOf(newStatus));
 
 
     //GET RETURN REQUEST BASED ON A FARMER
-
-
     public List<ReturnRequestDTO> getReturnsForCurrentFarmer(Long farmerId) {
 //        User currentFarmer = authenticationService.getCurrentUser();
-
-
-
         List<ReturnRequest> returns = returnRequestRepository.findByFarmerId(farmerId);
-
         System.out.println(returns.toArray());
         return returns.stream()
                 .map(this::convertToDTO)
@@ -338,20 +342,58 @@ item.setStatus(ReturnItemStatus.valueOf(newStatus));
         dto.setItems(convertItemsToDTO(returnRequest.getItems()));
         return dto;
     }
-
     private List<ReturnItemDTO> convertItemsToDTO(List<ReturnItem> items) {
         return items.stream()
                 .map(item -> ReturnItemDTO.builder()
                         .id(item.getId())
-                        .id(item.getProduct().getId())
-                        //.productId(item.getProductId())
-                        .name(item.getProduct().getProductName())
+                        .productId(item.getProduct().getId())
+                        .name(item.getName())
                         .quantity(item.getQuantity())
                         .reason(item.getReason())
-                        .image(String.valueOf(item.getProduct().getImageUrls()))
+                        .currentStatus(item.getCurrentStatus())
+                        .status(item.getStatus())
+                        .rejectionReason(item.getRejectionReason())
+                        .processedDate(item.getProcessedDate())
+                        .image(item.getProduct().getImageUrls().get(0))
+                        .statusHistory(convertStatusHistoryToDTO(item.getStatusHistory()))
                         .build())
                 .collect(Collectors.toList());
+    }private List<StatusHistory> convertStatusHistoryToDTO(List<StatusHistory> statusHistory) {
+        if (statusHistory == null) {
+            return Collections.emptyList();
+        }
+
+        List<StatusHistory> result = statusHistory.stream()
+                .map(history -> {
+                    StatusHistory newHistory = new StatusHistory();
+                    newHistory.setId(history.getId());
+                    // Swapping status and changedBy to match API structure
+                    newHistory.setStatus(history.getStatus());  // API shows status in changedBy field
+                    newHistory.setChangedBy(history.getChangedBy()); // API shows changedBy in status field
+                    newHistory.setChangedAt(history.getChangedAt());
+                    return newHistory;
+                })
+                .collect(Collectors.toList());
+
+        Collections.reverse(result);
+        return result;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // For paginated results
     public Page<ReturnRequestDTO> getReturnsForCurrentFarmer(Pageable pageable, Long farmerId) {
 //        User currentFarmer = authenticationService.getCurrentUser();
@@ -361,6 +403,12 @@ item.setStatus(ReturnItemStatus.valueOf(newStatus));
 
 
 
+
+    //RETURN EQUEST FOR THE FARMER
+    public List<MonthlyReturnSummary> getMonthlyReturnsForFarmer(int year, Long farmerId) {
+
+        return returnRequestRepository.getMonthlyReturnsForFarmer(year, farmerId);
+    }
 
 
 }

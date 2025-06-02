@@ -3,6 +3,7 @@ package com.alibou.book.Controllers;
 import com.alibou.book.DTO.*;
 import com.alibou.book.DTO.FarmersOrdersDTO.OrderDTO;
 import com.alibou.book.Entity.Order;
+import com.alibou.book.Entity.OrderDetails;
 import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
 import com.alibou.book.Services.OrderService;
 import com.alibou.book.user.User;
@@ -230,13 +231,21 @@ public class OrderController {
     }
 
     @GetMapping("/farmerOrderCount")
-    public long getFarmerOrderCount() {
-        return orderService.getOrderCountByCurrentFarmer();
+    public long getFarmerOrderCount(Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to view return request.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        return orderService.getOrderCountByCurrentFarmer(Long.valueOf(user.getId()));
     }
 
     @GetMapping("/farmerTotalSales")
-    public BigDecimal getFarmerTotalSales() {
-        return orderService.getTotalSalesByCurrentFarmer();
+    public BigDecimal getFarmerTotalSales(Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to view return request.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        return orderService.getTotalSalesByCurrentFarmer(Long.valueOf(user.getId()));
     }
 
 
@@ -306,17 +315,67 @@ public class OrderController {
 
     // Endpoint: /api/analytics/daily-revenue?year=2024&month=5
     @GetMapping("/daily-summaryByFarmer")
-    public List<Map<String, Object>> getDailyRevenue(
+    public ResponseEntity<?> getDailyRevenue(
             @RequestParam int year,
             @RequestParam int month,
             Principal principal) {
         if (principal == null) {
-            return (List<Map<String, Object>>) ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         // Get farmer's ID from the principal (assuming you can load it by username)
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Long farmerId = Long.valueOf(user.getId());
-        return orderService.getDailyRevenueForFarmer(year, month, farmerId);
+        List<Map<String, Object>> result = orderService.getDailyRevenueForFarmer(year, month, farmerId);
+        return ResponseEntity.ok(result);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    @PatchMapping("/{orderedItemId}/ItemStatus")
+    public ResponseEntity<?> updateOrderedItemStatus(
+            @PathVariable Long orderedItemId,
+            @RequestBody OrderStatusUpdate request, Principal principal) {
+
+        if (principal == null) {
+            throw new IllegalArgumentException("User must be authenticated to view return request.");
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+
+        try {
+            OrderDetails updatedOrder = orderService.updateOrderedItemStatus(orderedItemId, request.getItemStatus(), user.getFullName());
+            System.out.println("Order status update to " + request.getItemStatus());
+            return ResponseEntity.ok(updatedOrder);
+//            return ResponseEntity.ok("Order status updated to " + request.getStatus());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

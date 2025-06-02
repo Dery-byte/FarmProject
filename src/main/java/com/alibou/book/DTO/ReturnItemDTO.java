@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class ReturnItemDTO {
     private Long id;
-    //private Long productId;
+    private Long productId;
     private String name;
     private String reason;
     private String quantity;
@@ -18,6 +18,7 @@ public class ReturnItemDTO {
     private LocalDateTime processedDate;
     private ReturnItemStatus status;
     private String currentStatus;
+    private String customerName;
 
     private String image;
     private List<StatusHistory> statusHistory;

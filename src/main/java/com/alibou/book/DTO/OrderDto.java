@@ -1,9 +1,6 @@
 package com.alibou.book.DTO;
 
-import com.alibou.book.Entity.DeliveryDetailsDTO;
-import com.alibou.book.Entity.OrderStatus;
-import com.alibou.book.Entity.OrderSummaryDTO;
-import com.alibou.book.Entity.OrdersStatus;
+import com.alibou.book.Entity.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,7 +10,7 @@ import java.util.List;
 
 @Data
 public class OrderDto {
-    private Long id;
+    private Long orderId;
     private LocalDateTime orderDate;
     private BigDecimal totalAmount;
     private Long customerId; // Instead of Customer object
@@ -21,10 +18,14 @@ public class OrderDto {
     private String customerEmail;
     private List<OrderItemDto> items;
     private OrdersStatus status;
+    private PaymentMethod paymentMethod;
+    private boolean isPaid;
+    private OrderStatus orderStatus;
 
     private DeliveryDetailsDTO deliveryDetails;
 
     private OrderSummaryDTO summary;
+    private List<OrderStatusHistory> orderStatusHistoryList;
 
 
     // getters and setters

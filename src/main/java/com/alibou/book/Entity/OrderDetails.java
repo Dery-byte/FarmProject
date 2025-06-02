@@ -39,4 +39,14 @@ public class OrderDetails {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("changedAt ASC")
     private List<OrderStatusHistory> orderStatusHistoryList = new ArrayList<>();
+
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OrderBy("changedAt ASC")
+//    private List<OrderedItemStatusHistory> orderedItemStatusHistoryList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "orderDetails", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("changedAt ASC")
+    private List<OrderedItemStatusHistory> orderedItemStatusHistoryList = new ArrayList<>();
+
+
 }
