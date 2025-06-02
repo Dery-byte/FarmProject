@@ -38,27 +38,22 @@ public class ReturnItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;  // This is the crucial relationship
 
-
 //    @ManyToOne
 //    @JoinColumn(name = "user_id", nullable = false)
 //    private User customerName;  // This is the crucial relationship
 
+
+
     @Column(name = "reason")
     private String reason;
-
     @Column(name = "quantity")
     private String quantity;
-
     private String RejectionReason;
 //    private String image;
-
     private LocalDateTime ProcessedDate;
-
     @Enumerated(EnumType.STRING)
     private ReturnItemStatus status = ReturnItemStatus.PENDING;
     private String currentStatus;
-
-
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("changedAt ASC")

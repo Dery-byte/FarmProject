@@ -19,8 +19,10 @@ public class ReturnItemDTO {
     private ReturnItemStatus status;
     private String currentStatus;
     private String customerName;
-
     private String image;
+
+    private List<String> imageUrls; // Add this field for images
+
     private List<StatusHistory> statusHistory;
 
     // Add order details you need from ReturnRequest

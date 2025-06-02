@@ -19,6 +19,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,6 +70,13 @@ public class ReturnService {
            // item.setCustomerName(orderDetail.getOrder().getCustomer());
             item.setName(orderDetail.getProduct().getProductName());
             item.setQuantity(String.valueOf(orderDetail.getQuantity()));
+
+
+
+            item.getProduct().setImageUrls(itemDTO.getImageUrls());
+
+
+
             item.setReason(itemDTO.getReason());
             item.setStatus(ReturnItemStatus.RETURN_REQUESTED);
             item.setReturnRequest(returnRequest);
@@ -158,7 +166,6 @@ public class ReturnService {
         } else {
             newStatus = ReturnStatus.PARTIALLY_PROCESSED;
         }
-
         if (newStatus != returnRequest.getStatus()) {
             returnRequest.setStatus(newStatus);
             returnRequestRepository.save(returnRequest);
@@ -168,7 +175,6 @@ public class ReturnService {
         if (allApproved) {
             Order order = orderRepository.findById(returnRequest.getOrderId())
                     .orElseThrow(() -> new RuntimeException("Order not found"));
-
             if (order.getOrderDetails().stream()
                     .allMatch(od -> od.getStatus() == OrderDetailStatus.RETURNED)) {
                 order.setStatus(OrderStatus.RETURNED);
@@ -185,6 +191,8 @@ public class ReturnService {
         // 3. Updating payment records
     }
 
+
+
     public List<ReturnRequest> getUserReturnRequests(Principal principal) {
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to view return requests.");
@@ -192,6 +200,10 @@ public class ReturnService {
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
         return returnRequestRepository.findByUserId(Long.valueOf(user.getId()));
     }
+
+
+
+
 
     public ReturnRequest getReturnRequest(Long id, Principal principal) {
         if (principal == null) {
@@ -201,7 +213,6 @@ public class ReturnService {
         return returnRequestRepository.findByIdAndUserId(id, Long.valueOf(user.getId()))
                 .orElseThrow(() -> new RuntimeException("Return request not found"));
     }
-
 
 
     public List<ReturnRequest> getAllReturnRequest(){
@@ -342,6 +353,8 @@ item.setStatus(ReturnItemStatus.valueOf(newStatus));
         dto.setItems(convertItemsToDTO(returnRequest.getItems()));
         return dto;
     }
+
+
     private List<ReturnItemDTO> convertItemsToDTO(List<ReturnItem> items) {
         return items.stream()
                 .map(item -> ReturnItemDTO.builder()
@@ -354,11 +367,21 @@ item.setStatus(ReturnItemStatus.valueOf(newStatus));
                         .status(item.getStatus())
                         .rejectionReason(item.getRejectionReason())
                         .processedDate(item.getProcessedDate())
-                        .image(item.getProduct().getImageUrls().get(0))
+                        // Safely get the first image URL (or null if none exists)
+                        .image(
+                                Optional.ofNullable(item.getProduct().getImageUrls())
+                                        .filter(urls -> !urls.isEmpty())
+                                        .map(urls -> urls.get(0))
+                                        .orElse(null) // or provide a default image URL
+                        )
                         .statusHistory(convertStatusHistoryToDTO(item.getStatusHistory()))
                         .build())
                 .collect(Collectors.toList());
-    }private List<StatusHistory> convertStatusHistoryToDTO(List<StatusHistory> statusHistory) {
+    }
+
+
+
+    private List<StatusHistory> convertStatusHistoryToDTO(List<StatusHistory> statusHistory) {
         if (statusHistory == null) {
             return Collections.emptyList();
         }
