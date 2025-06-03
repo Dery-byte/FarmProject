@@ -182,4 +182,10 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(service.getUsersByRole("FARMER", pageable));
     }
+
+
+    @GetMapping("getUserById/{userId}")
+    public User getUserById(@PathVariable Integer userId) {  // Add @PathVariable
+        return service.findByUserId(userId);
+    }
 }

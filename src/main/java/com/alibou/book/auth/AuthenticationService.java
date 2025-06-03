@@ -1,6 +1,5 @@
 package com.alibou.book.auth;
 
-import com.alibou.book.DTO.UpdateCartItemRequest;
 import com.alibou.book.DTO.UserResponseDTO;
 import com.alibou.book.DTO.UserSummaryDTO;
 import com.alibou.book.email.EmailService;
@@ -21,11 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -189,6 +186,12 @@ public class AuthenticationService {
                     ". It expires in 15 minutes.";
         mNotifyV2SmsService.sendSms(Collections.singletonList(user.getPhoneNummber()),smsMessage);
 
+    }
+
+
+    public User findByUserId(Integer id) {
+        return userRepository.findById(id)  // Use findById instead of getReferenceById
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
     private String generateActivationCode(int length) {
