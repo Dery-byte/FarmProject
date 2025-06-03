@@ -19,13 +19,27 @@ public class BookNetworkApiApplication {
 		SpringApplication.run(BookNetworkApiApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner runner(RoleRepository roleRepository) {
-		return args -> {
-			if (roleRepository.findByName("FARMER").isEmpty()) {
-				roleRepository.save(Role.builder().name("FARMER").build());
-			}
-		};
+//	@Bean
+//	public CommandLineRunner runner(RoleRepository roleRepository) {
+//		return args -> {
+//			if (roleRepository.findByName("FARMER").isEmpty()) {
+//				roleRepository.save(Role.builder().name("FARMER").build());
+//			}
+//		};
+//	}
+@Bean
+public CommandLineRunner runner(RoleRepository roleRepository) {
+	return args -> {
+		createRoleIfNotExists(roleRepository, "FARMER");
+		createRoleIfNotExists(roleRepository, "ADMIN");
+		createRoleIfNotExists(roleRepository, "USER");
+	};
+}
+
+	private void createRoleIfNotExists(RoleRepository roleRepository, String roleName) {
+		if (roleRepository.findByName(roleName).isEmpty()) {
+			roleRepository.save(Role.builder().name(roleName).build());
+		}
 	}
 
 

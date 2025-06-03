@@ -5,10 +5,7 @@ import com.alibou.book.role.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -76,6 +73,9 @@ private List<Farm> farms; // A farmer can own multiple farms
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
+
+//    public <R> User(Integer id, String fullName, String username, String phoneNummber, LocalDateTime createdDate, boolean enabled, R collect, List<String> list) {
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

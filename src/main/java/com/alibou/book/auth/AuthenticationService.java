@@ -1,5 +1,6 @@
 package com.alibou.book.auth;
 
+import com.alibou.book.DTO.UpdateCartItemRequest;
 import com.alibou.book.DTO.UserResponseDTO;
 import com.alibou.book.DTO.UserSummaryDTO;
 import com.alibou.book.email.EmailService;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,9 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,10 +48,9 @@ public class AuthenticationService {
 
 
     @Value("${application.mailing.frontend.activation-url}")
-
     private String activationUrl;
     public void register(RegistrationRequest request) throws MessagingException {
-        var userRole = roleRepository.findByName("FARMER")
+        var userRole = roleRepository.findByName("USER")
                 // todo - better exception handling
                 .orElseThrow(() -> new IllegalStateException("ROLE USER was not initiated"));
         var user = User.builder()
@@ -297,4 +296,95 @@ public class AuthenticationService {
                         PageRequest.of(0, count))
                 .map(UserSummaryDTO::fromUser);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    USER ROLE UPDATES
+public void updateUserRoles(Long userId, List<String> roleNames) {
+    User user = userRepository.findById(Math.toIntExact(userId))
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    Set<Role> roles = roleNames.stream()
+            .map(roleName -> roleRepository.findByName(roleName)
+                    .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+            .collect(Collectors.toSet());
+
+    user.setRoles(new ArrayList<>(roles)); // ✅ Convert Set to List
+    userRepository.save(user);
+}
+
+
+
+    public List<String> getUserRoleNames(Long userId) {
+        User user = userRepository.findById(Math.toIntExact(userId))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();  // Uses the JPA method with entity graph
+    }
+
+
+    public Page<User> getUsersByRole(String roleName, Pageable pageable) {
+        return userRepository.findByRoles_Name(roleName, pageable)
+                .map(user -> User.builder()
+                        .id(user.getId())
+                        .firstname(user.getFirstname())
+                        .lastname(user.getLastname())
+                        .username(user.getUsername())
+                        .phoneNummber(user.getPhoneNummber())
+                        .createdDate(user.getCreatedDate())
+                        .enabled(user.isEnabled())
+                        .accountLocked(user.isAccountLocked())
+                        .dateOfBirth(user.getDateOfBirth())
+
+                        .roles(new ArrayList<>(user.getRoles()))  // ✅ Fix
+
+                       // .roles(user.getRoles().stream().map(Role::getName).toList())
+                       // .authorities(user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+                        .build()
+                );
+    }
+
+
+
+
+
+
+
+
 }

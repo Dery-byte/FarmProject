@@ -256,14 +256,24 @@ private final FileStorageServices fileStorageServices;
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
+
+
+
+
     // ✅ Get product by ID
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
+
+
+
     // ✅ Get products by name
     public List<Product> getProductsByProductName(String name) {
         return productRepository.findByProductNameContainingIgnoreCase(name);
     }
+
+
 
     //GET PROCUCTS BASED ON LOCATION
 

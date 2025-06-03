@@ -1,5 +1,6 @@
 package com.alibou.book.auth;
 
+import com.alibou.book.DTO.RoleUpdateRequest;
 import com.alibou.book.DTO.UserResponseDTO;
 import com.alibou.book.DTO.UserSummaryDTO;
 import com.alibou.book.user.User;
@@ -8,6 +9,8 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -114,13 +117,69 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.getUsersSignedUpAfter(cutoff));
     }
 
-
-
-
     @GetMapping("/latestUsersSummary")
     public ResponseEntity<Page<UserSummaryDTO>> getLatestUsersSummary(
             @RequestParam(defaultValue = "6") int count) {
         return ResponseEntity.ok(service.getLatestUsersSummary(count));
     }
 
+
+
+
+
+
+
+
+   // UPDATE USER ROLE
+
+
+    @PutMapping("/users/{id}/roles")
+    public ResponseEntity<?> updateRoles(@PathVariable Long id, @RequestBody RoleUpdateRequest request) {
+        service.updateUserRoles(id, request.getRoleNames());
+        return ResponseEntity.ok("User roles updated.");
+    }
+
+    @GetMapping("/{id}/roles")
+    public ResponseEntity<List<String>> getUserRoles(@PathVariable Long id) {
+        List<String> roles = service.getUserRoleNames(id);
+        return ResponseEntity.ok(roles);
+    }
+
+
+
+    @GetMapping("allUsers")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(service.getAllUsers());
+    }
+
+
+
+
+
+
+
+
+
+
+
+    @GetMapping("/admins")
+    public ResponseEntity<Page<User>> getAdmins(
+            @PageableDefault(size = 5) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.getUsersByRole("ADMIN", pageable));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<Page<User>> getRegularUsers(
+            @PageableDefault(size = 5) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.getUsersByRole("USER", pageable));
+    }
+
+    @GetMapping("/farmers")
+    public ResponseEntity<Page<User>> getFarmers(
+            @PageableDefault(size = 5) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.getUsersByRole("FARMER", pageable));
+    }
 }

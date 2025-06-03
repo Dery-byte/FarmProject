@@ -2,6 +2,7 @@ package com.alibou.book.user;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -56,6 +57,22 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Page<User> findLatestNonAdminUsers(Pageable pageable);
     // Get users signed up after a specific date
     List<User> findByCreatedDateAfter(LocalDateTime date);
+
+
+
+
+
+
+
+
+    @EntityGraph(attributePaths = {"roles"})  // Eagerly fetches the role in one query
+    List<User> findAll();  // Uses standard JPA method
+
+
+
+
+    @EntityGraph(attributePaths = {"roles"})
+    Page<User> findByRoles_Name(String roleName, Pageable pageable);
 
 
 
