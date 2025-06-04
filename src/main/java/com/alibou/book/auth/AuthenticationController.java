@@ -133,10 +133,12 @@ public class AuthenticationController {
    // UPDATE USER ROLE
 
 
-    @PutMapping("/users/{id}/roles")
-    public ResponseEntity<?> updateRoles(@PathVariable Long id, @RequestBody RoleUpdateRequest request) {
-        service.updateUserRoles(id, request.getRoleNames());
-        return ResponseEntity.ok("User roles updated.");
+    @PutMapping("/users/{userid}/roles")
+    public ResponseEntity<?> updateRoles(@PathVariable Long userid, @RequestBody RoleUpdateRequest request) {
+        service.updateUserRoles(userid, request.getRoleNames());
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User role updated.");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}/roles")
