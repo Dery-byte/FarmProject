@@ -1,8 +1,10 @@
 package com.alibou.book.handler;
 
 import com.alibou.book.exception.ActivationTokenException;
+import com.alibou.book.exception.InsufficientStockException;
 import com.alibou.book.exception.OperationNotPermittedException;
 import jakarta.mail.MessagingException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static com.alibou.book.handler.BusinessErrorCodes.ACCOUNT_DISABLED;
@@ -129,4 +133,13 @@ public class GlobalExceptionHandler {
                                 .build()
                 );
     }
+
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<Map<String, String>> handleInsufficientStockException(InsufficientStockException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
 }

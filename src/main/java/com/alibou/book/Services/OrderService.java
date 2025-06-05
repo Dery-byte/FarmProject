@@ -3,6 +3,7 @@ import com.alibou.book.DTO.*;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.*;
 import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
+import com.alibou.book.exception.InsufficientStockException;
 import com.alibou.book.exception.ResourceNotFoundException;
 import com.alibou.book.exception.UnauthorizedAccessException;
 import com.alibou.book.user.User;
@@ -81,6 +82,80 @@ public class OrderService {
 //}
 
 
+//    @Transactional
+//    public Order placeOrder(Principal principal, PlaceOrderRequest request) {
+//        // 1. Get user cart
+//        Cart cart = cartService.getUserCart(principal);
+//        if (cart.getItems().isEmpty()) {
+//            throw new IllegalStateException("Cannot place order: Cart is empty");
+//        }
+//        // 2. Validate and create delivery info
+//        Delivery deliveryInfo = new Delivery(
+//                request.getDelivery().getRecipientName(),
+//                request.getDelivery().getPhoneNumber(),
+//                request.getDelivery().getDigitalAddress(),
+//                request.getDelivery().getArea(),
+//                request.getDelivery().getDistrict(),
+//                request.getDelivery().getNotes(),
+//                request.getDelivery().getLandmark(),
+//                request.getDelivery().getStreet(),
+//                request.getDelivery().getRegion()
+//        );
+//        deliveryInfo.validate(); // Throws IllegalArgumentException if invalid
+//
+//
+//        // Create Payment during Order Processing
+//
+//
+//
+//        // 3. Create order with delivery info
+//        Order order = new Order();
+//        order.setOrderDate(LocalDateTime.now());
+//        order.setCustomer(cart.getUser());
+//        order.setAmount(cartService.getCartTotal(cart));
+//        order.setOrdersStatus(OrdersStatus.PENDING);
+//        order.setStatus(OrderStatus.PENDING);
+//        order.setPaid(false);
+//        order.setDeliveryInfo(deliveryInfo); // Embedded delivery details
+//
+//
+//        Payment payment = new Payment();
+//        payment.setPaymentDate(LocalDateTime.now());
+//        payment.setAmount(cartService.getCartTotal(cart));
+//        payment.setPaymentMethod(PaymentMethod.MOBILE_MONEY);
+//        payment.setStatus(PaymentStatus.PENDING);
+//        payment.setTransactionId("999987363536839");
+//        payment.setOrder(order);
+//        paymentRepository.save(payment);
+//
+//        // 4. Convert cart items to order details
+//        List<OrderDetails> orderDetailsList = cart.getItems().stream()
+//                .map(item -> {
+//                    OrderDetails detail = new OrderDetails();
+//                    detail.setOrder(order);
+//                    detail.setProduct(item.getProduct());
+//                    detail.setQuantity(item.getQuantity());
+//                    detail.setPrice(item.getPrice());
+//
+//                    // Update product stock
+//                    Product product = item.getProduct();
+//                    product.setQuantity(product.getQuantity() - item.getQuantity());
+//                    productRepository.save(product);
+//
+//                    return detail;
+//                })
+//                .toList();
+//
+//        order.setOrderDetails(orderDetailsList);
+//
+//        // 5. Save and clear cart
+//        Order savedOrder = orderRepository.save(order);
+//        cart.getItems().clear();
+//        return savedOrder;
+//    }
+//
+
+
     @Transactional
     public Order placeOrder(Principal principal, PlaceOrderRequest request) {
         // 1. Get user cart
@@ -89,7 +164,15 @@ public class OrderService {
             throw new IllegalStateException("Cannot place order: Cart is empty");
         }
 
-        // 2. Validate and create delivery info
+        // 2. Validate stock for all cart items before processing
+        for (CartItem item : cart.getItems()) {
+            Product product = item.getProduct();
+            if (product.getQuantity() < item.getQuantity()) {
+                throw new InsufficientStockException("Insufficient stock for product: " + product.getProductName());
+            }
+        }
+
+        // 3. Validate and create delivery info
         Delivery deliveryInfo = new Delivery(
                 request.getDelivery().getRecipientName(),
                 request.getDelivery().getPhoneNumber(),
@@ -103,12 +186,7 @@ public class OrderService {
         );
         deliveryInfo.validate(); // Throws IllegalArgumentException if invalid
 
-
-        // Create Payment during Order Processing
-
-
-
-        // 3. Create order with delivery info
+        // 4. Create order with delivery info
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
         order.setCustomer(cart.getUser());
@@ -116,9 +194,9 @@ public class OrderService {
         order.setOrdersStatus(OrdersStatus.PENDING);
         order.setStatus(OrderStatus.PENDING);
         order.setPaid(false);
-        order.setDeliveryInfo(deliveryInfo); // Embedded delivery details
+        order.setDeliveryInfo(deliveryInfo);
 
-
+        // 5. Create and attach payment
         Payment payment = new Payment();
         payment.setPaymentDate(LocalDateTime.now());
         payment.setAmount(cartService.getCartTotal(cart));
@@ -128,34 +206,30 @@ public class OrderService {
         payment.setOrder(order);
         paymentRepository.save(payment);
 
-        // 4. Convert cart items to order details
+        // 6. Convert cart items to order details and deduct stock
         List<OrderDetails> orderDetailsList = cart.getItems().stream()
                 .map(item -> {
-                    OrderDetails detail = new OrderDetails();
-                    detail.setOrder(order);
-                    detail.setProduct(item.getProduct());
-                    detail.setQuantity(item.getQuantity());
-                    detail.setPrice(item.getPrice());
-
-                    // Update product stock
                     Product product = item.getProduct();
+                    // Deduct stock now that validation is passed
                     product.setQuantity(product.getQuantity() - item.getQuantity());
                     productRepository.save(product);
 
+                    OrderDetails detail = new OrderDetails();
+                    detail.setOrder(order);
+                    detail.setProduct(product);
+                    detail.setQuantity(item.getQuantity());
+                    detail.setPrice(item.getPrice());
                     return detail;
                 })
                 .toList();
 
         order.setOrderDetails(orderDetailsList);
 
-        // 5. Save and clear cart
+        // 7. Save order and clear cart
         Order savedOrder = orderRepository.save(order);
         cart.getItems().clear();
         return savedOrder;
     }
-
-
-
 
 
 
