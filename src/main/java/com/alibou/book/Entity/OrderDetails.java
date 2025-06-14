@@ -23,7 +23,12 @@ public class OrderDetails {
     private double price; // Price at the time of the order
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(20)") // or whatever size you need
     private OrderDetailStatus status = OrderDetailStatus.ACTIVE;
+
+
+
+
 
     @ManyToOne
     @JoinColumn(name = "order_id")

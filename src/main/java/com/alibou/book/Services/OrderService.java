@@ -672,15 +672,61 @@ OrderedItemStatusHistory orderedItemStatusHistory = new  OrderedItemStatusHistor
         // Update order
         //orderDetails.setStatus(newStatus);
         orderDetails.setOrderedItemStatus(newStatus);
-//        orderDetails.setStatus(newStatus);
+        orderDetails.setStatus(OrderDetailStatus.valueOf(newStatus.toString()));
         //order.setOrdersStatus(newStatus);
 //        order.setStatus(OrdersStatus.valueOf(newStatus.name()));
         orderDetails.getOrderedItemStatusHistoryList().add(orderedItemStatusHistory);
+
+
+        Order order = orderDetails.getOrder();
+
+
+        updateParentOrderStatus(order);
+        OrdersStatus newOrderStatus = mapItemStatusToOrderStatus(newStatus);
+        if (!newOrderStatus.equals(order.getOrdersStatus())) {
+            OrderStatusHistory orderHistory = new OrderStatusHistory();
+            orderHistory.setStatus(newOrderStatus.toString());
+            orderHistory.setChangedAt(LocalDateTime.now());
+            orderHistory.setChangedBy(adminUsername);
+            orderHistory.setOrder(order);
+            order.setOrdersStatus(newOrderStatus);
+            order.getOrderStatusHistoryList().add(orderHistory);
+            orderRepository.save(order);
+        }
+
+
         //order.getOrderStatusHistoryList().add(orderStatusHistory);
         return orderDetailsRepository.save(orderDetails);
     }
 
+    private void updateParentOrderStatus(Order order) {
+        // Get the most "advanced" status from all items
+        OrderedItemStatus highestItemStatus = order.getOrderDetails().stream()
+                .map(OrderDetails::getOrderedItemStatus)
+                .max(Enum::compareTo)
+                .orElse(OrderedItemStatus.PENDING);
 
+        // Map the item status to order status
+        OrdersStatus newOrderStatus = mapItemStatusToOrderStatus(highestItemStatus);
+
+        // Only update if different to avoid unnecessary updates
+        if (!newOrderStatus.equals(order.getOrdersStatus())) {
+            order.setOrdersStatus(newOrderStatus);
+            orderRepository.save(order);
+        }
+    }
+
+
+    private OrdersStatus mapItemStatusToOrderStatus(OrderedItemStatus itemStatus) {
+        // Map between the item status enum and order status enum
+        return switch (itemStatus) {
+            case PENDING -> OrdersStatus.PENDING;
+            case PROCESSED -> OrdersStatus.PROCESSED;
+            case SHIPPED -> OrdersStatus.SHIPPED;
+            case DELIVERED -> OrdersStatus.DELIVERED;
+            default -> OrdersStatus.PENDING;
+        };
+    }
 
 
 

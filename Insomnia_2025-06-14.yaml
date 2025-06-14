@@ -1,0 +1,2679 @@
+type: collection.insomnia.rest/5.0
+name: API
+meta:
+  id: wrk_c310007760664cc9bcdc9460bcad4171
+  created: 1747904640507
+  modified: 1747904640507
+  description: ""
+collection:
+  - url: localhost:8088/api/v1/auth/farms/add
+    name: addFarm
+    meta:
+      id: req_7fbc6f6575e64b2f9756cfd7f008ae15
+      created: 1747904751979
+      modified: 1747941527100
+      isPrivate: false
+      description: ""
+      sortKey: -1747904751979
+    method: POST
+    body:
+      mimeType: application/json
+      text: >-
+        {
+        	"farmName": "Akonta Farms",
+        	"location": "Tarkwa",
+        	"contact": "0244000000",
+        	"email": "info@akontafarms.com",
+        	"farmAddress": "Plot 12, Mango Street, Tarkwa. Behind the old cocoa shed. Accessible via the main road. Landmark: yellow signboard.",
+        	"farmSize": "200 acres",
+        	"farmType": "Livestock",
+        	"yearEstablished": "2023",
+        	"numberOfworkers": "45"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/authenticate
+    name: login
+    meta:
+      id: req_5c039f9321e64e679fe5e3af16ca3a69
+      created: 1747905064769
+      modified: 1748961638551
+      isPrivate: false
+      description: ""
+      sortKey: -1747905064769
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"email": "immanuelderry10@gmail.com",
+        	"password": "password123"
+        	}
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/register
+    name: register
+    meta:
+      id: req_a22778a6631d417c8f6fb03b96cfe7c4
+      created: 1747905265020
+      modified: 1747905293736
+      isPrivate: false
+      description: ""
+      sortKey: -1747904677233.5
+    method: POST
+    headers:
+      - name: User-Agent
+        value: insomnia/11.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/activate-account
+    name: activateAccount
+    meta:
+      id: req_72a269fa113b43b1b69b358ee1e50e0e
+      created: 1747905329417
+      modified: 1747905354806
+      isPrivate: false
+      description: ""
+      sortKey: -1747904639860.75
+    method: POST
+    parameters:
+      - id: pair_b118b8d4959448e09d48f7e2cc43aca5
+        name: token
+        value: "2355554"
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/11.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms
+    name: getAllFarms
+    meta:
+      id: req_964870976cdd4888b6ca70e5ca605902
+      created: 1747905566541
+      modified: 1748961780072
+      isPrivate: false
+      description: ""
+      sortKey: -1747904714606.25
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg5NjE2MzksImV4cCI6MTc0OTA0ODAzOSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.loRFvdzwEpHSg8EiijDoxMF6P_pd57r6ibJxIX_8y7g
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/2
+    name: getFarmById
+    meta:
+      id: req_48538233afeb4462a006704825e40555
+      created: 1747905647634
+      modified: 1747905685690
+      isPrivate: false
+      description: ""
+      sortKey: -1747904695919.875
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/search
+    name: searchFarm
+    meta:
+      id: req_999f266a5f8c4f5b9858dd2941669d57
+      created: 1747905712606
+      modified: 1747905774381
+      isPrivate: false
+      description: ""
+      sortKey: -1747904686576.6875
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_144de13e5f2e4db4b1a4187990fdc8a1
+        name: name
+        value: Zamzam Farms
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/deleteFarmBy/4
+    name: deleteFarmById
+    meta:
+      id: req_7e8737cc7c6d4107b4478c5f1231e419
+      created: 1747905808307
+      modified: 1747905848778
+      isPrivate: false
+      description: ""
+      sortKey: -1747904691248.2812
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/update/6
+    name: updateFarmById
+    meta:
+      id: req_eb58f7c4d4cf4d94ac87b8a020b5e8b9
+      created: 1747905885969
+      modified: 1747984626186
+      isPrivate: false
+      description: ""
+      sortKey: -1747904688912.4844
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Nyame Nsah Farms",
+        	"location":"Tarkwa"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/Zamzam Farms/products
+    name: farmNameAndProducts
+    meta:
+      id: req_bbebfc1b5f1f429f9746c1fb02dd13ef
+      created: 1747906072588
+      modified: 1747907521697
+      isPrivate: false
+      description: ""
+      sortKey: -1747904681905.0938
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_144de13e5f2e4db4b1a4187990fdc8a1
+        name: name
+        value: Zamzam Farms
+        description: ""
+        disabled: true
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/with-products
+    name: farmNameWithProducts
+    meta:
+      id: req_653af3b111b043a08d6342e12edea421
+      created: 1747907441275
+      modified: 1747907475063
+      isPrivate: false
+      description: ""
+      sortKey: -1747904679569.2969
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_144de13e5f2e4db4b1a4187990fdc8a1
+        name: farmName
+        value: Zamzam Farms
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/cart/add
+    name: addToCart
+    meta:
+      id: req_e41574f9829546238647c236ec84fbb7
+      created: 1747923937099
+      modified: 1747923952103
+      isPrivate: false
+      description: ""
+      sortKey: -1747904733292.625
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/cart/list
+    name: listCart
+    meta:
+      id: req_32c6476dae3d4a419eab815f9e0c6777
+      created: 1747924122262
+      modified: 1747924224917
+      isPrivate: false
+      description: ""
+      sortKey: -1747904723949.4375
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/cart/update
+    name: updateCart
+    meta:
+      id: req_1286cf28304d48e6909f651a80fe13d2
+      created: 1747924244462
+      modified: 1747924269190
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728621.0312
+    method: PUT
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/cart/count
+    name: countCart
+    meta:
+      id: req_a8fcc9b59db94a679f5cc08ee7884965
+      created: 1747924299184
+      modified: 1747924311071
+      isPrivate: false
+      description: ""
+      sortKey: -1747904726285.2344
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/cart/remove/2
+    name: deleteCart
+    meta:
+      id: req_385f29096cd5492a879e1364217a1440
+      created: 1747924365905
+      modified: 1747924384552
+      isPrivate: false
+      description: ""
+      sortKey: -1747904719277.8438
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/allOrdersByUser
+    name: allOrdersByUsers
+    meta:
+      id: req_f3797aebbdf24b91a2792112072b246d
+      created: 1747925236887
+      modified: 1748535339954
+      isPrivate: false
+      description: ""
+      sortKey: -1747904730956.8281
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxQGdtYWlsLmNvbSIsImlhdCI6MTc0ODUzNTMwNywiZXhwIjoxNzQ4NjIxNzA3LCJhdXRob3JpdGllcyI6WyJVU0VSIl19.rpARY9o2TWkwuVfvTy6LE_8numeG8hyChX-VqXXlumM
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/placeOrder
+    name: placeOrder
+    meta:
+      id: req_f622a7a8903d4dd39e408cdb961f8e66
+      created: 1747925342957
+      modified: 1747925381335
+      isPrivate: false
+      description: ""
+      sortKey: -1747904729788.9297
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/25/status
+    name: orderByOrderId
+    meta:
+      id: req_ca415a682a724016b9ba0ea367318749
+      created: 1747925450270
+      modified: 1748813215548
+      isPrivate: false
+      description: ""
+      sortKey: -1747904729204.9805
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg1NDM0ODMsImV4cCI6MTc0ODYyOTg4MywiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.2ria8IPKSdGps_tokxxAIjtsMg352S8xo__BA0hL0xE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/allOrders
+    name: allOrders
+    meta:
+      id: req_4d96c96e9cda491a90827c0fc5ebc2c4
+      created: 1747925511008
+      modified: 1748813287947
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728913.0059
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg4MTMyNDUsImV4cCI6MTc0ODg5OTY0NSwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.TLCg70U2xciiL5vz5HmZYuaXsY4TDMk1u-tF-XET0Ic
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/count
+    name: orderCount
+    meta:
+      id: req_a812acc5cea54814929edf9b9126b50f
+      created: 1747925602928
+      modified: 1748543526420
+      isPrivate: false
+      description: ""
+      sortKey: -1747904729058.9932
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg1NDM0ODMsImV4cCI6MTc0ODYyOTg4MywiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.2ria8IPKSdGps_tokxxAIjtsMg352S8xo__BA0hL0xE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/total-sales
+    name: totalSales
+    meta:
+      id: req_c80bbbdac74140df836ddd75cb65fd7d
+      created: 1747925677647
+      modified: 1748961754685
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728985.9995
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg5NjE2MzksImV4cCI6MTc0OTA0ODAzOSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.loRFvdzwEpHSg8EiijDoxMF6P_pd57r6ibJxIX_8y7g
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/revenueDaily
+    name: revenueDaily
+    meta:
+      id: req_7cd867d481644789bb075dd5d54c3f62
+      created: 1747925717056
+      modified: 1747925722078
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728949.5027
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/revenueWeekly
+    name: revenueMonthly
+    meta:
+      id: req_e3eccaac30824890a0904d9aec22db50
+      created: 1747925748752
+      modified: 1748565755534
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728931.2544
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/ordersMonthly
+    name: ordersMonthly
+    meta:
+      id: req_63090c531fac44d994d33072471ff76f
+      created: 1747925785034
+      modified: 1748558425380
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728922.1301
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    parameters:
+      - id: pair_5f2a424c9aaa42ae93420237676678bc
+        name: year
+        value: "2025"
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg1NTgyNTcsImV4cCI6MTc0ODY0NDY1NywiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.oH-Ozxg1j6CqqppzOn_Go2JInrfG2mrPrSlCOcOoWEY
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/add
+    name: addProducts
+    meta:
+      id: req_142cece7b6d740beab02812087c9d963
+      created: 1747925892131
+      modified: 1747925906821
+      isPrivate: false
+      description: ""
+      sortKey: -1747904742635.8125
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/delete/1
+    name: deleteProducts
+    meta:
+      id: req_04b2a7bedba7477db019d0de39e1ebaa
+      created: 1747925955464
+      modified: 1747925976277
+      isPrivate: false
+      description: ""
+      sortKey: -1747904737964.2188
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/update/4
+    name: updateProducts
+    meta:
+      id: req_4911ffa93b7040e6847109b566aa4b78
+      created: 1747926000036
+      modified: 1748462841558
+      isPrivate: false
+      description: ""
+      sortKey: -1747904735628.4219
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"productName": "Akonta Farms",
+        	"description": "Tarkwar",
+        	"price":"123",
+        	"weight":"234"
+        }
+    parameters:
+      - id: pair_b1f33e0bdb29458f8e00df33cc64f536
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+      - id: pair_fa87b25c38e74b2a903fc464255da7da
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg0NTk5ODMsImV4cCI6MTc0ODU0NjM4MywiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.otJqGZeT62Y8QHDg6B0iyKLQ1WxwaIFuc6zNVDVnV7Q
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/update/4
+    name: getProductsById
+    meta:
+      id: req_fe3b4fcc955747918474b151f35ca976
+      created: 1747926055910
+      modified: 1748460024938
+      isPrivate: false
+      description: ""
+      sortKey: -1747904734460.5234
+    method: PUT
+    body:
+      mimeType: multipart/form-data
+      params:
+        - id: pair_ee92a21b401541088f6f980cc44cf4ce
+          name: productName
+          value: Elephant
+          description: ""
+          disabled: false
+        - id: pair_0a525ea472f44732a0b7c6967890c5dd
+          name: description
+          value: wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+          description: ""
+          disabled: false
+        - id: pair_fef9dfdfc6c441339295efb856e0399b
+          name: weight
+          value: "403"
+          description: ""
+          disabled: false
+        - id: pair_6bd1220eb8bb4c88a29435248476c573
+          name: existingImageUrls
+          value: ""
+          description: ""
+          disabled: false
+          type: file
+          fileName: D:\Project\FarmProject\FarmFrontEnd\FarmFront\src\assets\img\goat1.jpg
+        - id: pair_ce75c16897894c8ba862f21ce586abf2
+          name: existingImageUrls
+          value: ""
+          description: ""
+          disabled: false
+          type: file
+          fileName: D:\Project\FarmProject\FarmFrontEnd\FarmFront\src\assets\img\goat2.jpg
+        - id: pair_1c3615564b1749ff8ba9c1d47231b1f5
+          name: existingImageUrls
+          value: ""
+          description: ""
+          disabled: false
+          type: file
+          fileName: D:\Project\FarmProject\FarmFrontEnd\FarmFront\src\assets\img\goat6.jpg
+    parameters:
+      - id: pair_0da1fd314614480baaa91fb4153482ec
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_acf250fa16f1441ca9a21beeb8bda2ec
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg0NTk5ODMsImV4cCI6MTc0ODU0NjM4MywiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.otJqGZeT62Y8QHDg6B0iyKLQ1WxwaIFuc6zNVDVnV7Q
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/search
+    name: searchProducts
+    meta:
+      id: req_f18747fb73794bd296ce718cf252fdc1
+      created: 1747926099424
+      modified: 1747926147625
+      isPrivate: false
+      description: ""
+      sortKey: -1747904733876.5742
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    parameters:
+      - id: pair_4ee9c1214c0641adabc07a94cd376927
+        name: name
+        value: cattle
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/search/by-location
+    name: searchProductsByLocation
+    meta:
+      id: req_92693682d9e0483c9d028993f596289e
+      created: 1747926181756
+      modified: 1747926200893
+      isPrivate: false
+      description: ""
+      sortKey: -1747904733584.5996
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    parameters:
+      - id: pair_4ee9c1214c0641adabc07a94cd376927
+        name: location
+        value: cattle
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/category/poultry"
+    name: searchProductsBYCategory
+    meta:
+      id: req_25b68c378a2944748d2b41959b802af9
+      created: 1747926228023
+      modified: 1747926274657
+      isPrivate: false
+      description: ""
+      sortKey: -1747904733730.587
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    parameters:
+      - id: pair_4ee9c1214c0641adabc07a94cd376927
+        name: name
+        value: cattle
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/category/poultry
+    name: searchByLocation
+    meta:
+      id: req_c5ec288ccd2f49f2a92460a0da18de45
+      created: 1747926507273
+      modified: 1747926554484
+      isPrivate: false
+      description: ""
+      sortKey: -1747904733657.5933
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    parameters:
+      - id: pair_4ee9c1214c0641adabc07a94cd376927
+        name: name
+        value: cattle
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/price-ranges
+    name: price-ranges
+    meta:
+      id: req_8aaa133c963d4193a9824fd3d95b602e
+      created: 1747926576995
+      modified: 1747926586655
+      isPrivate: false
+      description: ""
+      sortKey: -1747904733438.6123
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    parameters:
+      - id: pair_4ee9c1214c0641adabc07a94cd376927
+        name: location
+        value: cattle
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/filter
+    name: priceFilter
+    meta:
+      id: req_bfae9dcefdfd496794439c93b43ffbbc
+      created: 1747926611535
+      modified: 1747926616034
+      isPrivate: false
+      description: ""
+      sortKey: -1747904733365.6187
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    parameters:
+      - id: pair_4ee9c1214c0641adabc07a94cd376927
+        name: location
+        value: cattle
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/return/request
+    name: ReturnRequest
+    meta:
+      id: req_ad0b83a5ea334d4aa8bc95cd2e6054d7
+      created: 1747926663946
+      modified: 1747926687438
+      isPrivate: false
+      description: ""
+      sortKey: -1747904732124.7266
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/return/requestByUser
+    name: ReturnRequestbYUser
+    meta:
+      id: req_25beda99813a4614ae258a49e6e84fb0
+      created: 1747926720739
+      modified: 1747926774831
+      isPrivate: false
+      description: ""
+      sortKey: -1747904731540.7773
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/return/requestByUser
+    name: ReturnRequestUser
+    meta:
+      id: req_be51da0d580649b9a6f4d04d4fa9ed03
+      created: 1747926790057
+      modified: 1748340012469
+      isPrivate: false
+      description: ""
+      sortKey: -1747904731248.8027
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDgyODg3NzAsImV4cCI6MTc0ODM3NTE3MCwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.OvEtt0JO4nWhO6iDgKob7hvvVPlRIG6qevIYEQ_V9O8
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/return/byRequestId/1
+    name: ReturnByIdRequest
+    meta:
+      id: req_9e3446a3d66249fbb52484b8fad3a308
+      created: 1747926835347
+      modified: 1747926844140
+      isPrivate: false
+      description: ""
+      sortKey: -1747904731102.8154
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/return/requestUser
+    name: userRequest
+    meta:
+      id: req_b148231777944acfa4c7aa8b300f1e93
+      created: 1747926872835
+      modified: 1747926884932
+      isPrivate: false
+      description: ""
+      sortKey: -1747904731029.8218
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/return/2/items/3/status
+    name: viewReturnRequest
+    meta:
+      id: req_73b29620f38a4ddf927b14ba2266981d
+      created: 1747926964848
+      modified: 1747926990657
+      isPrivate: false
+      description: ""
+      sortKey: -1747904731066.3186
+    method: PATCH
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDc5MDUyNDIsImV4cCI6MTc0Nzk5MTY0MiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.j19joz-R5FRs_pEub6l7XC3HL2MPiBiEcO5FgkD8IeE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/allOrdersByFarmer
+    name: allOrdersAssociatedFarmer
+    meta:
+      id: req_8eb56e841e064571a9a0102c986d8441
+      created: 1748254509776
+      modified: 1748804490346
+      isPrivate: false
+      description: ""
+      sortKey: -1747904730372.879
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg4MDE4NjUsImV4cCI6MTc0ODg4ODI2NSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.YiEUcObbbAO18iLSPSwjlyzfntEvsrmCHOtxBMLkbFg
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/getAllFarmsByFarmer
+    name: getAllFarmsBYFarmer
+    meta:
+      id: req_001b4351a0764699991dc3af87606f77
+      created: 1748282856196
+      modified: 1748537231691
+      isPrivate: false
+      description: ""
+      sortKey: -1747904730664.8535
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkFzaHRhdmFrcmEgR2l0YSIsInN1YiI6ImltbWFudWVsZGVycnkzMTNAZ21haWwuY29tIiwiaWF0IjoxNzQ4NTM2NzQwLCJleHAiOjE3NDg2MjMxNDAsImF1dGhvcml0aWVzIjpbIlVTRVIiXX0.iiiOPEcYNotRZlm53t57VXXl5fKNNr0EOTYhZiJZd58
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/getAllFarmsByFarmer/with-products
+    name: getAllFarmsBYFarmerWithProducts
+    meta:
+      id: req_d21e3833f18e477ea588cad48135a589
+      created: 1748283288941
+      modified: 1748691464295
+      isPrivate: false
+      description: ""
+      sortKey: -1747904730518.8662
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg2ODczMzksImV4cCI6MTc0ODc3MzczOSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.2mM6ttqpvZRwgBuwdCzFfwsD_P_cMSxvRWAaR2UZtiQ
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/return/allRturnsByFarmer
+    name: ReturnRequestByFarmer
+    meta:
+      id: req_35d6752028d348dfb57beb59918e96fb
+      created: 1748288579153
+      modified: 1748690686253
+      isPrivate: false
+      description: ""
+      sortKey: -1747904730591.8599
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg2ODczMzksImV4cCI6MTc0ODc3MzczOSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.2mM6ttqpvZRwgBuwdCzFfwsD_P_cMSxvRWAaR2UZtiQ
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products
+    name: getAllProducts
+    meta:
+      id: req_0fff73a5b87b412b9d7293880fa6334a
+      created: 1748535871995
+      modified: 1748962827373
+      isPrivate: false
+      description: ""
+      sortKey: -1747904734168.5488
+    method: GET
+    body:
+      mimeType: multipart/form-data
+    parameters:
+      - id: pair_0da1fd314614480baaa91fb4153482ec
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_acf250fa16f1441ca9a21beeb8bda2ec
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg5NjE2MzksImV4cCI6MTc0OTA0ODAzOSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.loRFvdzwEpHSg8EiijDoxMF6P_pd57r6ibJxIX_8y7g
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/products/myProducts
+    name: getAllPoductsForFarmer
+    meta:
+      id: req_c6595bf41be54e98a702cf66fe8bb59d
+      created: 1748536555112
+      modified: 1748962866862
+      isPrivate: false
+      description: ""
+      sortKey: -1747904734022.5615
+    method: GET
+    body:
+      mimeType: multipart/form-data
+    parameters:
+      - id: pair_0da1fd314614480baaa91fb4153482ec
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+        id: pair_acf250fa16f1441ca9a21beeb8bda2ec
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg5NjE2MzksImV4cCI6MTc0OTA0ODAzOSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.loRFvdzwEpHSg8EiijDoxMF6P_pd57r6ibJxIX_8y7g
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/farms/getAllFarmsByFarmer
+    name: getAllFarmsForFarmer
+    meta:
+      id: req_b9aa2a1d2e3945e6a87f1a4a51f7da6f
+      created: 1748537173563
+      modified: 1748691240772
+      isPrivate: false
+      description: ""
+      sortKey: -1747904730628.3567
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg2ODczMzksImV4cCI6MTc0ODc3MzczOSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.2mM6ttqpvZRwgBuwdCzFfwsD_P_cMSxvRWAaR2UZtiQ
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/farmerOrderCount
+    name: getAllFarmerOrderCount
+    meta:
+      id: req_e46c5469d39746e28ce73786fed83035
+      created: 1748538151768
+      modified: 1748590811008
+      isPrivate: false
+      description: ""
+      sortKey: -1747904730646.605
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkhlbnJ5IE1hY0NvdWxleSIsInN1YiI6ImltbWFudWVsZGVycnkzMTFAZ21haWwuY29tIiwiaWF0IjoxNzQ4NTY2NzQ3LCJleHAiOjE3NDg2NTMxNDcsImF1dGhvcml0aWVzIjpbIkFETUlOIl19.DbIRFrgyM6dmPKfP5aTpGQDs0bMRMemQ_X3RpxK_2Kw
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/farmerTotalSales
+    name: getFarmerTotalSales
+    meta:
+      id: req_42e1cdf1e6b5430ebcb25a6d37a687c5
+      created: 1748538205527
+      modified: 1748801898734
+      isPrivate: false
+      description: ""
+      sortKey: -1747904730637.481
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg4MDE4NjUsImV4cCI6MTc0ODg4ODI2NSwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.YiEUcObbbAO18iLSPSwjlyzfntEvsrmCHOtxBMLkbFg
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/monthly-summaryForFarmer
+    name: ordersMonthlyBYFarmer
+    meta:
+      id: req_2ef79a33f55347b9adb6570806f5893f
+      created: 1748558072678
+      modified: 1748565728058
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728917.5679
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_22455d6fe3e64b1baad5d7bc791212bd
+        name: year
+        value: "2025"
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg1NjU2NzgsImV4cCI6MTc0ODY1MjA3OCwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.cUTLajM5_FKWveIyuwqxRS79ePvQc7noIOTnZB28RgU
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8088/api/v1/auth/users/52/roles
+    name: updateUserRole
+    meta:
+      id: req_57f5abe2936b48e0bb0b1926f6945243
+      created: 1748563298544
+      modified: 1749038162930
+      isPrivate: false
+      description: ""
+      sortKey: -1748563298544
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "roleNames": [
+                "ADMIN"
+            ]
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/monthly-revenueFarmer
+    name: revenueMonthlyByFarmer
+    meta:
+      id: req_b9a6a78f18184ce9bc4ec072153c960b
+      created: 1748565776653
+      modified: 1748591925624
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728926.6924
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_33278ecb0c704f4595235e73ed19c96e
+        name: year
+        value: "2025"
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkhlbnJ5IE1hY0NvdWxleSIsInN1YiI6ImltbWFudWVsZGVycnkzMTFAZ21haWwuY29tIiwiaWF0IjoxNzQ4NTkxODk0LCJleHAiOjE3NDg2NzgyOTQsImF1dGhvcml0aWVzIjpbIkFETUlOIl19.rOjvBbUJWFwGdylqRn4_56Hh802YEQ0lxvT3i7uCAm4
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/weekly-summaryByFarmer
+    name: revenueWeeklyByFarmer
+    meta:
+      id: req_f8c36ad05f724faf999fd848bb4fc08d
+      created: 1748592395903
+      modified: 1748611863237
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728928.9734
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_832d4b4b3f8b4ddca6f5e2c9ddd390ff
+        name: year
+        value: "2025"
+        description: ""
+        disabled: false
+      - id: pair_c692e4435c9b42918e89d904378429c6
+        name: month
+        value: "5"
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg2MTE4NDEsImV4cCI6MTc0ODY5ODI0MSwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.u9ejScnnjH7-dfBh6NoqHexSHKus03F2Wt6VGSCr46c
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/revenueWeekly
+    name: revenueWeekly
+    meta:
+      id: req_a875ae02e3b14b9798a31783266f373a
+      created: 1748592932282
+      modified: 1748593053504
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728927.833
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"farmName":"Akonta Farms",
+        	"location":"Tarkwar"
+        	
+        }
+    parameters:
+      - id: pair_4af67bd2a0cc4cb99d2f20b0c51c29ab
+        name: year
+        value: "2025"
+        description: ""
+        disabled: false
+      - id: pair_0bcef1427e1b43ed9e409679765447ae
+        name: month
+        value: "5"
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkhlbnJ5IE1hY0NvdWxleSIsInN1YiI6ImltbWFudWVsZGVycnkzMTFAZ21haWwuY29tIiwiaWF0IjoxNzQ4NTY2NzQ3LCJleHAiOjE3NDg2NTMxNDcsImF1dGhvcml0aWVzIjpbIkFETUlOIl19.DbIRFrgyM6dmPKfP5aTpGQDs0bMRMemQ_X3RpxK_2Kw
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/daily-summaryByFarmer
+    name: revenueDaillyByFarmer
+    meta:
+      id: req_650a445ffa28472bbe9bdc26d183a904
+      created: 1748611659635
+      modified: 1748613485096
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728928.4033
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_832d4b4b3f8b4ddca6f5e2c9ddd390ff
+        name: year
+        value: "2025"
+        description: ""
+        disabled: false
+      - id: pair_c692e4435c9b42918e89d904378429c6
+        name: month
+        value: "5"
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkhlbnJ5IE1hY0NvdWxleSIsInN1YiI6ImltbWFudWVsZGVycnkzMTFAZ21haWwuY29tIiwiaWF0IjoxNzQ4NjEzNDU3LCJleHAiOjE3NDg2OTk4NTcsImF1dGhvcml0aWVzIjpbIkFETUlOIl19.T3QvDDKEiq3MCyKHQJ-9iye4Guvvpub1OW7xaufrDQI
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/return/monthly-returnsForFarmer
+    name: returnsMonthlyByFarmer
+    meta:
+      id: req_1fc5eca8ca0648e99d8d4a725413c368
+      created: 1748685034136
+      modified: 1748685939170
+      isPrivate: false
+      description: ""
+      sortKey: -1747904728924.4111
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    parameters:
+      - id: pair_33278ecb0c704f4595235e73ed19c96e
+        name: year
+        value: "2025"
+        description: ""
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkVtbWFudWVsIERlcnJ5Iiwic3ViIjoiaW1tYW51ZWxkZXJyeTMxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg2ODU4NTgsImV4cCI6MTc0ODc3MjI1OCwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXX0.s_hdnRsHjGWBNS4CDZ45hL1Udl9IV5u2wDd7f8a-qH8
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/order/27/ItemStatus
+    name: changedOrderedItemStatus
+    meta:
+      id: req_9f530a351f934f4abdc959a3028155f7
+      created: 1748714824236
+      modified: 1748782485241
+      isPrivate: false
+      description: ""
+      sortKey: -1747904729022.4963
+    method: PATCH
+    body:
+      mimeType: application/json
+      text: |-
+        
+        {
+        	"itemStatus":"PROCESSED"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg3Njc4NzcsImV4cCI6MTc0ODg1NDI3NywiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.LG8x5oBaOEnmljLUPDf5QUoIi7wzFYW2B1guW4S4nsU
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:8088/api/v1/auth/orderdetails/details/32
+    name: getOrderServiceById
+    meta:
+      id: req_82cf05fa0c624c38808f6ec25453618d
+      created: 1748775039810
+      modified: 1748775686294
+      isPrivate: false
+      description: ""
+      sortKey: -1747904729004.248
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+        disabled: true
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+        disabled: true
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg3Njc4NzcsImV4cCI6MTc0ODg1NDI3NywiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.LG8x5oBaOEnmljLUPDf5QUoIi7wzFYW2B1guW4S4nsU
+        description: ""
+        disabled: true
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8088/api/v1/auth/return/7/items/4/status
+    name: changedReturnedItemStatus
+    meta:
+      id: req_edd2d112640f4755b40d9542e446e88d
+      created: 1748869215200
+      modified: 1748873507136
+      isPrivate: false
+      description: ""
+      sortKey: -1747904729013.372
+    method: PATCH
+    body:
+      mimeType: application/json
+      text: |-
+        
+        {
+        	"newStatus":"APPROVED"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_684ddc2e5f134fcd8f23ab29b2e78db3
+      - name: User-Agent
+        value: insomnia/11.1.0
+        id: pair_bf26064b79144f978f011ce13817b372
+      - id: pair_de712ed8e2954c2ca4575b7512fa0690
+        name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiJ9.eyJmdWxsTmFtZSI6IkpvaG4gQXJ0aHVyIEp1bmlvciIsInN1YiI6ImltbWFudWVsZGVycnkxMEBnbWFpbC5jb20iLCJpYXQiOjE3NDg4NjkyNTgsImV4cCI6MTc0ODk1NTY1OCwiYXV0aG9yaXRpZXMiOlsiRkFSTUVSIl19.5XKEcJTvO_OYk3Q7gug4RTWqDIyr4RGgUujWA0u4CLE
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8088/api/v1/auth/303/roles
+    name: userAndRole
+    meta:
+      id: req_6624377cb224482dbc36e59549879a52
+      created: 1748902896143
+      modified: 1749042998283
+      isPrivate: false
+      description: ""
+      sortKey: -1748234181656.5
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8088/api/v1/auth/allUsers
+    name: allUsers
+    meta:
+      id: req_3b9de6b8ccc640b2897e6bba538f4956
+      created: 1748967007984
+      modified: 1749042904211
+      isPrivate: false
+      description: ""
+      sortKey: -1748069623212.75
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_e2baf5199a1c4ed787a563c86a15cd8e
+        disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8088/api/v1/auth/admins
+    name: allAdmin
+    meta:
+      id: req_200d6119069f45358b7d684b2e866b8b
+      created: 1748971756372
+      modified: 1748971813212
+      isPrivate: false
+      description: ""
+      sortKey: -1747987343990.875
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_e2baf5199a1c4ed787a563c86a15cd8e
+        disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8088/api/v1/auth/users
+    name: allUsers
+    meta:
+      id: req_afa55367cb654e37beb0d316f438320c
+      created: 1748971767562
+      modified: 1748971847403
+      isPrivate: false
+      description: ""
+      sortKey: -1747946204379.9375
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_e2baf5199a1c4ed787a563c86a15cd8e
+        disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8088/api/v1/auth/farmers
+    name: allFarmers
+    meta:
+      id: req_f0ceb234e6ed44918911de0dd990ca23
+      created: 1748971779624
+      modified: 1748971864495
+      isPrivate: false
+      description: ""
+      sortKey: -1747925634574.4688
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_e2baf5199a1c4ed787a563c86a15cd8e
+        disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8088/api/v1/auth/getUserById/103
+    name: getUserById
+    meta:
+      id: req_105320c26797467c9369c286d3bdd8b3
+      created: 1748987238562
+      modified: 1748987267651
+      isPrivate: false
+      description: ""
+      sortKey: -1747915349671.7344
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_e2baf5199a1c4ed787a563c86a15cd8e
+        disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_381473f2f3dc480382a4692239e5fc6eb70277ae
+    created: 1747904640514
+    modified: 1747904640514
+environments:
+  name: Base Environment
+  meta:
+    id: env_381473f2f3dc480382a4692239e5fc6eb70277ae
+    created: 1747904640510
+    modified: 1747904640510
+    isPrivate: false
