@@ -5,7 +5,8 @@ import com.alibou.book.DTO.MoolrePaymentResponse;
 import com.alibou.book.DTO.PaymentData;
 import com.alibou.book.DTO.PaymentStatusRequest;
 import com.alibou.book.Entity.*;
-//import com.alibou.book.Repositories.PaymentStatusRepository;
+import com.alibou.book.Repositories.OrderRepository;
+import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.config.MoolreConfig;
 import com.alibou.book.email.EmailService;
 import com.alibou.book.email.EmailTemplateName;
@@ -44,33 +45,37 @@ public class MoolrePaymentService {
     private final MoolreConfig config;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final PaymentStatusRepository paymentStatusRepository;
     private static final Logger logger = Logger.getLogger(MoolrePaymentService.class.getName());
     private final JavaMailSender mailSender;
     private final UserDetailsService userDetailsService;
     private final SpringTemplateEngine templateEngine;
     private final MNotifyV2SmsService mNotifyV2SmsService;
+    private final OrderRepository orderRepository;
 
+    private final OrderService orderService;
 
-
+private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatusRepository;
+    private final ProductRepository productRepository;
     public User user;
 
     // Thread-safe storage for external references mapped to user IDs (or phone numbers)
     private final Map<String, String> userPaymentReferences = new ConcurrentHashMap<>();
 
-    public MoolrePaymentService(MoolreConfig config, RestTemplate restTemplate, ObjectMapper objectMapper, PaymentStatusRepository paymentStatusRepository,
+    public MoolrePaymentService(MoolreConfig config, RestTemplate restTemplate, ObjectMapper objectMapper,
                                 JavaMailSender mailSender,
-                                UserDetailsService userDetailsService, SpringTemplateEngine templateEngine, MNotifyV2SmsService mNotifyV2SmsService
-                               ) {
+                                UserDetailsService userDetailsService, SpringTemplateEngine templateEngine, MNotifyV2SmsService mNotifyV2SmsService,
+                                OrderRepository orderRepository, OrderService orderService, com.alibou.book.Repositories.PaymentStatusRepository paymentStatusRepository, ProductRepository productRepository) {
         this.config = config;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
-        this.paymentStatusRepository = paymentStatusRepository;
-        //  this.paymentStatusRepository = paymentStatusRepository;
         this.mailSender = mailSender;
         this.userDetailsService = userDetailsService;
         this.templateEngine = templateEngine;
         this.mNotifyV2SmsService = mNotifyV2SmsService;
+        this.orderRepository = orderRepository;
+        this.orderService = orderService;
+        this.paymentStatusRepository = paymentStatusRepository;
+        this.productRepository = productRepository;
     }
 
     /**
@@ -81,21 +86,28 @@ public class MoolrePaymentService {
     public MoolrePaymentResponse initiatePayment(Principal principal, MoolrePaymentRequest request) {
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
         this.user = user;
+       // String externalRef = getOrCreateExternalReference(user, recordId);
 
+       String externalRef = generateReference();
         HttpHeaders headers = createHeaders();
         request.setAccountnumber(config.getAccountNumber());
         request.setCurrency("GHS");
         request.setType(1);
-
-       String externalRef = generateReference();
+        request.setReference("Optimus");
+        if (externalRef == null || externalRef.isEmpty()) {
+            throw new PaymentProcessingException("Failed to generate payment reference");
+        }
         request.setExternalref(externalRef);
+
+        System.out.println("Using the external Ref as " + externalRef);
+
+        this.orderService.placeOrder(principal,externalRef);
 
         log.info("Payment initiated for User: {} with External Ref: {}", principal.getName(), externalRef);
         System.out.println("For the webhook " + externalRef);
-
+        System.out.print("The resquest data for the OTP " + request);
         // Store externalRef for this user session
         userPaymentReferences.put(principal.getName(), externalRef);
-
         HttpEntity<MoolrePaymentRequest> entity = new HttpEntity<>(request, headers);
 
         try {
@@ -121,6 +133,26 @@ public class MoolrePaymentService {
             log.error("Payment initiation failed: {}", e.getMessage(), e);
             throw new PaymentProcessingException("Failed to process payment. Please try again later.", e);
         }
+    }
+
+    private String getOrCreateExternalReference(User user, String recordId) {
+        if (recordId != null) {
+            Optional<Order> recordOpt = orderRepository.findById(Long.valueOf(recordId));
+            if (recordOpt.isPresent()) {
+                Order record = recordOpt.get();
+                if (record.getPaymentStatus() == PaymentStatus.PENDING &&
+                        record.getCustomer().equals(String.valueOf(user.getId()))) {
+
+                    // Generate new reference only when updating existing record
+                    String externalRef = generateReference();
+                    record.setExternalRef(externalRef);
+                   // record.setLastUpdated(Instant.now());
+                    orderRepository.save(record);
+                    return externalRef;
+                }
+            }
+        }
+        return recordId;
     }
 
     /**
@@ -287,6 +319,8 @@ public class MoolrePaymentService {
      * Processes webhook payment status updates.
      * Updates the corresponding ExamCheckRecord's PaymentStatus field.
      */
+
+
     @Transactional
     public void processPaymentStatusRequest(PaymentStatusRequest paymentStatusRequest) {
         if (paymentStatusRequest == null || paymentStatusRequest.getData() == null) {
@@ -302,17 +336,35 @@ public class MoolrePaymentService {
 
         // Save webhook data to PaymentStatus table
         PaymentStatuss paymentStatus = mapToPaymentStatus(paymentStatusRequest);
-       // paymentStatusRepository.save(paymentStatus);
+        paymentStatusRepository.save(paymentStatus);
 
         // Update ExamCheckRecord based on webhook response
        // updateExamCheckRecordFromWebhook(paymentData);
 
         // Send notifications if payment was successful
         if (paymentData.getTxstatus() == 1) {
+            Order order = orderRepository.findByExternalRef(paymentData.getExternalref())
+                    .orElseThrow(() -> new RuntimeException("Order not found"));
+            for (OrderDetails item : order.getOrderDetails()) {
+                Product product = item.getProduct();
+                int newQty = product.getQuantity() - item.getQuantity();
+                if (newQty < 0) {
+                    throw new RuntimeException("Insufficient stock for product: " + product.getProductName());
+                }
+                product.setQuantity(newQty);
+                productRepository.save(product);
+               //productRepository.save(product);
+            }
+
+            order.setPaid(true);
+//            order.setStatus(OrderStatus.PENDING);
+//            order.setOrdersStatus(OrdersStatus.PENDING);
+            orderRepository.save(order);
+            System.out.println("hellow see the status value " + paymentData.getTxstatus());
+            System.out.println("hellow see the external ref " + paymentData.getExternalref());
             sendPaymentSuccessEmail(paymentData);
             sendPaymentSuccessNotification(paymentData);
         }
-
         logger.info("Payment status processed and saved successfully for transaction: " + paymentData.getTransactionid());
     }
 
@@ -343,7 +395,7 @@ public class MoolrePaymentService {
     /**
      * Determines PaymentStatus based on transaction status from webhook.
      */
-//    private PaymentStatus determinePaymentStatus(int txStatus) {
+//    private PaymentStatus c(int txStatus) {
 //        return txStatus == 1 ? PaymentStatus.PAID : PaymentStatus.FAILED;
 //    }
 
@@ -409,6 +461,7 @@ public class MoolrePaymentService {
         paymentStatus.setExternalRef(data.getExternalref());
         paymentStatus.setThirdPartyRef(data.getThirdpartyref());
         paymentStatus.setTimestamp(data.getTs());
+        paymentStatus.setTxStatus(data.getTxstatus());
         return paymentStatus;
     }
 

@@ -34,6 +34,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
+    @Column(name = "external_ref", nullable = false) // Must match DB schema
+    private String externalRef= "DEFAULT_EXT_REF";
+
 
     @Enumerated(EnumType.STRING)
     private OrdersStatus ordersStatus;
@@ -44,8 +50,8 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User customer;
 
-    @Embedded
-    private Delivery deliveryInfo;
+//    @Embedded
+//    private Delivery deliveryInfo;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     private List<OrderDetails> orderDetails;

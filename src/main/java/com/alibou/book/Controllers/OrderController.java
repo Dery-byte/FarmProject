@@ -43,11 +43,11 @@ public class OrderController {
 
 
 
-    @PostMapping("/placeOrder")
-    public ResponseEntity<Order> checkout(Principal principal,@Valid @RequestBody PlaceOrderRequest request ) {
-        Order order = orderService.placeOrder(principal,request);
-        return ResponseEntity.ok(order);
-    }
+//    @PostMapping("/placeOrder")
+//    public ResponseEntity<Order> checkout(Principal principal ) {
+//        Order order = orderService.placeOrder(principal);
+//        return ResponseEntity.ok(order);
+//    }
 
 
     @GetMapping("/allOrdersByUser")

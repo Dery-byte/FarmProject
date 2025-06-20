@@ -1,9 +1,11 @@
 package com.alibou.book.user;
 
+import com.alibou.book.Entity.Delivery;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.role.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -44,7 +46,9 @@ public class User implements UserDetails, Principal {
     private String phoneNummber;
 
 //    private String recipient;
-
+@JsonManagedReference
+@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+private Delivery delivery;
 
     private LocalDate dateOfBirth;
 

@@ -1,19 +1,25 @@
 package com.alibou.book.Entity;
 
+import com.alibou.book.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-@Embeddable
+
+@Entity
+@Table(name = "delivery_info")  // Explicitly define the table name
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@Entity
-//@Table(name = "deliveries")
-//@Data
 public class Delivery {
-    @Column(nullable = false, length = 100)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = true, length = 100)
     private String recipientName;
 
     @Column(nullable = false, length = 20)
@@ -25,8 +31,8 @@ public class Delivery {
     @Column(length = 200)
     private String street;
 
-    @Column(nullable = false, length = 100)
-    private String area;
+    @Column(length = 100)
+    private String area = "Accra";
 
     @Column(nullable = false, length = 200)
     private String district;
@@ -34,19 +40,18 @@ public class Delivery {
     @Column(nullable = false, length = 50)
     private String region;
 
-
-
-
     @Column(nullable = false, length = 100)
     private String notes;
 
     @Column(nullable = false, length = 20)
     private String landmark;
 
-//    @Column(nullable = false, length = 50)
-//    private String region;
 
-    // Business logic validation
+    @JsonBackReference
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     public void validate() {
         if (recipientName == null || recipientName.isBlank()) {
             throw new IllegalArgumentException("Recipient name is required");

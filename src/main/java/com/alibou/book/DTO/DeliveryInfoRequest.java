@@ -1,28 +1,37 @@
 package com.alibou.book.DTO;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class DeliveryInfoRequest {
-    @NotBlank private String recipientName;
-    @NotBlank private String phoneNumber;
-    @NotBlank private String digitalAddress;
 
-//    private String addressLine2;
+    @NotBlank(message = "Recipient name is required")
+    private String recipientName;
 
+    @NotBlank(message = "Phone number is required")
+    private String phoneNumber;
 
-//    @NotBlank private String city;
-//    @NotBlank private String postalCode;
+    @NotBlank(message = "Digital address is required")
+    private String digitalAddress;
 
-    @NotBlank private String street;
-    @NotBlank private String area;
+    private String street;
 
-    @NotBlank private String district;
+    private String area;
 
-    @NotBlank private String region;
-    @NotBlank private String notes;
-    @NotBlank private String landmark;
+    @NotBlank(message = "District is required")
+    private String district;
+
+    @NotBlank(message = "Region is required")
+    private String region;
+
+    @NotBlank(message = "Notes are required")
+    private String notes;
+
+    @NotBlank(message = "Landmark is required")
+    private String landmark;
 }

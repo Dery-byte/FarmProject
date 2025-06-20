@@ -29,6 +29,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
         Optional<Order> findByIdAndCustomer(Long id, User customer);
+
+    Optional<Order> findByExternalRef(String externalref);
+
     public interface OrderDetailsRepository extends JpaRepository<OrderDetails, Long> {
         Optional<OrderDetails> findByOrderIdAndProductId(Long orderId, Long productId);
 

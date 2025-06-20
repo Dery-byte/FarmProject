@@ -2,6 +2,7 @@ package com.alibou.book.Services;
 import com.alibou.book.DTO.*;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.*;
+import com.alibou.book.Repositories.PaymentStatusRepository;
 import com.alibou.book.Repositories.Projections.WeeklyRevenueSummary;
 import com.alibou.book.exception.InsufficientStockException;
 import com.alibou.book.exception.ResourceNotFoundException;
@@ -40,6 +41,8 @@ public class OrderService {
     private final DelegatingApplicationListener delegatingApplicationListener;
     private final PaymentRepository paymentRepository;
     private final OrderDetailsRepository orderDetailsRepository;
+
+    private final PaymentStatusRepository paymentStatusRepository;
 //    private final UserRepository userRepository;
 //@Transactional
 //public Order placeOrder(Principal principal) {
@@ -157,7 +160,7 @@ public class OrderService {
 
 
     @Transactional
-    public Order placeOrder(Principal principal, PlaceOrderRequest request) {
+    public Order placeOrder(Principal principal, String externalRef) {
         // 1. Get user cart
         Cart cart = cartService.getUserCart(principal);
         if (cart.getItems().isEmpty()) {
@@ -173,18 +176,18 @@ public class OrderService {
         }
 
         // 3. Validate and create delivery info
-        Delivery deliveryInfo = new Delivery(
-                request.getDelivery().getRecipientName(),
-                request.getDelivery().getPhoneNumber(),
-                request.getDelivery().getDigitalAddress(),
-                request.getDelivery().getArea(),
-                request.getDelivery().getDistrict(),
-                request.getDelivery().getNotes(),
-                request.getDelivery().getLandmark(),
-                request.getDelivery().getStreet(),
-                request.getDelivery().getRegion()
-        );
-        deliveryInfo.validate(); // Throws IllegalArgumentException if invalid
+//        Delivery deliveryInfo = new Delivery(
+//                request.getDelivery().getRecipientName(),
+//                request.getDelivery().getPhoneNumber(),
+//                request.getDelivery().getDigitalAddress(),
+//                request.getDelivery().getArea(),
+//                request.getDelivery().getDistrict(),
+//                request.getDelivery().getNotes(),
+//                request.getDelivery().getLandmark(),
+//                request.getDelivery().getStreet(),
+//                request.getDelivery().getRegion()
+//        );
+       // deliveryInfo.validate(); // Throws IllegalArgumentException if invalid
 
         // 4. Create order with delivery info
         Order order = new Order();
@@ -194,24 +197,28 @@ public class OrderService {
         order.setOrdersStatus(OrdersStatus.PENDING);
         order.setStatus(OrderStatus.PENDING);
         order.setPaid(false);
-        order.setDeliveryInfo(deliveryInfo);
-
+        order.setExternalRef(externalRef);
+      //  order.setDeliveryInfo(deliveryInfo);
+       // order.setExternalRef(request.getDelivery().getExternalRef());
         // 5. Create and attach payment
-        Payment payment = new Payment();
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setAmount(cartService.getCartTotal(cart));
-        payment.setPaymentMethod(PaymentMethod.MOBILE_MONEY);
-        payment.setStatus(PaymentStatus.PENDING);
-        payment.setTransactionId("999987363536839");
-        payment.setOrder(order);
-        paymentRepository.save(payment);
+//        PaymentStatuss payment = new PaymentStatuss();
+//        //payment.setTimestamp(String.valueOf(LocalDateTime.now()));
+//       // payment.setPaymentDate(LocalDateTime.now());
+//        payment.setAmount(cartService.getCartTotal(cart));
+//       // payment.setPaymentMethod(PaymentMethod.MOBILE_MONEY);
+//        payment.setExternalRef(externalRef);
+//        //payment.setStatus(PaymentStatus.PENDING);
+//        payment.setTransactionId(Long.parseLong("999987363536839"));
+//       // payment.
+//        //payment.setOrder(order);
+//        paymentStatusRepository.save(payment);
 
         // 6. Convert cart items to order details and deduct stock
         List<OrderDetails> orderDetailsList = cart.getItems().stream()
                 .map(item -> {
                     Product product = item.getProduct();
                     // Deduct stock now that validation is passed
-                    product.setQuantity(product.getQuantity() - item.getQuantity());
+                   // product.setQuantity(product.getQuantity() - item.getQuantity());
                     productRepository.save(product);
 
                     OrderDetails detail = new OrderDetails();
@@ -361,9 +368,6 @@ public class OrderService {
                 startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX));
     }
 
-
-
-
     public List<MonthlyRevenueSummary> getMonthlyRevenue(int year) {
         List<Object[]> results = orderRepository.getMonthlyRevenue(year);
         List<MonthlyRevenueSummary> summary = new ArrayList<>();
@@ -472,17 +476,17 @@ public class OrderService {
         // dto.setTotalAmount(order.getTotalAmount());
         dto.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
 
-        DeliveryDetailsDTO deliveryDTO = new DeliveryDetailsDTO();
-        deliveryDTO.setDeliveryNote(order.getDeliveryInfo().getNotes());
-        deliveryDTO.setArea(order.getDeliveryInfo().getArea());
-        deliveryDTO.setRecipient(order.getDeliveryInfo().getRecipientName());
-        deliveryDTO.setPhone(order.getDeliveryInfo().getPhoneNumber());
-        deliveryDTO.setGpsAddress(order.getDeliveryInfo().getDigitalAddress());
-        deliveryDTO.setMajorLandmark(order.getDeliveryInfo().getLandmark());
-        deliveryDTO.setRegion(order.getDeliveryInfo().getRegion());
-        deliveryDTO.setStreet(order.getDeliveryInfo().getStreet());
-        deliveryDTO.setDistrict(order.getDeliveryInfo().getDistrict());
-        dto.setDeliveryDetails(deliveryDTO);
+//        DeliveryDetailsDTO deliveryDTO = new DeliveryDetailsDTO();
+//        deliveryDTO.setDeliveryNote(order.getDeliveryInfo().getNotes());
+//        deliveryDTO.setArea(order.getDeliveryInfo().getArea());
+//        deliveryDTO.setRecipient(order.getDeliveryInfo().getRecipientName());
+//        deliveryDTO.setPhone(order.getDeliveryInfo().getPhoneNumber());
+//        deliveryDTO.setGpsAddress(order.getDeliveryInfo().getDigitalAddress());
+//        deliveryDTO.setMajorLandmark(order.getDeliveryInfo().getLandmark());
+//        deliveryDTO.setRegion(order.getDeliveryInfo().getRegion());
+//        deliveryDTO.setStreet(order.getDeliveryInfo().getStreet());
+//        deliveryDTO.setDistrict(order.getDeliveryInfo().getDistrict());
+//        dto.setDeliveryDetails(deliveryDTO);
 
         OrderSummaryDTO summary = new OrderSummaryDTO();
         summary.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
@@ -726,6 +730,113 @@ OrderedItemStatusHistory orderedItemStatusHistory = new  OrderedItemStatusHistor
             case DELIVERED -> OrdersStatus.DELIVERED;
             default -> OrdersStatus.PENDING;
         };
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // New Methods
+
+
+    @Transactional
+    public Order placeOrderAfterPayment(Principal principal, String transactionId) {
+        // 1. Get user cart
+        Cart cart = cartService.getUserCart(principal);
+        if (cart.getItems().isEmpty()) {
+            throw new IllegalStateException("Cannot place order: Cart is empty");
+        }
+
+        // 2. Validate stock
+        for (CartItem item : cart.getItems()) {
+            Product product = item.getProduct();
+            if (product.getQuantity() < item.getQuantity()) {
+                throw new InsufficientStockException("Insufficient stock for product: " + product.getProductName());
+            }
+        }
+
+        // 3. Create basic order (without delivery info)
+        Order order = new Order();
+        order.setOrderDate(LocalDateTime.now());
+        order.setCustomer(cart.getUser());
+        order.setAmount(cartService.getCartTotal(cart));
+        //order.setOrdersStatus(OrdersStatus.PROCESSING);
+        //order.setStatus(OrderStatus.PROCESSING);
+        order.setPaid(true); // Since payment is confirmed
+       // order.setDeliveryInfo(deliveryInfo);
+
+
+        // 4. Create payment record
+        Payment payment = new Payment();
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setAmount(cartService.getCartTotal(cart));
+        payment.setPaymentMethod(PaymentMethod.MOBILE_MONEY);
+        payment.setStatus(PaymentStatus.COMPLETED);
+        payment.setTransactionId(transactionId);
+        payment.setOrder(order);
+        paymentRepository.save(payment);
+
+        // 5. Convert cart items to order details and deduct stock
+        List<OrderDetails> orderDetailsList = cart.getItems().stream()
+                .map(item -> {
+                    Product product = item.getProduct();
+                    product.setQuantity(product.getQuantity() - item.getQuantity());
+                    productRepository.save(product);
+
+                    OrderDetails detail = new OrderDetails();
+                    detail.setOrder(order);
+                    detail.setProduct(product);
+                    detail.setQuantity(item.getQuantity());
+                    detail.setPrice(item.getPrice());
+                    return detail;
+                })
+                .toList();
+
+        order.setOrderDetails(orderDetailsList);
+        Order savedOrder = orderRepository.save(order);
+
+        // 6. Clear cart only after successful order placement
+        cart.getItems().clear();
+        cartRepository.save(cart);
+
+        return savedOrder;
     }
 
 
