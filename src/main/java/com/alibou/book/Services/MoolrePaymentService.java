@@ -450,8 +450,10 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
      * Maps the webhook request to the domain model
      */
     private PaymentStatuss mapToPaymentStatus(PaymentStatusRequest request) {
+
         PaymentData data = request.getData();
         PaymentStatuss paymentStatus = new PaymentStatuss();
+
         paymentStatus.setTxStatus(data.getTxstatus());
         paymentStatus.setPayer(data.getPayer());
         paymentStatus.setPayee(data.getAccountnumber());
@@ -461,9 +463,25 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
         paymentStatus.setExternalRef(data.getExternalref());
         paymentStatus.setThirdPartyRef(data.getThirdpartyref());
         paymentStatus.setTimestamp(data.getTs());
-        paymentStatus.setTxStatus(data.getTxstatus());
+
+        Optional<Order> optionalOrder = orderRepository.findByExternalRef(data.getExternalref());
+        Order order = optionalOrder.orElseThrow(() ->
+                new IllegalStateException("No order found for externalRef: " + data.getExternalref())
+        );
+
+        paymentStatus.setCustomer(order.getCustomer());
+
+        if (!order.getOrderDetails().isEmpty()) {
+            paymentStatus.setFarmer(
+                    order.getOrderDetails().getFirst().getProduct().getFarmer()
+            );
+        } else {
+            throw new IllegalStateException("Order has no order details: " + order.getId());
+        }
+
         return paymentStatus;
     }
+
 
     /**
      * Validates the webhook secret

@@ -39,6 +39,7 @@ public class PaymentService {
         payment.setTransactionId(request.getTransactionId());
         payment.setOrder(order);
 
+
         order.setPaid(true);
         order.setStatus(COMPLETED);
 
