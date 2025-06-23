@@ -24,6 +24,9 @@ public class OrderDto {
 
     private DeliveryDetailsDTO deliveryDetails;
 
+
+    private DeliveryDTO delivery;
+
     private OrderSummaryDTO summary;
     private List<OrderStatusHistory> orderStatusHistoryList;
 

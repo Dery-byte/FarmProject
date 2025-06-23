@@ -476,18 +476,18 @@ public class OrderService {
         // dto.setTotalAmount(order.getTotalAmount());
         dto.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
 
-//        DeliveryDetailsDTO deliveryDTO = new DeliveryDetailsDTO();
-//        deliveryDTO.setDeliveryNote(order.getDeliveryInfo().getNotes());
-//        deliveryDTO.setArea(order.getDeliveryInfo().getArea());
-//        deliveryDTO.setRecipient(order.getDeliveryInfo().getRecipientName());
-//        deliveryDTO.setPhone(order.getDeliveryInfo().getPhoneNumber());
-//        deliveryDTO.setGpsAddress(order.getDeliveryInfo().getDigitalAddress());
-//        deliveryDTO.setMajorLandmark(order.getDeliveryInfo().getLandmark());
-//        deliveryDTO.setRegion(order.getDeliveryInfo().getRegion());
-//        deliveryDTO.setStreet(order.getDeliveryInfo().getStreet());
-//        deliveryDTO.setDistrict(order.getDeliveryInfo().getDistrict());
-//        dto.setDeliveryDetails(deliveryDTO);
+        DeliveryDTO deliveryDTO = new DeliveryDTO();
 
+        deliveryDTO.setNotes(order.getCustomer().getDelivery().getNotes());
+        deliveryDTO.setArea(order.getCustomer().getDelivery().getArea());
+        deliveryDTO.setRecipientName(order.getCustomer().getDelivery().getRecipientName());
+        deliveryDTO.setPhoneNumber(order.getCustomer().getDelivery().getPhoneNumber());
+        deliveryDTO.setDigitalAddress(order.getCustomer().getDelivery().getDigitalAddress());
+        deliveryDTO.setLandmark(order.getCustomer().getDelivery().getLandmark());
+        deliveryDTO.setRegion(order.getCustomer().getDelivery().getRegion());
+        deliveryDTO.setStreet(order.getCustomer().getDelivery().getStreet());
+        deliveryDTO.setDistrict(order.getCustomer().getDelivery().getDistrict());
+        dto.setDelivery(deliveryDTO);
         OrderSummaryDTO summary = new OrderSummaryDTO();
         summary.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
         //summary.setTotalAmount(order.getTotalAmount());
