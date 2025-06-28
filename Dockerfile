@@ -10,36 +10,38 @@
 ## RUNTIME STAGE
 #FROM openjdk:22-jdk-slim
 #WORKDIR /app
-#COPY --from=build /app/target/exam-docker.jar exam-docker.jar
+#COPY --from=build /app/target/*.jar farm-docker.jar
 #EXPOSE 8080
-#ENTRYPOINT ["java", "-jar", "exam-docker.jar"]
+#ENTRYPOINT ["java", "-jar", "farm-docker.jar"]
 
 
 
 
 
 
+# BUILD STAGE
+#FROM maven:3.9.4-amazoncorretto-17 AS build
+#WORKDIR /app
+#COPY pom.xml .
+#COPY src ./src
+#RUN mvn clean package -DskipTests
+#
+## RUNTIME STAGE
+#FROM openjdk:20-slim
+#WORKDIR /app
+#COPY --from=build /app/target/*.jar app.jar
+#EXPOSE 8080
+#ENTRYPOINT ["java", "-jar", "app.jar"]
 
-# BUILD STAGE - Using different Maven version
-FROM maven:3.8.6-amazoncorretto-11 AS build
+
+FROM maven:3.9.4-amazoncorretto-21-debian AS build
 WORKDIR /app
-
-# Copy pom.xml and download dependencies
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Copy source code
-COPY src ./src
-
-# Build the application
+#RUN mvn dependency:go-offline
+COPY . .
 RUN mvn clean package -DskipTests
 
-# RUNTIME STAGE
-FROM amazoncorretto:11-alpine-jdk
+FROM openjdk:21-slim
 WORKDIR /app
-
-# Copy the built jar file
-COPY --from=build /app/target/*.jar exam-docker.jar
-
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "exam-docker.jar"]
+COPY --from=build /app/target/farm-docker.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
