@@ -46,5 +46,5 @@ RUN mvn clean package -DskipTests
 FROM openjdk:21-slim
 ENV JAVA_OPTS="--enable-preview"
 WORKDIR /app
-COPY --from=build /app/target/farm-docker.jar farm.jar
-ENTRYPOINT ["java", "-jar", "farm-docker.jar"]
+COPY --from=build /app/target/farm-docker.jar farm-docker.jar
+ENTRYPOINT ["java",  "--enable-preview", "-jar", "farm-docker.jar"]
