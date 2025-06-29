@@ -34,7 +34,9 @@
 #ENTRYPOINT ["java", "-jar", "app.jar"]
 
 
-FROM maven:3.9.4-amazoncorretto-21-debian AS build
+#FROM maven:3.9.4-amazoncorretto-21-debian AS build
+
+FROM maven:3.9.4-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY pom.xml .
 #RUN mvn dependency:go-offline
@@ -42,6 +44,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 FROM openjdk:21-slim
+ENV JAVA_OPTS="--enable-preview"
 WORKDIR /app
-COPY --from=build /app/target/farm-docker.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY --from=build /app/target/farm-docker.jar farm.jar
+ENTRYPOINT ["java", "-jar", "farm-docker.jar"]
