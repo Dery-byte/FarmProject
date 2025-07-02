@@ -3,8 +3,11 @@ package com.alibou.book.Entity;
 import com.alibou.book.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +15,10 @@ import java.util.List;
 @Entity
 @Table(name = "products")
 @Data
+@Builder
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

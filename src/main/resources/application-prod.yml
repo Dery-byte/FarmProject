@@ -13,7 +13,6 @@ spring:
         format_sql: true
 #        default_schema: farmDB
     database-platform: org.hibernate.dialect.SQLServer2016Dialect
-
   mail:
     host: smtp.gmail.com
     port: 587
@@ -33,6 +32,8 @@ spring:
           writetimeout: 5000
           ssl:
             trust: smtp.gmail.com
+
+
 
   security:
     oauth2:
@@ -84,3 +85,7 @@ price:
   ranges:
     step-size: 50.0
     max-before-plus: 200.0
+cloudinary:
+  cloud-name: dchrz8cke
+  api-key: 671581399874922
+  api-secret: CO2iff1or7s7Y6GP5C5CKKQsvc0

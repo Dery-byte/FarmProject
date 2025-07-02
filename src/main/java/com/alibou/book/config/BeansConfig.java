@@ -56,7 +56,9 @@ public class BeansConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",           // Development
                 "https://farm-4fa35.web.app"       // Production
-        ));        config.setAllowedHeaders(Arrays.asList(
+        ));
+
+        config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.ORIGIN,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT,

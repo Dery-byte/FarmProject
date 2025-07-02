@@ -14,6 +14,14 @@ import com.alibou.book.config.PriceRangeConfig;
 import com.alibou.book.file.FileStorageService;
 import com.alibou.book.file.FileStorageServices;
 import com.alibou.book.user.User;
+//import com.azure.storage.blob.BlobClient;
+//import com.azure.storage.blob.BlobContainerClient;
+//import com.azure.storage.blob.BlobContainerClientBuilder;
+//import com.azure.storage.blob.BlobServiceClient;
+//import com.azure.storage.blob.models.PublicAccessType;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +31,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,13 +47,12 @@ public class ProductService {
     private final UserDetailsService userDetailsService;
     private final FarmRepository farmRepository;
     private final OrderDetailsRepository orderDetailsRepository;
-private final PriceRangeConfig priceRangeConfig;
-private final FileStorageServices fileStorageServices;
+    private final PriceRangeConfig priceRangeConfig;
+    private final FileStorageServices fileStorageServices;
+   // private final BlobServiceClient blobServiceClient; // Injected Azure client
+    private final Cloudinary cloudinary;
 
-
-
-
-
+    private final String containerName = "product-images"; // Your container name
 
 
     @Value("${application.file.upload-dir}")
@@ -112,87 +118,403 @@ private final FileStorageServices fileStorageServices;
 //    }
 
 
+//    public Product addProduct(ProductRequestDTO productRequest, Principal principal) throws IOException {
+//        // Authentication check
+//        if (principal == null) {
+//            throw new IllegalArgumentException("User must be authenticated to add a product.");
+//        }
+//
+//        // Load user and validate farm
+//        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+//        Long farmId = productRequest.getFarmId();
+//        if (farmId == null) {
+//            throw new IllegalArgumentException("Farm ID must be provided.");
+//        }
+//        Farm farm = farmRepository.findById(farmId)
+//                .orElseThrow(() -> new IllegalArgumentException("Farm not found with ID: " + farmId));
+//
+//        // Validate and process images
+//        List<MultipartFile> imageFiles = productRequest.getImages(); // 👈 now multiple images
+//        if (imageFiles == null || imageFiles.isEmpty()) {
+//            throw new IllegalArgumentException("At least one product image is required.");
+//        }
+//
+//        // Create upload directory if it doesn't exist
+//        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+//        try {
+//            Files.createDirectories(uploadPath);
+//        } catch (IOException e) {
+//            throw new RuntimeException("Could not create the upload directory.", e);
+//        }
+//
+//        List<String> imageUrls = new ArrayList<>();
+//
+//        for (MultipartFile imageFile : imageFiles) {
+//            if (imageFile.isEmpty()) continue; // Skip empty files
+//
+//            // Generate unique filename
+//            String originalFilename = imageFile.getOriginalFilename();
+//            String fileExtension = originalFilename != null
+//                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+//                    : "";
+//            String fileName = UUID.randomUUID() + "_" + (originalFilename != null ? originalFilename : "image") + fileExtension;
+//
+//            // Save file
+//            Path targetLocation = uploadPath.resolve(fileName);
+//            try {
+//                Files.copy(imageFile.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+//            } catch (IOException ex) {
+//                throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+//            }
+//
+//            // Add URL to list
+//            imageUrls.add("/uploads/" + fileName);
+//        }
+//
+//        // Create and save product
+//        Product product = new Product();
+//        product.setProductName(productRequest.getProductName());
+//        product.setDescription(productRequest.getDescription());
+//        product.setPrice(productRequest.getPrice());
+//        product.setQuantity(productRequest.getQuantity());
+//        product.setCategory(productRequest.getCategory());
+//
+//
+//        product.setWeight(productRequest.getWeight());
+//        product.setBreed(productRequest.getBreed());
+//        product.setHealthStatus(productRequest.getHealthStatus());
+//        product.setCondition(productRequest.getCondition());
+//        product.setGender(productRequest.getGender());
+//        product.setAge(productRequest.getAge());
+//
+//
+//        product.setFarm(farm);
+//        product.setFarmer(user);
+//        product.setImageUrls(imageUrls); // 👈 SET the List of image URLs
+//
+//        return productRepository.save(product);
+//    }
+//
+//    @Transactional
+//    public Product addProduct(ProductRequestDTO productRequest, Principal principal) throws IOException {
+//        validateRequest(productRequest, principal);
+//
+//        User user = getAuthenticatedUser(principal);
+//        Farm farm = getFarm(productRequest.getFarmId());
+//
+//        List<String> imageUrls = uploadImages(productRequest.getImages());
+//
+//        try {
+//            Product product = createProduct(productRequest, farm, user, imageUrls);
+//            return productRepository.save(product);
+//        } catch (Exception e) {
+//            // Clean up uploaded images if product creation fails
+//            deleteUploadedImages(imageUrls);
+//            throw e;
+//        }
+//    }
+//
+//    private void validateRequest(ProductRequestDTO productRequest, Principal principal) {
+//        if (principal == null) {
+//            throw new IllegalArgumentException("User must be authenticated to add a product.");
+//        }
+//        if (productRequest.getFarmId() == null) {
+//            throw new IllegalArgumentException("Farm ID must be provided.");
+//        }
+//        if (productRequest.getImages() == null || productRequest.getImages().isEmpty()) {
+//            throw new IllegalArgumentException("At least one product image is required.");
+//        }
+//    }
+//
+//    private User getAuthenticatedUser(Principal principal) {
+//        return (User) userDetailsService.loadUserByUsername(principal.getName());
+//    }
+//
+//    private Farm getFarm(Long farmId) {
+//        return farmRepository.findById(farmId)
+//                .orElseThrow(() -> new IllegalArgumentException("Farm not found with ID: " + farmId));
+//    }
+//
+//    private List<String> uploadImages(List<MultipartFile> imageFiles) throws IOException {
+//        BlobContainerClient containerClient = getOrCreateContainer();
+//        List<String> imageUrls = new ArrayList<>();
+//        List<String> uploadedFileNames = new ArrayList<>();
+//
+//        try {
+//            for (MultipartFile imageFile : imageFiles) {
+//                if (imageFile.isEmpty()) continue;
+//
+//                String fileName = generateUniqueFileName(imageFile);
+//                String blobUrl = uploadFileToBlobStorage(containerClient, imageFile, fileName);
+//
+//                imageUrls.add(blobUrl);
+//                uploadedFileNames.add(fileName);
+//            }
+//            return imageUrls;
+//        } catch (Exception e) {
+//            // Clean up any successfully uploaded files if one fails
+//            uploadedFileNames.forEach(name -> containerClient.getBlobClient(name).deleteIfExists());
+//            throw e;
+//        }
+//    }
+//
+//    private BlobContainerClient getOrCreateContainer() {
+//        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
+//
+//        if (!containerClient.exists()) {
+//            containerClient.create();
+//            containerClient.setAccessPolicy(PublicAccessType.BLOB, null);
+//        }
+//
+//        return containerClient;
+//    }
+//
+//    private String generateUniqueFileName(MultipartFile file) {
+//        String originalFilename = file.getOriginalFilename();
+//        String fileExtension = originalFilename != null ?
+//                originalFilename.substring(originalFilename.lastIndexOf('.')) : ".jpg";
+//        return "product_" + UUID.randomUUID() + fileExtension;
+//    }
+//
+//    private String uploadFileToBlobStorage(BlobContainerClient containerClient,
+//                                           MultipartFile file,
+//                                           String fileName) throws IOException {
+//        BlobClient blobClient = containerClient.getBlobClient(fileName);
+//
+//        try (InputStream inputStream = file.getInputStream()) {
+//            blobClient.upload(inputStream, file.getSize(), true);
+//
+//            // Verify upload was successful
+//            if (!blobClient.exists()) {
+//                throw new IOException("Failed to verify uploaded file: " + fileName);
+//            }
+//
+//            return blobClient.getBlobUrl();
+//        }
+//    }
+//
+//    private Product createProduct(ProductRequestDTO request,
+//                                  Farm farm,
+//                                  User user,
+//                                  List<String> imageUrls) {
+//        return Product.builder()
+//                .productName(request.getProductName())
+//                .description(request.getDescription())
+//                .price(request.getPrice())
+//                .quantity(request.getQuantity())
+//                .category(request.getCategory())
+//                .weight(request.getWeight())
+//                .breed(request.getBreed())
+//                .healthStatus(request.getHealthStatus())
+//                .condition(request.getCondition())
+//                .gender(request.getGender())
+//                .age(request.getAge())
+//                .farm(farm)
+//                .farmer(user)
+//                .imageUrls(imageUrls)
+//                .build();
+//    }
+//
+//    private void deleteUploadedImages(List<String> imageUrls) {
+//        if (imageUrls == null || imageUrls.isEmpty()) return;
+//
+//        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
+//
+//        imageUrls.forEach(url -> {
+//            try {
+//                String blobName = url.substring(url.lastIndexOf('/') + 1);
+//                containerClient.getBlobClient(blobName).deleteIfExists();
+//            } catch (Exception e) {
+//                // Log deletion failure but don't throw
+//                System.err.println("Failed to delete blob: " + url);
+//            }
+//        });
+//    }
+//
+//
+//    // 🔹 Delete Product by ID
+//    public void deleteProduct(Long id) {
+//        List<OrderDetails> orderDetails = orderDetailsRepository.findByProductId(id);
+//        orderDetails.forEach(od -> {
+//            od.setProduct(null); // This requires setProduct() method in OrderDetails
+//            orderDetailsRepository.save(od); // Save the change
+//        });
+//
+//        productRepository.deleteById(id);
+//    }
 
-    public Product addProduct(ProductRequestDTO productRequest, Principal principal) throws IOException {
-        // Authentication check
+
+
+
+
+
+
+//    CLOUDINARY SETUP
+@Transactional
+public Product addProduct(ProductRequestDTO productRequest, Principal principal) throws IOException {
+    validateRequest(productRequest, principal);
+
+    User user = getAuthenticatedUser(principal);
+    Farm farm = getFarm(productRequest.getFarmId());
+
+    List<String> imageUrls = uploadImages(productRequest.getImages());
+
+    try {
+        Product product = createProduct(productRequest, farm, user, imageUrls);
+        return productRepository.save(product);
+    } catch (Exception e) {
+        // Clean up uploaded images if product creation fails
+        deleteUploadedImages(imageUrls);
+        throw e;
+    }
+}
+
+    private void validateRequest(ProductRequestDTO productRequest, Principal principal) {
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to add a product.");
         }
-
-        // Load user and validate farm
-        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
-        Long farmId = productRequest.getFarmId();
-        if (farmId == null) {
+        if (productRequest.getFarmId() == null) {
             throw new IllegalArgumentException("Farm ID must be provided.");
         }
-        Farm farm = farmRepository.findById(farmId)
-                .orElseThrow(() -> new IllegalArgumentException("Farm not found with ID: " + farmId));
-
-        // Validate and process images
-        List<MultipartFile> imageFiles = productRequest.getImages(); // 👈 now multiple images
-        if (imageFiles == null || imageFiles.isEmpty()) {
+        if (productRequest.getImages() == null || productRequest.getImages().isEmpty()) {
             throw new IllegalArgumentException("At least one product image is required.");
         }
-
-        // Create upload directory if it doesn't exist
-        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        try {
-            Files.createDirectories(uploadPath);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create the upload directory.", e);
-        }
-
-        List<String> imageUrls = new ArrayList<>();
-
-        for (MultipartFile imageFile : imageFiles) {
-            if (imageFile.isEmpty()) continue; // Skip empty files
-
-            // Generate unique filename
-            String originalFilename = imageFile.getOriginalFilename();
-            String fileExtension = originalFilename != null
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : "";
-            String fileName = UUID.randomUUID() + "_" + (originalFilename != null ? originalFilename : "image") + fileExtension;
-
-            // Save file
-            Path targetLocation = uploadPath.resolve(fileName);
-            try {
-                Files.copy(imageFile.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException ex) {
-                throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
-            }
-
-            // Add URL to list
-            imageUrls.add("/uploads/" + fileName);
-        }
-
-        // Create and save product
-        Product product = new Product();
-        product.setProductName(productRequest.getProductName());
-        product.setDescription(productRequest.getDescription());
-        product.setPrice(productRequest.getPrice());
-        product.setQuantity(productRequest.getQuantity());
-        product.setCategory(productRequest.getCategory());
-
-
-        product.setWeight(productRequest.getWeight());
-        product.setBreed(productRequest.getBreed());
-        product.setHealthStatus(productRequest.getHealthStatus());
-        product.setCondition(productRequest.getCondition());
-        product.setGender(productRequest.getGender());
-        product.setAge(productRequest.getAge());
-
-
-        product.setFarm(farm);
-        product.setFarmer(user);
-        product.setImageUrls(imageUrls); // 👈 SET the List of image URLs
-
-        return productRepository.save(product);
     }
 
+    private User getAuthenticatedUser(Principal principal) {
+        return (User) userDetailsService.loadUserByUsername(principal.getName());
+    }
+
+    private Farm getFarm(Long farmId) {
+        return farmRepository.findById(farmId)
+                .orElseThrow(() -> new IllegalArgumentException("Farm not found with ID: " + farmId));
+    }
+
+    // 🔹 MODIFIED: Upload images to Cloudinary instead of Azure Blob
+    private List<String> uploadImages(List<MultipartFile> imageFiles) throws IOException {
+        List<String> imageUrls = new ArrayList<>();
+        List<String> uploadedPublicIds = new ArrayList<>();
+
+        try {
+            for (MultipartFile imageFile : imageFiles) {
+                if (imageFile.isEmpty()) continue;
+
+                String publicId = generateUniquePublicId();
+                String imageUrl = uploadFileToCloudinary(imageFile, publicId);
+
+                imageUrls.add(imageUrl);
+                uploadedPublicIds.add(publicId);
+            }
+            return imageUrls;
+        } catch (Exception e) {
+            // Clean up any successfully uploaded files if one fails
+            deleteCloudinaryImages(uploadedPublicIds);
+            throw e;
+        }
+    }
+
+    // 🔹 NEW: Generate unique public ID for Cloudinary
+    private String generateUniquePublicId() {
+        return "products/product_" + UUID.randomUUID().toString();
+    }
+
+    // 🔹 NEW: Upload single file to Cloudinary
+    private String uploadFileToCloudinary(MultipartFile file, String publicId) throws IOException {
+        try {
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap(
+                            "public_id", publicId,
+                            "folder", "products", // Optional: organize in folders
+                            "resource_type", "image",
+                            "quality", "auto", // Automatic quality optimization
+                            "fetch_format", "auto" // Automatic format optimization
+                    )
+            );
+
+            return (String) uploadResult.get("secure_url");
+        } catch (Exception e) {
+            throw new IOException("Failed to upload image to Cloudinary: " + e.getMessage(), e);
+        }
+    }
+
+    private Product createProduct(ProductRequestDTO request,
+                                  Farm farm,
+                                  User user,
+                                  List<String> imageUrls) {
+        return Product.builder()
+                .productName(request.getProductName())
+                .description(request.getDescription())
+                .price(request.getPrice())
+                .quantity(request.getQuantity())
+                .category(request.getCategory())
+                .weight(request.getWeight())
+                .breed(request.getBreed())
+                .healthStatus(request.getHealthStatus())
+                .condition(request.getCondition())
+                .gender(request.getGender())
+                .age(request.getAge())
+                .farm(farm)
+                .farmer(user)
+                .imageUrls(imageUrls)
+                .build();
+    }
+
+    // 🔹 MODIFIED: Delete images from Cloudinary instead of Azure Blob
+    private void deleteUploadedImages(List<String> imageUrls) {
+        if (imageUrls == null || imageUrls.isEmpty()) return;
+
+        List<String> publicIds = extractPublicIdsFromUrls(imageUrls);
+        deleteCloudinaryImages(publicIds);
+    }
+
+    // 🔹 NEW: Delete images from Cloudinary using public IDs
+    private void deleteCloudinaryImages(List<String> publicIds) {
+        publicIds.forEach(publicId -> {
+            try {
+                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            } catch (Exception e) {
+                // Log deletion failure but don't throw
+                System.err.println("Failed to delete Cloudinary image: " + publicId + " - " + e.getMessage());
+            }
+        });
+    }
+
+    // 🔹 NEW: Extract public IDs from Cloudinary URLs
+    private List<String> extractPublicIdsFromUrls(List<String> imageUrls) {
+        return imageUrls.stream()
+                .map(this::extractPublicIdFromUrl)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    // 🔹 NEW: Extract public ID from a Cloudinary URL
+    private String extractPublicIdFromUrl(String url) {
+        try {
+            // Cloudinary URL format: https://res.cloudinary.com/{cloud_name}/image/upload/v{version}/{public_id}.{format}
+            String[] parts = url.split("/");
+            if (parts.length >= 2) {
+                String lastPart = parts[parts.length - 1];
+                // Remove file extension
+                return lastPart.substring(0, lastPart.lastIndexOf('.'));
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to extract public ID from URL: " + url);
+        }
+        return null;
+    }
 
     // 🔹 Delete Product by ID
     public void deleteProduct(Long id) {
+        // Get the product to access its image URLs for cleanup
+        Optional<Product> productOptional = productRepository.findById(id);
+
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            // Delete images from Cloudinary
+            deleteUploadedImages(product.getImageUrls());
+        }
+
         List<OrderDetails> orderDetails = orderDetailsRepository.findByProductId(id);
         orderDetails.forEach(od -> {
             od.setProduct(null); // This requires setProduct() method in OrderDetails
@@ -201,8 +523,6 @@ private final FileStorageServices fileStorageServices;
 
         productRepository.deleteById(id);
     }
-
-
 
     // 🔹 Update Product by ID
     public Product updateProduct(Long id, ProductUpdateRequest newProduct, List<MultipartFile> newImages) {
