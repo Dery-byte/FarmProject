@@ -524,50 +524,171 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
         productRepository.deleteById(id);
     }
 
-    // 🔹 Update Product by ID
+//    // 🔹 Update Product by ID
+//    public Product updateProduct(Long id, ProductUpdateRequest newProduct, List<MultipartFile> newImages) {
+//        return productRepository.findById(id).map(product -> {
+//            // Update basic fields
+//            product.setProductName(newProduct.getProductName());
+//            product.setDescription(newProduct.getDescription());
+//            product.setPrice(newProduct.getPrice());
+//            product.setQuantity(newProduct.getQuantity());
+//            product.setCategory(newProduct.getCategory());
+//            product.setAge(newProduct.getAge());
+//            product.setWeight(newProduct.getWeight());
+//            product.setBreed(newProduct.getBreed());
+//            product.setHealthStatus(newProduct.getHealthStatus());
+//            product.setCondition(newProduct.getCondition());
+//
+//            // Handle images
+//            List<String> existingImageUrls = newProduct.getExistingImageUrls() != null ?
+//                    newProduct.getExistingImageUrls() : new ArrayList<>();
+//
+//            List<String> newImageUrls = new ArrayList<>();
+//
+//            if (newImages != null) {
+//                for (MultipartFile file : newImages) {
+//                    if (!file.isEmpty()) {
+//                        try {
+//                            String imageUrl = fileStorageServices.storeFile(file);
+//                            newImageUrls.add(imageUrl);
+//                        } catch (IOException e) {
+//                            throw new RuntimeException("Failed to store file", e);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // Combine existing and new image URLs
+//            List<String> allImageUrls = new ArrayList<>();
+//            allImageUrls.addAll(existingImageUrls);
+//            allImageUrls.addAll(newImageUrls);
+//
+//            product.setImageUrls(allImageUrls);
+//
+//            return productRepository.save(product);
+//        }).orElseThrow(() -> new RuntimeException("Product not found!"));
+//    }
+
+
+
+
+    // UPDATE WITH CLOUDINARY INTEGRATION STARTS HERE
+    @Transactional
     public Product updateProduct(Long id, ProductUpdateRequest newProduct, List<MultipartFile> newImages) {
         return productRepository.findById(id).map(product -> {
-            // Update basic fields
-            product.setProductName(newProduct.getProductName());
-            product.setDescription(newProduct.getDescription());
-            product.setPrice(newProduct.getPrice());
-            product.setQuantity(newProduct.getQuantity());
-            product.setCategory(newProduct.getCategory());
-            product.setAge(newProduct.getAge());
-            product.setWeight(newProduct.getWeight());
-            product.setBreed(newProduct.getBreed());
-            product.setHealthStatus(newProduct.getHealthStatus());
-            product.setCondition(newProduct.getCondition());
+            try {
+                // Store original image URLs for cleanup if update fails
+                List<String> originalImageUrls = new ArrayList<>(product.getImageUrls());
 
-            // Handle images
-            List<String> existingImageUrls = newProduct.getExistingImageUrls() != null ?
-                    newProduct.getExistingImageUrls() : new ArrayList<>();
+                // Update basic fields
+                product.setProductName(newProduct.getProductName());
+                product.setDescription(newProduct.getDescription());
+                product.setPrice(newProduct.getPrice());
+                product.setQuantity(newProduct.getQuantity());
+                product.setCategory(newProduct.getCategory());
+                product.setAge(newProduct.getAge());
+                product.setWeight(newProduct.getWeight());
+                product.setBreed(newProduct.getBreed());
+                product.setHealthStatus(newProduct.getHealthStatus());
+                product.setCondition(newProduct.getCondition());
 
-            List<String> newImageUrls = new ArrayList<>();
+                // Handle images
+                List<String> existingImageUrls = newProduct.getExistingImageUrls() != null ?
+                        newProduct.getExistingImageUrls() : new ArrayList<>();
 
-            if (newImages != null) {
-                for (MultipartFile file : newImages) {
-                    if (!file.isEmpty()) {
-                        try {
-                            String imageUrl = fileStorageServices.storeFile(file);
-                            newImageUrls.add(imageUrl);
-                        } catch (IOException e) {
-                            throw new RuntimeException("Failed to store file", e);
-                        }
-                    }
+                // Find images to delete (images that were in original but not in existingImageUrls)
+                List<String> imagesToDelete = originalImageUrls.stream()
+                        .filter(url -> !existingImageUrls.contains(url))
+                        .collect(Collectors.toList());
+
+                // Upload new images to Cloudinary
+                List<String> newImageUrls = uploadNewImages(newImages);
+
+                // Combine existing and new image URLs
+                List<String> allImageUrls = new ArrayList<>();
+                allImageUrls.addAll(existingImageUrls);
+                allImageUrls.addAll(newImageUrls);
+
+                // Validate that we have at least one image
+                if (allImageUrls.isEmpty()) {
+                    throw new IllegalArgumentException("At least one product image is required.");
+                }
+
+                product.setImageUrls(allImageUrls);
+
+                // Save the updated product
+                Product savedProduct = productRepository.save(product);
+
+                // Delete removed images from Cloudinary (only after successful save)
+                deleteCloudinaryImagesByUrls(imagesToDelete);
+
+                return savedProduct;
+
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to update product: " + e.getMessage(), e);
+            }
+        }).orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
+    }
+
+    // 🔹 Helper method to upload new images to Cloudinary
+    private List<String> uploadNewImages(List<MultipartFile> newImages) throws IOException {
+        List<String> newImageUrls = new ArrayList<>();
+        List<String> uploadedPublicIds = new ArrayList<>();
+
+        if (newImages == null || newImages.isEmpty()) {
+            return newImageUrls;
+        }
+
+        try {
+            for (MultipartFile file : newImages) {
+                if (!file.isEmpty()) {
+                    String publicId = generateUniquePublicId();
+                    String imageUrl = uploadFileToCloudinary(file, publicId);
+
+                    newImageUrls.add(imageUrl);
+                    uploadedPublicIds.add(publicId);
                 }
             }
-
-            // Combine existing and new image URLs
-            List<String> allImageUrls = new ArrayList<>();
-            allImageUrls.addAll(existingImageUrls);
-            allImageUrls.addAll(newImageUrls);
-
-            product.setImageUrls(allImageUrls);
-
-            return productRepository.save(product);
-        }).orElseThrow(() -> new RuntimeException("Product not found!"));
+            return newImageUrls;
+        } catch (Exception e) {
+            // Clean up any successfully uploaded files if one fails
+            deleteCloudinaryImages(uploadedPublicIds);
+            throw new IOException("Failed to upload new images: " + e.getMessage(), e);
+        }
     }
+
+// 🔹 Helper method to delete images from Cloudinary using URLs
+    private void deleteCloudinaryImagesByUrls(List<String> imageUrls) {
+        if (imageUrls == null || imageUrls.isEmpty()) return;
+
+        List<String> publicIds = extractPublicIdsFromUrls(imageUrls);
+        deleteCloudinaryImages(publicIds);
+    }
+
+
+//UPDATE WITH CLOUDINARY INTEGRATION ENDS HERE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
