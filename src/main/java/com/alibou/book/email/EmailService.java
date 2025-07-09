@@ -33,7 +33,7 @@ public class EmailService {
             Map<String, Object> properties,
             String subject
     ) throws MessagingException {
-        String templateName = emailTemplate != null ? emailTemplate.name() : "confirm-email";
+        String templateName = emailTemplate != null ? emailTemplate.getName() : "confirm-email";
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED, UTF_8.name());
 
