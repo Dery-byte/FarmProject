@@ -44,7 +44,9 @@ spring:
 application:
   mailing:
     frontend:
-      activation-url: http://localhost:4200/activate-account
+      activation-url: https://farm-4fa35.web.app
+      reset-url: http://localhost:4200/reset-password
+      baseUrl:  https://farm-4fa35.web.app
       jwk-set-uri: http://localhost:8080/realms/postgres/protocol/openid-connect/certs
   security:
     jwt:

@@ -1,8 +1,6 @@
 package com.alibou.book.handler;
 
-import com.alibou.book.exception.ActivationTokenException;
-import com.alibou.book.exception.InsufficientStockException;
-import com.alibou.book.exception.OperationNotPermittedException;
+import com.alibou.book.exception.*;
 import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -140,6 +138,36 @@ public class GlobalExceptionHandler {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+
+
+
+
+
+
+
+
+
+    @ExceptionHandler(ResetPasswordTokenExpiredException.class)
+    public ResponseEntity<?> handleTokenExpired(ResetPasswordTokenExpiredException ex) {
+        return ResponseEntity
+                .status(HttpStatus.GONE)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ResetPasswordTokenAlreadyUsedException.class)
+    public ResponseEntity<?> handleTokenUsed(ResetPasswordTokenAlreadyUsedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("message", ex.getMessage()));    }
+
+
+
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRuntime(RuntimeException ex) {
+        return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
     }
 
 }

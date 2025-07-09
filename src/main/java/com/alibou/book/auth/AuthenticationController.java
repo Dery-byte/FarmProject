@@ -1,8 +1,6 @@
 package com.alibou.book.auth;
 
-import com.alibou.book.DTO.RoleUpdateRequest;
-import com.alibou.book.DTO.UserResponseDTO;
-import com.alibou.book.DTO.UserSummaryDTO;
+import com.alibou.book.DTO.*;
 import com.alibou.book.user.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
@@ -190,4 +188,61 @@ public class AuthenticationController {
     public User getUserById(@PathVariable Integer userId) {  // Add @PathVariable
         return service.findByUserId(userId);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @PostMapping("/forgotten-password")
+    public ResponseEntity<Void> forgottenPassword(
+            @RequestBody ForgottenPasswordRequest request
+    ) throws MessagingException {
+        service.forgottenPassword(request);
+        return ResponseEntity.accepted().build();
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(
+            @RequestBody ResetPasswordRequest request
+    ) {
+        service.resetPassword(request);
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
