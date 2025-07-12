@@ -8,6 +8,7 @@ import com.alibou.book.exception.InsufficientStockException;
 import com.alibou.book.exception.ResourceNotFoundException;
 import com.alibou.book.exception.UnauthorizedAccessException;
 import com.alibou.book.user.User;
+import com.cloudinary.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -240,6 +242,16 @@ public class OrderService {
 
 
 
+
+
+
+
+
+
+
+
+
+
     public List<Order> getOrdersByUserId(Principal principal) {
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to fetch orders.");
@@ -249,6 +261,9 @@ public class OrderService {
         return orderRepository.findByCustomer_Id(Long.valueOf(user.getId()));
     }
 
+    public Optional<Order> findByExternalReference(String externalReference) {
+        return orderRepository.findByExternalRef(externalReference);
+    }
 
     public List<Order> getAllOrders(){
     return orderRepository.findAll();
@@ -839,6 +854,75 @@ OrderedItemStatusHistory orderedItemStatusHistory = new  OrderedItemStatusHistor
         return savedOrder;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Transactional
+    public Order verifyAndUpdateOrder(Principal principal, Long orderId, String newExternalRef) {
+        // Validate inputs
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order ID cannot be null");
+        }
+        if (StringUtils.isBlank(newExternalRef)) {
+            throw new IllegalArgumentException("External reference cannot be blank");
+        }
+
+        // Get authenticated user
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+
+        // Find order
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Order not found with ID: " + orderId));
+
+        // Verify ownership
+        if (!order.getCustomer().getId().equals(user.getId())) {
+            throw new UnauthorizedAccessException("Unauthorized order access");
+        }
+
+        // Store the old externalRef for reference if needed
+        String oldExternalRef = order.getExternalRef();
+//        log.info("Updating externalRef for order {} from {} to {}",
+//                orderId, oldExternalRef, newExternalRef);
+
+        // Update with new externalRef
+        order.setExternalRef(newExternalRef);
+       // order.setLastModifiedDate(LocalDateTime.now());
+
+        return orderRepository.save(order);
+    }
 
 
 }

@@ -47,6 +47,18 @@ public class PaymentController {
     }
 
 
+    @PostMapping("/initiate2")
+    public ResponseEntity<MoolrePaymentResponse> initiatePayments(
+            Principal principal,
+            @RequestBody MoolrePaymentRequest request
+            // Optional parameter
+    ) {
+        MoolrePaymentResponse response = moolrePaymentService.initiatePayments(principal, request);
+        return ResponseEntity.ok(response);
+    }
+
+
+
 
     @PostMapping("/verify-otp")
     public ResponseEntity<MoolrePaymentResponse> verifyOtpAndProceed(

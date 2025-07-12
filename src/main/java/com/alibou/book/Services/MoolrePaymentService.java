@@ -6,6 +6,7 @@ import com.alibou.book.DTO.PaymentData;
 import com.alibou.book.DTO.PaymentStatusRequest;
 import com.alibou.book.Entity.*;
 import com.alibou.book.Repositories.OrderRepository;
+import com.alibou.book.Repositories.PaymentStatusRepository;
 import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.config.MoolreConfig;
 import com.alibou.book.email.EmailService;
@@ -13,6 +14,7 @@ import com.alibou.book.email.EmailTemplateName;
 import com.alibou.book.email.MNotifyV2SmsService;
 import com.alibou.book.exception.PaymentProcessingException;
 import com.alibou.book.user.User;
+import com.cloudinary.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -54,7 +56,7 @@ public class MoolrePaymentService {
 
     private final OrderService orderService;
 
-private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatusRepository;
+    private final PaymentStatusRepository paymentStatusRepository;
     private final ProductRepository productRepository;
     public User user;
 
@@ -64,7 +66,7 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
     public MoolrePaymentService(MoolreConfig config, RestTemplate restTemplate, ObjectMapper objectMapper,
                                 JavaMailSender mailSender,
                                 UserDetailsService userDetailsService, SpringTemplateEngine templateEngine, MNotifyV2SmsService mNotifyV2SmsService,
-                                OrderRepository orderRepository, OrderService orderService, com.alibou.book.Repositories.PaymentStatusRepository paymentStatusRepository, ProductRepository productRepository) {
+                                OrderRepository orderRepository, OrderService orderService, PaymentStatusRepository paymentStatusRepository, ProductRepository productRepository) {
         this.config = config;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
@@ -135,6 +137,28 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
         }
     }
 
+
+
+
+
+
+    private String getExistingOrderReference(String orderExternalRef) {
+        if (orderExternalRef == null || orderExternalRef.isEmpty()) {
+            throw new IllegalArgumentException("Order external reference cannot be null or empty");
+        }
+        // Verify the order exists and belongs to the current user
+//        Order order = orderService.findByExternalReference(orderExternalRef)
+//                .orElseThrow(() -> new OrderNotFoundException("Order not found with reference: " + orderExternalRef));
+//
+//        // Add any additional validation you need, for example:
+//        if (!order.getCustomer().getUsername().equals(principal.getName())) {
+//            throw new UnauthorizedOrderAccessException("You don't have permission to access this order");
+//        }
+
+        return orderExternalRef;
+    }
+
+
     private String getOrCreateExternalReference(User user, String recordId) {
         if (recordId != null) {
             Optional<Order> recordOpt = orderRepository.findById(Long.valueOf(recordId));
@@ -146,7 +170,7 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
                     // Generate new reference only when updating existing record
                     String externalRef = generateReference();
                     record.setExternalRef(externalRef);
-                   // record.setLastUpdated(Instant.now());
+                    // record.setLastUpdated(Instant.now());
                     orderRepository.save(record);
                     return externalRef;
                 }
@@ -266,13 +290,13 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
                 log.warn("OTP verification failed for User: {}. Reason: {}", principal.getName(),
                         verificationResponse.getMessage() != null ? verificationResponse.getMessage() : "Unknown reason.");
                 // Update status to failed on OTP verification failure
-             //   updateExamCheckRecordStatus(externalRef, PaymentStatus.FAILED);
+                //   updateExamCheckRecordStatus(externalRef, PaymentStatus.FAILED);
                 throw new PaymentProcessingException("OTP verification failed. " +
                         (verificationResponse.getMessage() != null ? verificationResponse.getMessage() : "Please try again."));
             }
         } catch (Exception e) {
             log.error("OTP verification error: {}", e.getMessage(), e);
-         //   updateExamCheckRecordStatus(externalRef, PaymentStatus.FAILED);
+            //   updateExamCheckRecordStatus(externalRef, PaymentStatus.FAILED);
             throw new PaymentProcessingException("Failed to verify OTP. Please try again later.", e);
         }
     }
@@ -303,14 +327,14 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
             } else {
                 log.warn("Payment failed for External Ref: {}. Code: {}, Message: {}", request.getExternalref(),
                         paymentResponse.getCode(), paymentResponse.getMessage());
-               // updateExamCheckRecordStatus(request.getExternalref(), PaymentStatus.FAILED);
+                // updateExamCheckRecordStatus(request.getExternalref(), PaymentStatus.FAILED);
                 throw new PaymentProcessingException("Payment failed. " +
                         (paymentResponse.getMessage() != null ? paymentResponse.getMessage() : "Please contact support."));
             }
             return paymentResponse;
         } catch (Exception e) {
             log.error("Error triggering payment: {}", e.getMessage(), e);
-           // updateExamCheckRecordStatus(request.getExternalref(), PaymentStatus.FAILED);
+            // updateExamCheckRecordStatus(request.getExternalref(), PaymentStatus.FAILED);
             throw new PaymentProcessingException("Failed to process payment. Please try again later.", e);
         }
     }
@@ -339,7 +363,7 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
         paymentStatusRepository.save(paymentStatus);
 
         // Update ExamCheckRecord based on webhook response
-       // updateExamCheckRecordFromWebhook(paymentData);
+        // updateExamCheckRecordFromWebhook(paymentData);
 
         // Send notifications if payment was successful
         if (paymentData.getTxstatus() == 1) {
@@ -353,7 +377,7 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
                 }
                 product.setQuantity(newQty);
                 productRepository.save(product);
-               //productRepository.save(product);
+                //productRepository.save(product);
             }
 
             order.setPaid(true);
@@ -524,8 +548,8 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(
                     mimeMessage,
-                    MimeMessageHelper.MULTIPART_MODE_MIXED,
-                    StandardCharsets.UTF_8.name()
+                    MULTIPART_MODE_MIXED,
+                    UTF_8.name()
             );
 
             Map<String, Object> properties = new HashMap<>();
@@ -551,4 +575,77 @@ private final com.alibou.book.Repositories.PaymentStatusRepository paymentStatus
             e.printStackTrace();
         }
     }
-}
+
+
+    @Transactional
+    public MoolrePaymentResponse initiatePayments(Principal principal, MoolrePaymentRequest request) {
+        // Validate inputs
+        Objects.requireNonNull(principal, "Principal cannot be null");
+        Objects.requireNonNull(request, "Payment request cannot be null");
+
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        this.user = user;
+
+        // Generate new externalRef for payment processing
+//        String newExternalRef = generateReference();
+               String externalRef = generateReference();
+
+        if (StringUtils.isBlank(externalRef)) {
+            throw new PaymentProcessingException("Failed to generate payment reference");
+        }
+
+        // Get or create order
+        Order order;
+        if (request.getOrderId() != null) {
+            // Existing order - verify and update
+            order = orderService.verifyAndUpdateOrder(
+                    principal,
+                    request.getOrderId(),
+                    externalRef
+            );
+        } else {
+            // New order - create
+//            order = orderService.createNewOrder(principal, newExternalRef);
+        }
+
+            // Prepare payment request
+            request.setExternalref(externalRef); // Use the new externalRef for payment
+            request.setAccountnumber(config.getAccountNumber());
+            request.setCurrency("GHS");
+            request.setType(1);
+            request.setReference("Optimus");
+
+//        log.info("Processing payment for order {} with new externalRef {}",
+//                order.getId(), newExternalRef);
+
+            // Process payment
+                userPaymentReferences.put(principal.getName(), externalRef);
+
+        HttpHeaders headers = createHeaders();
+            HttpEntity<MoolrePaymentRequest> entity = new HttpEntity<>(request, headers);
+
+            try {
+                ResponseEntity<String> response = restTemplate.exchange(
+                        config.getApiUrl(),
+                        HttpMethod.POST,
+                        entity,
+                        String.class
+                );
+
+                log.debug("Raw response: {}", response.getBody());
+                MoolrePaymentResponse paymentResponse = objectMapper.readValue(response.getBody(), MoolrePaymentResponse.class);
+                paymentResponse.setExternalref(externalRef);
+
+                // Handle response messages
+                handlePaymentResponse(paymentResponse);
+
+                return paymentResponse;
+
+            } catch (Exception e) {
+                //log.error("Payment failed for order {}: {}", order.getId(), e.getMessage());
+                // orderService.updateOrderPaymentStatus(order.getId(), PaymentStatus.FAILED);
+                throw new PaymentProcessingException("Payment processing failed", e);
+            }
+        }
+
+    }

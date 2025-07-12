@@ -19,14 +19,10 @@ public class OrderDto {
     private List<OrderItemDto> items;
     private OrdersStatus status;
     private PaymentMethod paymentMethod;
-    private boolean isPaid;
+    private boolean paid;
     private OrderStatus orderStatus;
-
     private DeliveryDetailsDTO deliveryDetails;
-
-
     private DeliveryDTO delivery;
-
     private OrderSummaryDTO summary;
     private List<OrderStatusHistory> orderStatusHistoryList;
 
