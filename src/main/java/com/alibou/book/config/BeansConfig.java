@@ -55,7 +55,8 @@ public class BeansConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",           // Development
-                "https://farm-4fa35.web.app"       // Production
+                //"https://farm-4fa35.web.app",       // Production
+                "https://farm-front-g6n9qyujc-dery-bytes-projects.vercel.app"
         ));
 
         config.setAllowedHeaders(Arrays.asList(

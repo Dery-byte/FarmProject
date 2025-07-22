@@ -181,7 +181,7 @@ public class AuthenticationService {
         vars.put("username", user.getFullName());
         vars.put("confirmationUrl", activationUrl);
         vars.put("newToken", newToken);
-        vars.put("baseUrl", "https://farm-4fa35.web.app");
+        vars.put("baseUrl", "https://farm-front-g6n9qyujc-dery-bytes-projects.vercel.app");
 
         emailService.sendEmail(
                 user.getUsername(),
@@ -307,7 +307,6 @@ public void updateUserRoles(Long userId, List<String> roleNames) {
             .map(roleName -> roleRepository.findByName(roleName)
                     .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
             .collect(Collectors.toSet());
-
     user.setRoles(new ArrayList<>(roles)); // ✅ Convert Set to List
     userRepository.save(user);
 }

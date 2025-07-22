@@ -44,9 +44,9 @@ spring:
 application:
   mailing:
     frontend:
-      activation-url: https://farm-4fa35.web.app
+      activation-url: https://farm-front-g6n9qyujc-dery-bytes-projects.vercel.app
       reset-url: http://localhost:4200/reset-password
-      baseUrl:  https://farm-4fa35.web.app
+      baseUrl:  https://farm-front-g6n9qyujc-dery-bytes-projects.vercel.app
       jwk-set-uri: http://localhost:8080/realms/postgres/protocol/openid-connect/certs
   security:
     jwt:
