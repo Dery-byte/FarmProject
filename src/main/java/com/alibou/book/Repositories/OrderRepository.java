@@ -102,7 +102,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                                       @Param("end") LocalDateTime end);
 
 
-
     @Query("SELECT FUNCTION('MONTH', o.orderDate) AS month, SUM(o.amount) AS totalAmount " +
             "FROM Order o " +
             "WHERE FUNCTION('YEAR', o.orderDate) = :year AND o.isPaid = false " +
@@ -276,6 +275,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("year") int year,
             @Param("month") int month,
             @Param("farmerId") Long farmerId);
-
-
 }

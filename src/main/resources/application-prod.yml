@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://farmserver.database.windows.net:1433;database=farmDB
+    url: jdbc:sqlserver://fammers.database.windows.net:1433;database=farm
     username: Mudita
-    password: EMM@RESCUe
+    password: EMM@RESCUE1
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     hibernate:

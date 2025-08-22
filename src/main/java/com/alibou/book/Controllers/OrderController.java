@@ -123,6 +123,12 @@ public class OrderController {
         return ResponseEntity.ok(result);
     }
 
+
+
+
+
+
+
     // Weekly revenue API
     @GetMapping("/revenueWeekly")
     public ResponseEntity<List<WeeklyRevenueSummary>> getWeeklyTotals(

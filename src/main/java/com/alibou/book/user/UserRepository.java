@@ -51,6 +51,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // Get latest users with pagination
     Page<User> findAllByOrderByCreatedDateDesc(Pageable pageable);
+
+
+
     // Get latest non-admin users
     @Query("SELECT u FROM User u WHERE NOT EXISTS " +
             "(SELECT 1 FROM u.roles r WHERE r.name = 'ADMIN') " +
