@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin("https://farm-front-end-eta.vercel.app/")
 @RequestMapping("/auth/products")
 @RequiredArgsConstructor
 public class ProductController {
