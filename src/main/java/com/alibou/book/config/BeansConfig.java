@@ -57,7 +57,9 @@ public class BeansConfig {
                 "http://localhost:4200",           // Development
                 //"https://farm-4fa35.web.app",       // Production
                 "https://farm-front-g6n9qyujc-dery-bytes-projects.vercel.app",
-                "farm-front-end-eight.vercel.app"
+                "farm-front-end-eight.vercel.app",
+                "farm-front-o8dkxpr8v-dery-bytes-projects.vercel.app",
+                "farm-front-end-git-master-dery-bytes-projects.vercel.app"
         ));
 
         config.setAllowedHeaders(Arrays.asList(

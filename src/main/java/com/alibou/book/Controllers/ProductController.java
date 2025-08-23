@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/auth/products")
 @RequiredArgsConstructor
 public class ProductController {

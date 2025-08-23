@@ -12,6 +12,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/auth/payment-status")
 public class PaymentStatusController {
 private PaymentStatusService paymentStatusService;
