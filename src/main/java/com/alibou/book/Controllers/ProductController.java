@@ -1,13 +1,11 @@
 package com.alibou.book.Controllers;
 
-import com.alibou.book.DTO.PriceRangeInfo;
-import com.alibou.book.DTO.ProductRequestDTO;
-import com.alibou.book.DTO.ProductResponsepPriceRange;
-import com.alibou.book.DTO.ProductUpdateRequest;
+import com.alibou.book.DTO.*;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.Services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -163,7 +161,19 @@ public ResponseEntity<PriceRangeInfo> getPriceRanges() {
     }
 
 
+    // GET: /api/products/latest
+    @GetMapping("/latest")
+    public List<LatestProductDTO> getLatestProducts() {
+        return productService.getLatestProducts();
+    }
 
+    // GET: /api/products?page=0&size=6
+    @GetMapping("/latest/pagination")
+    public Page<LatestProductDTO> getProductsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productService.getProductsPaginated(page, size);
+    }
 
 
 }

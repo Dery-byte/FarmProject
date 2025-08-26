@@ -33,6 +33,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -205,7 +207,7 @@ public class AuthenticationService {
 //                newToken,
 //                "Account activation"
 //                );
-        System.out.println(STR."This is the recipient \{user.getPhoneNummber()}");
+        //System.out.println(STR."This is the recipient \{user.getPhoneNummber()}");
 //        String message = "Hello " + user.getFirstname() + ", your OTP is: " + newToken;
         String smsMessage = "Hello " + user.getFullName() +
                     ", your activation code is: " + newToken +

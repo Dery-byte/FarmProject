@@ -8,7 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,4 +69,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<CartItem> cartItems;
+
+
+    // ✅ Auto-set when inserted
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

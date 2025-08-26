@@ -1,12 +1,10 @@
 package com.alibou.book.Services;
 
-import com.alibou.book.DTO.PriceRangeInfo;
-import com.alibou.book.DTO.ProductRequestDTO;
-import com.alibou.book.DTO.ProductResponsepPriceRange;
-import com.alibou.book.DTO.ProductUpdateRequest;
+import com.alibou.book.DTO.*;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.OrderDetails;
 import com.alibou.book.Entity.Product;
+import com.alibou.book.Mapper.ProductMapper;
 import com.alibou.book.Repositories.FarmRepository;
 import com.alibou.book.Repositories.OrderDetailsRepository;
 import com.alibou.book.Repositories.ProductRepository;
@@ -24,6 +22,9 @@ import com.cloudinary.utils.ObjectUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -457,6 +459,7 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
                 .farm(farm)
                 .farmer(user)
                 .imageUrls(imageUrls)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
@@ -761,21 +764,22 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
 
 
 
+    // Get latest 6 products
+    public List<LatestProductDTO> getLatestProducts() {
+        PageRequest pageRequest = PageRequest.of(0, 6, Sort.by("createdAt").descending());
+        return productRepository.findAll(pageRequest)
+                .getContent()
+                .stream()
+                .map(ProductMapper::toDTO)
+                .toList();
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // Paginated + DTO
+    public Page<LatestProductDTO> getProductsPaginated(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return productRepository.findAll(pageRequest)
+                .map(ProductMapper::toDTO); // ✅ map each entity to DTO
+    }
 
 
 
