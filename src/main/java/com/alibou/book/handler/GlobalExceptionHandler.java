@@ -1,5 +1,6 @@
 package com.alibou.book.handler;
 
+import com.alibou.book.Error.ErrorResponse;
 import com.alibou.book.exception.*;
 import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
@@ -8,10 +9,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
+//import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -169,5 +173,56 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleRuntime(RuntimeException ex) {
         return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
     }
+
+
+
+
+//    @ExceptionHandler(UserNotAuthenticatedException.class)
+//    public ResponseEntity<ErrorResponse> handleUserNotAuthenticated(
+//            UserNotAuthenticatedException ex,
+//            WebRequest request
+//    ) {
+//        ErrorResponse errorResponse = new ErrorResponse(
+//                LocalDateTime.now(),
+//                HttpStatus.UNAUTHORIZED.value(),
+//                "Unauthorized",
+//                ex.getMessage(),
+//                request.getDescription(false).replace("uri=", "")
+//        );
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+//    }
+
+
+
+    @ExceptionHandler(UserNotAuthenticatedException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotAuthenticated(UserNotAuthenticatedException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    // fallback for other exceptions
+
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ErrorResponse> handleGeneralException(
+//            Exception ex,
+//            WebRequest request
+//    ) {
+//        ErrorResponse response = new ErrorResponse(
+//                LocalDateTime.now(),
+//                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+//                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+//                ex.getMessage(),
+//                request.getDescription(false).replace("uri=", "")
+//        );
+//
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//    }
 
 }

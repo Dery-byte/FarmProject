@@ -3,6 +3,7 @@ package com.alibou.book.Controllers;
 import com.alibou.book.DTO.DeliveryInfoRequest;
 import com.alibou.book.DTO.DeliveryResponse;
 import com.alibou.book.Services.DeliveryService;
+import com.alibou.book.exception.UserNotAuthenticatedException;
 import com.alibou.book.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,27 +24,44 @@ private final DeliveryService deliveryService;
 
 
     // Add or Update Delivery Info
+//    @PostMapping("/addInfo")
+//    public ResponseEntity<DeliveryResponse> addOrUpdateDelivery(
+//           Principal principal,
+//            @RequestBody DeliveryInfoRequest request
+//    ) {
+//
+//        if (principal == null) {
+//            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+//        }
+//        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+//        DeliveryResponse response = deliveryService.addOrUpdateDelivery(user, request);
+//        return ResponseEntity.ok(response);
+//    }
+
     @PostMapping("/addInfo")
     public ResponseEntity<DeliveryResponse> addOrUpdateDelivery(
-           Principal principal,
+            Principal principal,
             @RequestBody DeliveryInfoRequest request
     ) {
-
         if (principal == null) {
-            throw new IllegalArgumentException("User must be authenticated to fetch orders.");
+            throw new UserNotAuthenticatedException("User must be authenticated to fetch orders.");
         }
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
-
         DeliveryResponse response = deliveryService.addOrUpdateDelivery(user, request);
+
         return ResponseEntity.ok(response);
     }
+
+
+
+
+
 
     // Get Delivery Info
     @GetMapping("/getDeliveryInfo")
     public ResponseEntity<DeliveryResponse> getDelivery(
             Principal principal
     ) {
-
         if (principal == null) {
             throw new IllegalArgumentException("User must be authenticated to fetch orders.");
         }
@@ -51,4 +69,7 @@ private final DeliveryService deliveryService;
         DeliveryResponse response = deliveryService.getDeliveryByUserId(user.getId());
         return ResponseEntity.ok(response);
     }
+
+
+
 }

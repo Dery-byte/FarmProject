@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -700,6 +701,77 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
+
+
+//    PAGINATION
+// ✅ Service method for paginated products
+public ProductPageResponse getAllProducts(Pageable pageable) {
+    Page<Product> page = productRepository.findAll(pageable);
+
+    List<ProductDTO> productDTOs = page.getContent().stream().map(product -> {
+        FarmerDTO farmerDTO = new FarmerDTO(
+                product.getFarmer().getId(),
+//                product.getFarmer().getFarmerId(),
+                product.getFarmer().getFullName(),
+                product.getFarmer().getPhoneNummber(),
+//                product.getFarmer().getPhoneNumber(),
+                product.getFarmer().getUsername(),
+//                product.getFarmer().getAuthorities()
+//                product.getFarmer().getRole()
+                product.getFarmer().getRoles()
+        );
+
+        FarmDTO farmDTO = null;
+        if (product.getFarm() != null) {
+            farmDTO = new FarmDTO(
+//                    product.getFarm().getFarmId(),
+                    product.getFarm().getFarm_id(),
+                    product.getFarm().getFarmName(),
+                    product.getFarm().getLocation(),
+                    product.getFarm().getFarmAddress(),
+                    product.getFarm().getFarmType(),
+                    product.getFarm().getFarmSize(),
+                    product.getFarm().getEmail(),
+//                    product.getFarm().getFarmAddress(),
+//                    product.getFarm().getDescription(),
+//                    product.getFarm().getFarmOwner(),
+                    farmerDTO, // owner of farm
+                    product.getFarm().getContact()
+
+                    );
+        }
+
+        return new ProductDTO(
+                product.getId(),
+                product.getProductName(),
+                product.getPrice(),
+                product.getQuantity(),
+                product.getCategory(),
+                product.getImageUrls(),
+                product.getDescription(),
+                product.getWeight(),
+                product.getBreed(),
+                product.getHealthStatus(),
+                product.getCondition(),
+                product.getGender(),
+                product.getAge(),
+                product.getCreatedAt(),
+                farmDTO,
+                farmerDTO
+        );
+    }).collect(Collectors.toList());
+
+    return new ProductPageResponse(
+            productDTOs,
+            page.getNumber(),
+            page.getTotalPages(),
+            page.getTotalElements(),
+            page.getSize(),
+            page.hasNext(),
+            page.hasPrevious()
+    );
+}
 
 
 

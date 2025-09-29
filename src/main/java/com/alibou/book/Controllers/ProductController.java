@@ -6,6 +6,9 @@ import com.alibou.book.Repositories.ProductRepository;
 import com.alibou.book.Services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("https://farm-front-end-eta.vercel.app/")
+//@CrossOrigin("https://farm-front-end-eta.vercel.app/")
+@CrossOrigin(origins="*")
 @RequestMapping("/auth/products")
 @RequiredArgsConstructor
 public class ProductController {
@@ -72,6 +76,30 @@ public class ProductController {
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
+
+//PAGINATION
+// ✅ Get all products with pagination
+@GetMapping("/paginationAllProducts")
+public ResponseEntity<ProductPageResponse> getAllProductss(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "asc") String sortDir) {
+
+    Pageable pageable = PageRequest.of(
+            page,
+            size,
+            sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+    );
+
+    return ResponseEntity.ok(productService.getAllProducts(pageable));
+}
+
+
+
+
+
+
 
     // ✅ Get product by ID
     @GetMapping("/{id}")

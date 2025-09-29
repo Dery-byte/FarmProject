@@ -4,11 +4,14 @@ import com.alibou.book.DTO.DeliveryInfoRequest;
 import com.alibou.book.DTO.DeliveryResponse;
 import com.alibou.book.Entity.Delivery;
 import com.alibou.book.Repositories.DeliveryRepository;
+import com.alibou.book.exception.UserNotAuthenticatedException;
 import com.alibou.book.user.User;
 import com.alibou.book.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +29,7 @@ public class DeliveryService {
     // Add or Update Delivery Info
     @Transactional
     public DeliveryResponse addOrUpdateDelivery(Principal principal, DeliveryInfoRequest request) {
-
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
-
         // Check if user already has delivery info
         Delivery delivery = user.getDelivery();
         if (delivery == null) {
@@ -36,14 +37,18 @@ public class DeliveryService {
             delivery = new Delivery();
             delivery.setUser(user);
         }
-
         // Update delivery fields from request
         updateDeliveryFromRequest(delivery, request);
-
         // Save and return response
         Delivery savedDelivery = deliveryRepository.save(delivery);
         return mapToDeliveryResponse(savedDelivery);
     }
+
+
+
+
+
+
 
     // Get Delivery Info by User ID
     public DeliveryResponse getDeliveryByUserId(Integer userId) {
