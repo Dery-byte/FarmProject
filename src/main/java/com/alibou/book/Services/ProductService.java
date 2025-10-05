@@ -757,12 +757,12 @@ public ProductPageResponse getAllProducts(Pageable pageable) {
         }
 
         CategoryRequestDTO categoryRequestDTO = null;
-        if (product.getFarm() != null) {
+        if (product.getCategory() != null) {
             categoryRequestDTO = new CategoryRequestDTO(
                     product.getCategory().getId(),
-product.getCategory().getCategoryName(),
-product.getCategory().getCategoryDescription(),
-product.getCategory().getUserRole()
+                    product.getCategory().getCategoryName(),
+                    product.getCategory().getCategoryDescription(),
+                    product.getCategory().getUserRole()
 //                    farmerDTO, // owner of farm
 //                    product.getFarm().getContact()
 
