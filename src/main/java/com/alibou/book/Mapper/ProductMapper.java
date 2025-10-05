@@ -18,7 +18,7 @@ public class ProductMapper {
                 .gender(product.getGender() != null ? product.getGender().name() : null)
                 .age(product.getAge())
                 .imageUrls(product.getImageUrls())
-                .category(product.getCategory())
+                .category(product.getCategory().getCategoryName())
                 .farmName(product.getFarm() != null ? product.getFarm().getFarmName() : null)
                 .farmLocation(product.getFarm() != null ? product.getFarm().getLocation() : null)
                 .farmerName(product.getFarmer() != null ? product.getFarmer().getFullName() : null)

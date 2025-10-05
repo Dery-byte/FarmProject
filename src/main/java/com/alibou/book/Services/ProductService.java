@@ -1,10 +1,12 @@
 package com.alibou.book.Services;
 
 import com.alibou.book.DTO.*;
+import com.alibou.book.Entity.Category;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.OrderDetails;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Mapper.ProductMapper;
+import com.alibou.book.Repositories.CategoryRepository;
 import com.alibou.book.Repositories.FarmRepository;
 import com.alibou.book.Repositories.OrderDetailsRepository;
 import com.alibou.book.Repositories.ProductRepository;
@@ -56,6 +58,7 @@ public class ProductService {
     private final Cloudinary cloudinary;
 
     private final String containerName = "product-images"; // Your container name
+    private final CategoryRepository categoryRepository;
 
 
     @Value("${application.file.upload-dir}")
@@ -360,10 +363,12 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
     User user = getAuthenticatedUser(principal);
     Farm farm = getFarm(productRequest.getFarmId());
 
+    Category category = getCategory(productRequest.getCategoryId());
+
     List<String> imageUrls = uploadImages(productRequest.getImages());
 
     try {
-        Product product = createProduct(productRequest, farm, user, imageUrls);
+        Product product = createProduct(productRequest, farm, category, user, imageUrls);
         return productRepository.save(product);
     } catch (Exception e) {
         // Clean up uploaded images if product creation fails
@@ -391,6 +396,12 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
     private Farm getFarm(Long farmId) {
         return farmRepository.findById(farmId)
                 .orElseThrow(() -> new IllegalArgumentException("Farm not found with ID: " + farmId));
+    }
+
+
+    private Category getCategory(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Farm not found with ID: " + categoryId));
     }
 
     // 🔹 MODIFIED: Upload images to Cloudinary instead of Azure Blob
@@ -443,6 +454,7 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
 
     private Product createProduct(ProductRequestDTO request,
                                   Farm farm,
+                                  Category category,
                                   User user,
                                   List<String> imageUrls) {
         return Product.builder()
@@ -450,7 +462,8 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .quantity(request.getQuantity())
-                .category(request.getCategory())
+//                .category(request.getCategory().getCategoryName())
+                .category(category)
                 .weight(request.getWeight())
                 .breed(request.getBreed())
                 .healthStatus(request.getHealthStatus())
@@ -589,6 +602,7 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
                 product.setDescription(newProduct.getDescription());
                 product.setPrice(newProduct.getPrice());
                 product.setQuantity(newProduct.getQuantity());
+//                product.setCategory(newProduct.getCategory());
                 product.setCategory(newProduct.getCategory());
                 product.setAge(newProduct.getAge());
                 product.setWeight(newProduct.getWeight());
@@ -742,12 +756,31 @@ public ProductPageResponse getAllProducts(Pageable pageable) {
                     );
         }
 
+        CategoryRequestDTO categoryRequestDTO = null;
+        if (product.getFarm() != null) {
+            categoryRequestDTO = new CategoryRequestDTO(
+                    product.getCategory().getId(),
+product.getCategory().getCategoryName(),
+product.getCategory().getCategoryDescription(),
+product.getCategory().getUserRole()
+//                    farmerDTO, // owner of farm
+//                    product.getFarm().getContact()
+
+            );
+        }
+
+
+
+
+
+
         return new ProductDTO(
                 product.getId(),
                 product.getProductName(),
                 product.getPrice(),
                 product.getQuantity(),
-                product.getCategory(),
+                categoryRequestDTO,
+//                product.getCategory(),
                 product.getImageUrls(),
                 product.getDescription(),
                 product.getWeight(),
@@ -799,7 +832,7 @@ public ProductPageResponse getAllProducts(Pageable pageable) {
 
 
     public  List<Product> getProductsByCategory(String location){
-        return productRepository.findByCategory(location);
+        return productRepository.findByCategory_CategoryName(location);
     }
 
 

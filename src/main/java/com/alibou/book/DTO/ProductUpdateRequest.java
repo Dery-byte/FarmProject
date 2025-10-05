@@ -1,5 +1,6 @@
 package com.alibou.book.DTO;
 
+import com.alibou.book.Entity.Category;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,8 @@ public class ProductUpdateRequest {
     private String description;
     private Double price;
     private Integer quantity;
-    private String category;
+//    private String category;
+    private Category category;
     private Double weight;
     private String breed;
     private String healthStatus;

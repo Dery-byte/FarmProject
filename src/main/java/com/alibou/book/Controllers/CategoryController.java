@@ -23,7 +23,6 @@ public class CategoryController {
         return categoryService.addCategory(categoryRequest, principal);
     }
 
-
     // 📖 Get All Categories (for logged-in user)
     @GetMapping("/allCategories")
     public ResponseEntity<?> getCategories(Principal principal) {
@@ -35,6 +34,15 @@ public class CategoryController {
     public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody CategoryRequestDTO categoryRequest, Principal principal) {
         return categoryService.updateCategory(id, categoryRequest, principal);
     }
+
+
+    @GetMapping("/getAllCategories")
+    public ResponseEntity<?> getCategories() {
+        return categoryService.getAllCategories();
+    }
+
+
+
 
     // ❌ Delete Category
     @DeleteMapping("/deleteCategory/{id}")

@@ -1,9 +1,7 @@
 package com.alibou.book.Services;
 
-import com.alibou.book.DTO.FarmDTO;
-import com.alibou.book.DTO.FarmResponse;
-import com.alibou.book.DTO.FarmWithProductsDTO;
-import com.alibou.book.DTO.ProductDTO;
+import com.alibou.book.DTO.*;
+import com.alibou.book.Entity.Category;
 import com.alibou.book.Entity.Farm;
 import com.alibou.book.Entity.Product;
 import com.alibou.book.Repositories.FarmRepository;
@@ -238,7 +236,8 @@ public class FarmService {
                         .id(p.getId())
                         .name(p.getProductName())
                         .quantity(p.getQuantity())
-                        .category(p.getCategory())
+                        .category(mapCategoryToDTO(p.getCategory())) // ✅ fix here
+//                        .category(p.getCategory())
                         .price(p.getPrice())
                         .imageUrls(p.getImageUrls()) // Include image URLs
                         .build())
@@ -258,6 +257,14 @@ public class FarmService {
 
 
 
+    private CategoryRequestDTO mapCategoryToDTO(Category category) {
+        if (category == null) return null;
+        return CategoryRequestDTO.builder()
+                .id(category.getId())
+                .categoryName(category.getCategoryName())
+                .categoryDescription(category.getCategoryDescription())
+                .build();
+    }
 
 
 

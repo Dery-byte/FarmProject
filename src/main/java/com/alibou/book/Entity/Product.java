@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -54,12 +53,16 @@ public class Product {
     private List<String> imageUrls = new ArrayList<>();  // I
 
 
-    private String category; // e.g., Poultry, Meat, Dairy
+//    private String category; // e.g., Poultry, Meat, Dairy
 
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "farm_id")
     private Farm farm; // The seller of the product
 
+
+    @ManyToOne (fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private Category category; // The seller of the product
 
 //    @JsonIgnore // Ignore serialization of this field
     @ManyToOne(fetch = FetchType.EAGER) // Load user only when needed

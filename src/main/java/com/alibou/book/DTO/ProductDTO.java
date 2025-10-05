@@ -18,7 +18,9 @@ public class ProductDTO {
     private String name;
     private Double price;
     private Integer quantity;
-    private String category;
+
+    private CategoryRequestDTO category;
+//    private String category;
     private List<String> imageUrls; // Add this field for images
 
     private String description;

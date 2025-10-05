@@ -82,19 +82,32 @@ public class CategoryService {
         if (principal == null) {
             return ResponseEntity.badRequest().body("Principal is null");
         }
-
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category not found");
         }
-
         Category category = optionalCategory.get();
         category.setCategoryName(categoryRequest.getCategoryName());
         category.setCategoryDescription(categoryRequest.getCategoryDescription());
-
         Category updatedCategory = categoryRepository.save(category);
         return ResponseEntity.ok(convertToDTO(updatedCategory));
     }
+
+
+
+
+
+    // 📖 GET ALL CATEGORIES — Open to Everyone
+    public ResponseEntity<?> getAllCategories() {
+        List<CategoryRequestDTO> categories = categoryRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(categories);
+    }
+    
+
+
 
     // ❌ DELETE CATEGORY
     @Transactional

@@ -1,5 +1,6 @@
 package com.alibou.book.DTO;
 
+import com.alibou.book.Entity.Category;
 import com.alibou.book.Entity.GenderStatus;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +13,7 @@ public class ProductRequestDTO {
     private String description;
     private Double price;
     private Integer quantity;
-    private String category;
+    private Long categoryId;
     private Long farmId;
     private Double weight;
     private String breed;
