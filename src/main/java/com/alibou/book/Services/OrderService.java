@@ -478,6 +478,7 @@ public class OrderService {
         }
         return convertToDTO(order, farmerId);
     }
+
     public OrderDto convertToDTO(Order order, Long farmerId) {
         OrderDto dto = new OrderDto();
         dto.setOrderId(order.getId());
@@ -503,13 +504,6 @@ public class OrderService {
         deliveryDTO.setStreet(order.getCustomer().getDelivery().getStreet());
         deliveryDTO.setDistrict(order.getCustomer().getDelivery().getDistrict());
         dto.setDelivery(deliveryDTO);
-        OrderSummaryDTO summary = new OrderSummaryDTO();
-        summary.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
-        //summary.setTotalAmount(order.getTotalAmount());
-        summary.setPaymentMethod(order.getPaymentMethod() != null ?
-                order.getPaymentMethod().toString() : "Not specified");
-        summary.setPaymentStatus(order.isPaid() ? "Paid" : "Unpaid");
-        dto.setSummary(summary);
 
 
         // Only include items that belong to this farmer
@@ -531,9 +525,29 @@ public class OrderService {
                 .collect(Collectors.toList());
         System.out.println(STR."Order ID: \{order.getId()} has \{items.size()} items.");
         dto.setItems(items);
+
+        // ✅ CALCULATE SELLER TOTAL (price × quantity for this farmer)
+        BigDecimal farmerTotalAmount = items.stream()
+                .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        OrderSummaryDTO summary = new OrderSummaryDTO();
+        summary.setTotalAmount(BigDecimal.valueOf(order.getAmount()));
+        //summary.setTotalAmount(order.getTotalAmount());
+        summary.setFarmerTotalAmount(farmerTotalAmount);
+        summary.setPaymentMethod(order.getPaymentMethod() != null ?
+                order.getPaymentMethod().toString() : "Not specified");
+        summary.setPaymentStatus(order.isPaid() ? "Paid" : "Unpaid");
+        dto.setSummary(summary);
+
+
+
         return dto;
 
     }
+
+
+
     public OrderItemDto convertItemToDTO(OrderDetails item) {
         OrderItemDto dto = new OrderItemDto();
         dto.setOrderDetailsId(item.getId());

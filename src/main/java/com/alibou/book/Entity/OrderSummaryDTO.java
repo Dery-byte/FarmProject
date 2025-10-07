@@ -9,5 +9,6 @@ public class OrderSummaryDTO {
     private BigDecimal totalAmount;
     private String paymentMethod;
     private String paymentStatus;
+    private BigDecimal farmerTotalAmount;
     private String currency = "GHS"; // Default to GHS
 }
