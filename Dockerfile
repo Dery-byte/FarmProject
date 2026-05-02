@@ -32,5 +32,4 @@ WORKDIR /app
 
 COPY --from=build /app/target/farm-docker.jar app.jar
 
-ENTRYPOINT ["java", "--enable-preview", "-jar", "app.jar"]
-
+ENTRYPOINT ["java", "-Xms128m", "-Xmx256m", "--enable-preview", "-jar", "farm-docker.jar"]
