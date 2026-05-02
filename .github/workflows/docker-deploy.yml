@@ -35,7 +35,7 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
             docker rm -f farmapp || true
-            docker run -d -p 8080:8080 \
+            docker run -d -p 8080:8088 \
               --name farmapp \
               -e SPRING_PROFILES_ACTIVE=prod \
               ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
