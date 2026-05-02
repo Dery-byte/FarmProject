@@ -33,11 +33,11 @@ jobs:
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_SSH_KEY }}
          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
-            docker rm -f farmapp || true
-            docker run -d -p 8080:8088 \
-              --name farmapp \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              --memory="400m" \
-              --memory-swap="600m" \
-              ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
+          docker pull ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
+          docker rm -f farmapp || true
+          docker run -d -p 8080:8088 \
+            --name farmapp \
+            -e SPRING_PROFILES_ACTIVE=prod \
+            --memory="400m" \
+            --memory-swap="600m" \
+            ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
