@@ -439,10 +439,11 @@ public Product addProduct(ProductRequestDTO productRequest, Principal principal)
                     file.getBytes(),
                     ObjectUtils.asMap(
                             "public_id", publicId,
-                            "folder", "products", // Optional: organize in folders
+                            "folder", "products",
                             "resource_type", "image",
-                            "quality", "auto", // Automatic quality optimization
-                            "fetch_format", "auto" // Automatic format optimization
+                            "quality", "auto",
+                            "fetch_format", "auto",
+                            "format", "webp"
                     )
             );
 

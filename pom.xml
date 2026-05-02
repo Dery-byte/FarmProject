@@ -132,14 +132,6 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-
-
-<!--		<dependency>-->
-<!--			<groupId>com.azure</groupId>-->
-<!--			<artifactId>azure-storage-blob</artifactId>-->
-<!--			<version>12.25.0</version>-->
-<!--		</dependency>-->
-
 		<dependency>
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-http44</artifactId>
@@ -170,20 +162,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-
-			<!-- Compiler plugin targeting Java 21  for Dockerile to run-->
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-compiler-plugin</artifactId>-->
-<!--				<version>3.11.0</version>-->
-<!--				<configuration>-->
-<!--					<release>21</release>-->
-<!--					<compilerArgs>-->
-<!--						<arg>&#45;&#45;enable-preview</arg>-->
-<!--					</compilerArgs>-->
-<!--				</configuration>-->
-<!--			</plugin>-->
-
 
 
 
