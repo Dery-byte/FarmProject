@@ -1,20 +1,20 @@
-name: Build, Push and Deploy
+name: Build and Push Docker Image
 
 on:
   push:
     branches: [ "master" ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       # 1. Checkout code
       - uses: actions/checkout@v4
 
-      # 2. Set up Docker (optional but good)
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # 2. Build Docker image
+      - name: Build Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/farmproject:latest .
 
       # 3. Login to Docker Hub
       - name: Login to Docker Hub
@@ -23,24 +23,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 4. Build and Push Image (single step)
-      - name: Build and Push Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/farmproject:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
-
-      # 5. Deploy to DigitalOcean
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USER }}
-          key: ${{ secrets.DO_SSH_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
-            docker stop farmapp || true
-            docker rm farmapp || true
-            docker run -d -p 8080:8080 \
-              --name farmapp \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
+      # 4. Push Image
+      - name: Push Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/farmproject:latest
