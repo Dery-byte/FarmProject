@@ -43,9 +43,11 @@ public class OrderService {
     private final DelegatingApplicationListener delegatingApplicationListener;
     private final PaymentRepository paymentRepository;
     private final OrderDetailsRepository orderDetailsRepository;
+    private final LogisticsPartnerRepository logisticsPartnerRepository;
+    private final LogisticsPortalService logisticsPortalService;
+    private final com.alibou.book.user.UserRepository userRepository;
 
     private final PaymentStatusRepository paymentStatusRepository;
-//    private final UserRepository userRepository;
 //@Transactional
 //public Order placeOrder(Principal principal) {
 //    Cart cart = cartService.getUserCart(principal);
@@ -310,10 +312,31 @@ public class OrderService {
     }
 
 
-    public Order updateOrderStatus(Long orderId, OrdersStatus newStatus, String adminUsername) {
+    public Order updateOrderStatus(Long orderId, OrdersStatus newStatus, Long logisticsPartnerId, String adminUsername) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         OrdersStatus currentStatus = order.getOrdersStatus();
+
+        if (newStatus == OrdersStatus.SHIPPED && logisticsPartnerId != null) {
+            LogisticsPartner partner = logisticsPartnerRepository.findById(logisticsPartnerId)
+                    .orElseThrow(() -> new RuntimeException("Logistics Partner not found"));
+            order.setLogisticsPartner(partner);
+            
+            // Trigger delivery assignment in the portal + SMS
+            User assignedBy = userRepository.findByUsername(adminUsername).orElse(null);
+            Delivery delivery = order.getCustomer().getDelivery();
+            String destination = delivery != null ? delivery.getDigitalAddress() + ", " + delivery.getStreet() : "Unknown";
+            logisticsPortalService.createDeliveryAssignment(
+                order, partner,
+                "Farm Location", // we can pull from farm if needed
+                destination,
+                "Various", // animalType / category placeholder
+                "TBD", // quantity
+                "Standard", // special req
+                null, // agreed charge (can be updated via UI later)
+                assignedBy
+            );
+        }
 
         if (!isValidTransition(currentStatus, newStatus)) {
             throw new IllegalArgumentException("Invalid status transition from " + currentStatus + " to " + newStatus);
@@ -326,7 +349,6 @@ public class OrderService {
         orderStatusHistory.setOrder(order); // assuming a relationship exists
         // Update order
         order.setOrdersStatus(newStatus);
-//        order.setStatus(OrdersStatus.valueOf(newStatus.name()));
         order.getOrderStatusHistoryList().add(orderStatusHistory);
         return orderRepository.save(order);
     }
@@ -681,17 +703,21 @@ private boolean isValidTransitionItemStatusOrdered(OrderedItemStatus current, Or
 
 
     @Transactional
-    public OrderDetails updateOrderedItemStatus(Long ordererdItemId, OrderedItemStatus newStatus, String adminUsername) {
+    public OrderDetails updateOrderedItemStatus(Long ordererdItemId, OrderedItemStatus newStatus, Long logisticsPartnerId, String adminUsername) {
         OrderDetails orderDetails = orderDetailsRepository.findById(ordererdItemId).
                 orElseThrow(()-> new  RuntimeException("Order Item Not found"));
-        //OrderedItemStatus currentOrderedItemStatus = orderDetails.getOrderedItemStatus();
 
-       System.out.println(orderDetails.getId());
+        System.out.println(orderDetails.getId());
         System.out.println(orderDetails.getOrder().getId());
 
         System.out.println(newStatus);
         OrderedItemStatus currentOrderedItemStatus = orderDetails.getOrderedItemStatus();
 
+        if (newStatus == OrderedItemStatus.SHIPPED && logisticsPartnerId != null) {
+            LogisticsPartner partner = logisticsPartnerRepository.findById(logisticsPartnerId)
+                    .orElseThrow(() -> new RuntimeException("Logistics Partner not found"));
+            orderDetails.getOrder().setLogisticsPartner(partner);
+        }
 
         if (!isValidTransitionItemStatusOrdered(currentOrderedItemStatus, newStatus)) {
             throw new IllegalArgumentException("Invalid status transition from " + currentOrderedItemStatus + " to " + newStatus);

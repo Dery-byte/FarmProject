@@ -42,6 +42,15 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody Map<String, String> request,
+            java.security.Principal connectedUser
+    ) {
+        service.changePassword(request.get("currentPassword"), request.get("newPassword"), connectedUser);
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("/activate-account")
     public void confirm(@RequestParam String token) throws MessagingException {
@@ -146,6 +155,22 @@ public class AuthenticationController {
         return ResponseEntity.ok(roles);
     }
 
+    @PutMapping("/{id}/toggle-farm-management-lite")
+    public ResponseEntity<?> toggleFarmManagementLite(@PathVariable Long id, @RequestParam boolean enabled) {
+        service.toggleFarmManagementLite(id, enabled);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Farm Management Lite feature updated.");
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/toggle-status")
+    public ResponseEntity<?> toggleUserStatus(@PathVariable Long id) {
+        boolean newState = service.toggleUserEnabled(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("enabled", newState);
+        response.put("message", newState ? "User account enabled." : "User account disabled.");
+        return ResponseEntity.ok(response);
+    }
 
 
     @GetMapping("allUsers")
@@ -182,6 +207,13 @@ public class AuthenticationController {
             @PageableDefault(size = 5) Pageable pageable
     ) {
         return ResponseEntity.ok(service.getUsersByRole("FARMER", pageable));
+    }
+
+    @GetMapping("/partners")
+    public ResponseEntity<Page<User>> getPartners(
+            @PageableDefault(size = 5) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.getUsersByRole("LOGISTICS_PARTNER", pageable));
     }
 
 

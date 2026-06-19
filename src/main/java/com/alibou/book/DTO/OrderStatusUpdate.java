@@ -19,6 +19,16 @@ public class OrderStatusUpdate {
         return orderDetailStatus;
     }
 
+    private Long logisticsPartnerId;
+
+    public Long getLogisticsPartnerId() {
+        return logisticsPartnerId;
+    }
+
+    public void setLogisticsPartnerId(Long logisticsPartnerId) {
+        this.logisticsPartnerId = logisticsPartnerId;
+    }
+
     public void setOrderDetailStatus(OrderDetailStatus orderDetailStatus) {
         this.orderDetailStatus = orderDetailStatus;
     }

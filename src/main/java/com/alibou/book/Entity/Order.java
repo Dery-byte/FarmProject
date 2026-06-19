@@ -61,6 +61,10 @@ public class Order {
     @JsonIgnore
     private Payment payment;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "logistics_partner_id")
+    private LogisticsPartner logisticsPartner;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("changedAt ASC")
     @JsonManagedReference

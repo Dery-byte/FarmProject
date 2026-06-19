@@ -59,6 +59,9 @@ private Delivery delivery;
     private String password;
     private boolean accountLocked;
     private boolean enabled;
+    private boolean farmManagementLiteEnabled = false;
+    private boolean mustChangePassword = false;
+    private String companyName;
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
 

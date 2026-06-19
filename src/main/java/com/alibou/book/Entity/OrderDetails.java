@@ -35,8 +35,9 @@ public class OrderDetails {
     @JsonIgnore
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"farmer", "feedbacks", "sales", "inventoryRecords"})
     private Product product;
     @Enumerated(EnumType.STRING)
     private OrderedItemStatus orderedItemStatus=OrderedItemStatus.PENDING;

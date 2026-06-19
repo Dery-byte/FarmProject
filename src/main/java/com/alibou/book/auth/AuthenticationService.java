@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -88,15 +89,38 @@ public class AuthenticationService {
         var claims = new HashMap<String, Object>();
         var user = ((User) auth.getPrincipal());
         claims.put("fullName", user.getFullName());
+        claims.put("userId", user.getId());
+        claims.put("farmManagementLiteEnabled", user.isFarmManagementLiteEnabled());
 
         var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
+        String primaryRole = user.getRoles().isEmpty() ? "USER" : user.getRoles().get(0).getName();
         return AuthenticationResponse.builder()
                 .token(jwtToken)
-                .fullName(user.getFullName())   // <-- add directly to response
-                .firstName(user.getFirstname()) // <-- optional
-                .lastName(user.getLastname())   // <-- optional
+                .fullName(user.getFullName())
+                .firstName(user.getFirstname())
+                .lastName(user.getLastname())
                 .email(user.getUsername())
+                .mustChangePassword(user.isMustChangePassword())
+                .role(primaryRole)
                 .build();
+    }
+
+    public void changePassword(String currentPassword, String newPassword, Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        // check if the current password is correct
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalStateException("Wrong password");
+        }
+        // check if the two new passwords are the same
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalStateException("New password cannot be the same as old password");
+        }
+
+        // update the password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setMustChangePassword(false);
+        userRepository.save(user);
     }
 
 
@@ -327,9 +351,20 @@ public void updateUserRoles(Long userId, List<String> roleNames) {
                 .collect(Collectors.toList());
     }
 
+    public void toggleFarmManagementLite(Long userId, boolean enabled) {
+        User user = userRepository.findById(Math.toIntExact(userId))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setFarmManagementLiteEnabled(enabled);
+        userRepository.save(user);
+    }
 
-
-
+    public boolean toggleUserEnabled(Long userId) {
+        User user = userRepository.findById(Math.toIntExact(userId))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setEnabled(!user.isEnabled());
+        userRepository.save(user);
+        return user.isEnabled();
+    }
 
 
 
@@ -357,7 +392,7 @@ public void updateUserRoles(Long userId, List<String> roleNames) {
                         .enabled(user.isEnabled())
                         .accountLocked(user.isAccountLocked())
                         .dateOfBirth(user.getDateOfBirth())
-
+                        .farmManagementLiteEnabled(user.isFarmManagementLiteEnabled())
                         .roles(new ArrayList<>(user.getRoles()))  // ✅ Fix
 
                        // .roles(user.getRoles().stream().map(Role::getName).toList())

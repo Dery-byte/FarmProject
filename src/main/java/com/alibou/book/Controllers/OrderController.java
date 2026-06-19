@@ -69,7 +69,12 @@ public class OrderController {
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
 
         try {
-            Order updatedOrder = orderService.updateOrderStatus(orderId, request.getStatus(), user.getFullName());
+            Order updatedOrder = orderService.updateOrderStatus(
+                orderId, 
+                request.getStatus(), 
+                request.getLogisticsPartnerId(), 
+                user.getFullName()
+            );
             System.out.println("Order status update to " + request.getStatus());
             return ResponseEntity.ok(updatedOrder);
 //            return ResponseEntity.ok("Order status updated to " + request.getStatus());
@@ -357,7 +362,12 @@ public class OrderController {
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
 
         try {
-            OrderDetails updatedOrder = orderService.updateOrderedItemStatus(orderedItemId, request.getItemStatus(), user.getFullName());
+            OrderDetails updatedOrder = orderService.updateOrderedItemStatus(
+                orderedItemId, 
+                request.getItemStatus(), 
+                request.getLogisticsPartnerId(), 
+                user.getFullName()
+            );
             System.out.println("Order status update to " + request.getItemStatus());
             return ResponseEntity.ok(updatedOrder);
 //            return ResponseEntity.ok("Order status updated to " + request.getStatus());
