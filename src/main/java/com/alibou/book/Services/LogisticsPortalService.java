@@ -27,6 +27,7 @@ public class LogisticsPortalService {
 
     private final LogisticsPartnerRepository logisticsPartnerRepository;
     private final DeliveryAssignmentRepository deliveryAssignmentRepository;
+    private final com.alibou.book.Repositories.OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -170,10 +171,14 @@ public class LogisticsPortalService {
                 assignment.setPickedUpAt(LocalDateTime.now());
             }
             case "DELIVERED" -> {
-                if (assignment.getStatus() != DeliveryAssignmentStatus.PICKED_UP)
-                    throw new IllegalStateException("Must be PICKED_UP before DELIVERED");
+                if (assignment.getStatus() != DeliveryAssignmentStatus.PICKED_UP && assignment.getStatus() != DeliveryAssignmentStatus.ACCEPTED)
+                    throw new IllegalStateException("Must be ACCEPTED or PICKED_UP before DELIVERED");
                 assignment.setStatus(DeliveryAssignmentStatus.DELIVERED);
                 assignment.setDeliveredAt(LocalDateTime.now());
+                if (assignment.getOrder() != null) {
+                    assignment.getOrder().setOrdersStatus(com.alibou.book.Entity.OrdersStatus.DELIVERED);
+                    orderRepository.save(assignment.getOrder());
+                }
             }
             default -> throw new IllegalArgumentException("Status must be PICKED_UP or DELIVERED");
         }

@@ -268,7 +268,9 @@ public class OrderService {
     }
 
     public List<Order> getAllOrders(){
-    return orderRepository.findAll();
+        List<Order> orders = orderRepository.findAllWithDetails();
+        System.out.println("getAllOrders: returning " + orders.size() + " orders");
+        return orders;
     }
 
     public long getTotalOrderCount() {
@@ -333,9 +335,18 @@ public class OrderService {
                 "Various", // animalType / category placeholder
                 "TBD", // quantity
                 "Standard", // special req
-                null, // agreed charge (can be updated via UI later)
+                BigDecimal.valueOf(order.getAmount() * 0.1), // agreed charge (10% of order amount)
                 assignedBy
             );
+        }
+
+        if (newStatus == OrdersStatus.DELIVERED) {
+            List<DeliveryAssignment> assignments = logisticsPortalService.getAssignmentsByOrder(order.getId());
+            for (DeliveryAssignment da : assignments) {
+                if (da.getStatus() != DeliveryAssignmentStatus.DELIVERED && da.getStatus() != DeliveryAssignmentStatus.CANCELLED) {
+                    logisticsPortalService.updateDeliveryStatus(da.getId(), "DELIVERED");
+                }
+            }
         }
 
         if (!isValidTransition(currentStatus, newStatus)) {

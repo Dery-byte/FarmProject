@@ -252,6 +252,7 @@ public class ReturnController {
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
 
         List<ReturnRequestDTO> returns = returnService.getReturnsForCurrentFarmer(Long.valueOf(user.getId()));
+        System.out.println("Fetching returns for farmer: " + user.getId() + ", found: " + returns.size());
         return ResponseEntity.ok(returns);
     }
 

@@ -42,7 +42,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                          @Param("status") OrderDetailStatus status);
     }
 
-    List<Order>findByCustomer_Id(Long userId);
+    List<Order> findByCustomer_Id(Long userId);
+
+    /**
+     * Fetch all orders with their orderDetails and products in one query.
+     * Using JOIN FETCH to avoid LazyInitializationException during JSON serialization.
+     */
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderDetails od LEFT JOIN FETCH od.product p LEFT JOIN FETCH p.farm")
+    List<Order> findAllWithDetails();
 
     long count();
     // In OrderRepository
